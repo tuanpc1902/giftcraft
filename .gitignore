@@ -1,0 +1,61 @@
+# ============================================================
+# GiftCraft Studio — monorepo .gitignore
+# ============================================================
+
+# --- Env / secrets ---
+.env
+.env.*.local
+.env.local
+!.env.example
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ============================================================
+# Frontend (Next.js)
+# ============================================================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.turbo/
+frontend/next-env.d.ts
+frontend/*.tsbuildinfo
+frontend/coverage/
+frontend/.env*.local
+
+# ============================================================
+# Backend (Laravel)
+# ============================================================
+backend/vendor/
+backend/node_modules/
+backend/public/build/
+backend/public/hot
+backend/public/storage
+backend/storage/*.key
+backend/storage/pail/
+backend/storage/framework/cache/data/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+backend/storage/logs/
+backend/bootstrap/cache/*.php
+backend/.phpunit.result.cache
+backend/.phpunit.cache/
+backend/auth.json
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/database/database.sqlite
+backend/Homestead.json
+backend/Homestead.yaml
+
+# ============================================================
+# Infra / Docker
+# ============================================================
+infra/nginx/ssl/
+infra/certbot/
+*.log

@@ -1,0 +1,82 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, staging]
+
+# Required GitHub Secrets:
+#   STAGING_HOST, STAGING_USER, STAGING_SSH_KEY
+#   PROD_HOST, PROD_USER, PROD_SSH_KEY
+#   APP_KEY, DB_PASSWORD, VNPAY_HASH_SECRET, MOMO_SECRET_KEY,
+#   R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, SENTRY_DSN, GHN_TOKEN
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /var/www/giftcraft
+            git pull origin staging
+            docker compose -f infra/docker-compose.prod.yml up -d --build
+            docker compose -f infra/docker-compose.prod.yml exec -T laravel php artisan migrate --force
+            docker compose -f infra/docker-compose.prod.yml exec -T laravel php artisan optimize:clear
+            docker compose -f infra/docker-compose.prod.yml exec -T laravel php artisan queue:restart
+
+      - name: Smoke test
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://staging.giftcraft.vn/api/health)
+          echo "Health check: $status"
+          test "$status" = "200"
+
+  deploy-production:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production # configure manual approval on this environment in repo settings
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /var/www/giftcraft
+            git pull origin main
+            docker compose -f infra/docker-compose.prod.yml up -d --build
+            docker compose -f infra/docker-compose.prod.yml exec -T laravel php artisan migrate --force
+            docker compose -f infra/docker-compose.prod.yml exec -T laravel php artisan optimize:clear
+            docker compose -f infra/docker-compose.prod.yml exec -T laravel php artisan queue:restart
+
+      - name: Smoke test (rollback on failure)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /var/www/giftcraft
+            status=$(curl -s -o /dev/null -w "%{http_code}" https://giftcraft.vn/api/health)
+            echo "Health check: $status"
+            if [ "$status" != "200" ]; then
+              echo "Smoke test failed — rolling back"
+              git checkout HEAD~1
+              docker compose -f infra/docker-compose.prod.yml up -d --build
+              exit 1
+            fi
