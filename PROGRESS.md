@@ -71,18 +71,33 @@
 
 ## 🔄 Phase 2 — B2B + Forfolio (IN PROGRESS)
 
-### User-facing UI còn thiếu (ưu tiên làm ngay):
+### User-facing UI:
 
 | Trang | Mô tả | Trạng thái |
 |-------|-------|-----------|
-| `/` | Trang chủ | ⏳ TODO |
-| `/san-pham` | Danh sách sản phẩm + filter | ⏳ TODO |
-| `/gio-hang` | Giỏ hàng | ⏳ TODO |
-| `/qua-tang-doanh-nghiep` | B2B Landing | ⏳ TODO |
-| `/bat-dau-du-an-moi` | B2B Quote form 5 bước | ⏳ TODO |
-| `/forfolio` | Portfolio với filter + lightbox | ⏳ TODO |
-| `/gift-finder` | Gift finder 4 bước | ⏳ TODO |
-| `/tai-khoan/du-an` | B2B portal tracking | ⏳ TODO |
+| `/` | Trang chủ | ✅ DONE |
+| `/san-pham` | Danh sách sản phẩm + filter | ✅ DONE |
+| `/gio-hang` | Giỏ hàng | ✅ DONE |
+| `/qua-tang-doanh-nghiep` | B2B Landing | ✅ DONE |
+| `/bat-dau-du-an-moi` | B2B Quote form 5 bước | ✅ DONE |
+| `/forfolio` | Portfolio với filter + lightbox | ✅ DONE |
+| `/gift-finder` | Gift finder 4 bước | ✅ DONE |
+| `/dang-nhap` | Trang đăng nhập | ✅ DONE |
+| `/dang-ky` | Trang đăng ký | ✅ DONE |
+| `/tai-khoan` | Account hub (profile + orders) | ✅ DONE |
+| `/tai-khoan/du-an` | B2B portal tracking | ✅ DONE |
+| `/blog` | Blog listing + newsletter | ✅ DONE |
+| Header | Mobile menu + auth dropdown | ✅ DONE |
+
+### Admin UI:
+
+| Trang | Mô tả | Trạng thái |
+|-------|-------|-----------|
+| `/admin` | Dashboard + stats | ✅ DONE |
+| `/admin/don-hang` | Order management + drawer | ✅ DONE |
+| `/admin/san-pham` | Products CRUD (add/edit/delete + search) | ✅ DONE |
+| `/admin/b2b` | B2B quotes + status + price + note | ✅ DONE |
+| `/admin/forfolio` | Portfolio CRUD + featured toggle | ✅ DONE |
 
 ### Backend Phase 2:
 
@@ -153,4 +168,4 @@ docker compose -f infra/docker-compose.yml -p giftcraft ps
 
 ---
 
-*Cập nhật: 2026-06-09 | Phase 1 hoàn tất | Phase 2 đang triển khai*
+*Cập nhật: 2026-06-10 | Phase 1 hoàn tất | Phase 2 Frontend hoàn tất | Backend Phase 2 đang triển khai*
