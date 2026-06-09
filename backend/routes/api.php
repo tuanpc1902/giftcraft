@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\B2bQuoteController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CheckoutController;
@@ -54,6 +55,13 @@ Route::prefix('cart')->group(function () {
 // --- Shipping fee calculator ---
 Route::post('/shipping/calculate', [ShippingController::class, 'calculate']);
 
+// --- B2B Quotes ---
+Route::post('/b2b/quotes', [B2bQuoteController::class, 'store']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/b2b/quotes', [B2bQuoteController::class, 'index']);
+    Route::get('/b2b/quotes/{id}', [B2bQuoteController::class, 'show'])->whereNumber('id');
+});
+
 // --- Checkout & orders ---
 Route::post('/orders/checkout', [CheckoutController::class, 'checkout']);
 Route::get('/orders/{orderNumber}', [OrderController::class, 'show']);
@@ -72,6 +80,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->whereNumber('id');
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])->whereNumber('id');
     Route::get('/orders', [OrderController::class, 'adminIndex']);
+    Route::get('/b2b/quotes', [B2bQuoteController::class, 'adminIndex']);
+    Route::put('/b2b/quotes/{id}', [B2bQuoteController::class, 'adminUpdate'])->whereNumber('id');
 
     // Dashboard stats (placeholder returns zeros — fleshed out Phase 2)
     Route::get('/stats', function () {
