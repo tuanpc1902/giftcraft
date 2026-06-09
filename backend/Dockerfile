@@ -8,11 +8,12 @@ RUN apk add --no-cache \
     libpng-dev \
     libzip-dev \
     postgresql-dev \
+    sqlite-dev \
     oniguruma-dev \
     $PHPIZE_DEPS
 
 # PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql zip gd bcmath \
+RUN docker-php-ext-install pdo pdo_pgsql pdo_sqlite zip gd bcmath pcntl posix \
     && pecl install redis \
     && docker-php-ext-enable redis
 

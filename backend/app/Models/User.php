@@ -47,7 +47,7 @@ class User extends Authenticatable
         return LogOptions::defaults()
             ->logOnly(['name', 'email', 'role', 'loyalty_tier'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->dontLogEmptyChanges();
     }
 
     // --- Relationships ---
