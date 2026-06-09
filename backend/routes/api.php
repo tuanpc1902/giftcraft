@@ -71,6 +71,18 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::put('/products/{id}', [AdminProductController::class, 'update'])->whereNumber('id');
     Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->whereNumber('id');
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])->whereNumber('id');
+    Route::get('/orders', [OrderController::class, 'adminIndex']);
+
+    // Dashboard stats (placeholder returns zeros — fleshed out Phase 2)
+    Route::get('/stats', function () {
+        $today = now()->startOfDay();
+        return response()->json(['success' => true, 'data' => [
+            'today_revenue' => (int) \App\Models\Order::where('created_at', '>=', $today)->sum('total'),
+            'pending_orders' => \App\Models\Order::where('status', 'pending')->count(),
+            'express_orders' => \App\Models\Order::where('status', 'pending')->where('delivery_type', 'express')->count(),
+            'new_b2b_quotes' => 0, // Phase 2
+        ]]);
+    });
 });
 
 Route::get('/', function () {

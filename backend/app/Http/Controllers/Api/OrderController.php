@@ -45,6 +45,32 @@ class OrderController extends Controller
     }
 
     /**
+     * Admin: list all orders with optional filters.
+     */
+    public function adminIndex(Request $request): JsonResponse
+    {
+        $query = Order::with('items')->orderByDesc('created_at');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->query('status'));
+        }
+        if ($request->filled('delivery_type')) {
+            $query->where('delivery_type', $request->query('delivery_type'));
+        }
+
+        $orders = $query->paginate(30);
+
+        return $this->success([
+            'items' => OrderResource::collection($orders->items()),
+            'meta' => [
+                'current_page' => $orders->currentPage(),
+                'last_page' => $orders->lastPage(),
+                'total' => $orders->total(),
+            ],
+        ]);
+    }
+
+    /**
      * Admin: update order status and notify the customer.
      */
     public function updateStatus(Request $request, int $id): JsonResponse
