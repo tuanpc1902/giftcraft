@@ -143,7 +143,7 @@ export default function BlogPage() {
             <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
               <article className="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-md transition-all h-full flex flex-col">
                 {/* Placeholder cover */}
-                <div className="aspect-[16/9] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <div className="aspect-video bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                   <span className="text-4xl opacity-50">
                     {post.category === "Xu hướng quà tặng" ? "🎁"
                       : post.category === "Bí quyết B2B" ? "💼"
@@ -175,7 +175,7 @@ export default function BlogPage() {
           <p className="text-3xl mb-3">📬</p>
           <h2 className="text-2xl font-bold mb-3">Nhận bài viết mới nhất</h2>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">Xu hướng quà tặng, bí quyết B2B, và ưu đãi độc quyền gửi thẳng đến hộp thư của bạn.</p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={e => e.preventDefault()}>
+          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
               className="flex-1 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
