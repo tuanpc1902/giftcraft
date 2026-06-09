@@ -105,3 +105,48 @@ export interface OrderItem {
     sku: string | null;
   };
 }
+
+export interface B2bQuote {
+  id: number;
+  company_name: string;
+  contact_name: string;
+  phone: string;
+  email: string;
+  occasion: string | null;
+  quantity_requested: number;
+  budget_min: number | null;
+  budget_max: number | null;
+  deadline: string | null;
+  custom_requirements: string | null;
+  status: "new" | "reviewing" | "quoted" | "approved" | "in_production" | "delivered" | "cancelled";
+  quoted_price: number | null;
+  admin_note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  cover_image: string | null;
+  category: string;
+  author: string;
+  published_at: string;
+  read_minutes: number;
+}
+
+export interface PortfolioProject {
+  id: number;
+  title: string;
+  client_name: string | null;
+  occasion: string;
+  industry: string | null;
+  quantity: number | null;
+  cover_image: string;
+  gallery_images: string[];
+  description: string | null;
+  is_featured: boolean;
+  created_at: string;
+}
