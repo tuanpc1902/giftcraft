@@ -175,7 +175,7 @@ export default function BlogPage() {
           <p className="text-3xl mb-3">📬</p>
           <h2 className="text-2xl font-bold mb-3">Nhận bài viết mới nhất</h2>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">Xu hướng quà tặng, bí quyết B2B, và ưu đãi độc quyền gửi thẳng đến hộp thư của bạn.</p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               className="flex-1 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
