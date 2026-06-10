@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Concerns\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\B2bQuote;
+use App\Models\Product;
 use App\Services\B2bPricingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,8 +28,15 @@ class B2bQuoteController extends Controller
             'deadline' => ['nullable', 'date'],
             'custom_requirements' => ['nullable', 'string', 'max:2000'],
             'brief_file_url' => ['nullable', 'string', 'url'],
-            'product_id' => ['nullable', 'exists:products,id'],
+            'product_id'     => ['nullable', 'exists:products,id'],
+            'product_slug'   => ['nullable', 'string'],
         ]);
+
+        // Resolve product_slug → product_id when the modal sends a slug instead of ID.
+        if (empty($data['product_id']) && ! empty($data['product_slug'])) {
+            $data['product_id'] = Product::where('slug', $data['product_slug'])->value('id');
+        }
+        unset($data['product_slug']);
 
         $tierLabel = $pricing->matchTierLabel($data['quantity_requested']);
         $data['tier_matched'] = $tierLabel;

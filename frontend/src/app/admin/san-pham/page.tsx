@@ -12,35 +12,63 @@ interface ProductForm {
   retail_price: string;
   weight_grams: string;
   stock_status: "in_stock" | "out_of_stock" | "pre_order";
+  is_active: boolean;
   is_customizable: boolean;
   images: string;
   cover_image: string;
+  version: number;
 }
 
 const emptyForm: ProductForm = {
   name: "", slug: "", short_description: "",
   retail_price: "", weight_grams: "500",
-  stock_status: "in_stock", is_customizable: false,
-  images: "", cover_image: "",
+  stock_status: "in_stock", is_active: true, is_customizable: false,
+  images: "", cover_image: "", version: 0,
 };
 
 function toPayload(f: ProductForm) {
+  const imageList = f.images.split("\n").map(s => s.trim()).filter(Boolean);
   return {
     name: f.name,
-    slug: f.slug || f.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
+    slug: f.slug || autoSlug(f.name),
     short_description: f.short_description || null,
     retail_price: Number(f.retail_price),
     weight_grams: Number(f.weight_grams),
     stock_status: f.stock_status,
+    is_active: f.is_active,
     is_customizable: f.is_customizable,
-    images: f.images.split("\n").map(s => s.trim()).filter(Boolean),
-    cover_image: f.cover_image || f.images.split("\n").map(s => s.trim()).filter(Boolean)[0] || null,
+    images: imageList,
+    cover_image: f.cover_image || imageList[0] || null,
+    version: f.version,
   };
 }
 
-function formReducer(s: ProductForm, patch: Partial<ProductForm>): ProductForm { return { ...s, ...patch }; }
+function autoSlug(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/đ/g, "d")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
+function formReducer(s: ProductForm, patch: Partial<ProductForm>): ProductForm {
+  return { ...s, ...patch };
+}
 
 type ModalMode = "add" | "edit";
+
+const STOCK_LABELS: Record<string, string> = {
+  in_stock: "Còn hàng",
+  pre_order: "Pre-order",
+  out_of_stock: "Hết hàng",
+};
+const STOCK_COLORS: Record<string, string> = {
+  in_stock: "bg-green-100 text-green-700",
+  pre_order: "bg-amber-100 text-amber-700",
+  out_of_stock: "bg-gray-100 text-gray-500",
+};
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<ProductListItem[]>([]);
@@ -49,12 +77,13 @@ export default function AdminProductsPage() {
   const [modal, setModal] = useState<{ mode: ModalMode; id?: number } | null>(null);
   const [form, dispatchForm] = useReducer(formReducer, emptyForm);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const set = (patch: Partial<ProductForm>) => dispatchForm(patch);
 
   useEffect(() => {
-    api.get("/products?per_page=100")
+    api.get("/admin/products?per_page=200")
       .then(r => setProducts(r.data.data?.items ?? []))
       .catch(() => setProducts([]))
       .finally(() => setLoading(false));
@@ -66,6 +95,7 @@ export default function AdminProductsPage() {
 
   function openAdd() {
     dispatchForm(emptyForm);
+    setSaveError("");
     setModal({ mode: "add" });
   }
 
@@ -75,18 +105,22 @@ export default function AdminProductsPage() {
       slug: p.slug,
       short_description: "",
       retail_price: String(p.retail_price),
-      weight_grams: "500",
+      weight_grams: String(p.weight_grams ?? 500),
       stock_status: p.stock_status,
+      is_active: p.is_active ?? true,
       is_customizable: p.is_customizable,
       images: p.cover_image ?? "",
       cover_image: p.cover_image ?? "",
+      version: p.version ?? 1,
     });
+    setSaveError("");
     setModal({ mode: "edit", id: p.id });
   }
 
   async function handleSave() {
     if (!form.name || !form.retail_price) return;
     setSaving(true);
+    setSaveError("");
     try {
       const payload = toPayload(form);
       if (modal?.mode === "add") {
@@ -97,27 +131,33 @@ export default function AdminProductsPage() {
         setProducts(ps => ps.map(p => p.id === modal.id ? { ...p, ...data.data } : p));
       }
       setModal(null);
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number; data?: { message?: string } } })?.response?.status;
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      if (status === 409) {
+        setSaveError("Sản phẩm vừa bị chỉnh sửa bởi người khác. Vui lòng đóng lại và mở lại để lấy phiên bản mới.");
+      } else {
+        setSaveError(msg ?? "Lưu thất bại. Vui lòng thử lại.");
+      }
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(id: number, name: string) {
-    if (!confirm(`Xóa sản phẩm "${name}"?`)) return;
+    if (!confirm(`Xóa sản phẩm "${name}"? Hành động này không thể hoàn tác.`)) return;
     setDeleteId(id);
     await api.delete(`/admin/products/${id}`).catch(() => {});
     setProducts(ps => ps.filter(p => p.id !== id));
     setDeleteId(null);
   }
 
-  function autoSlug(name: string) {
-    return name
-      .toLowerCase()
-      .replace(/đ/g, "d")
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
+  async function toggleActive(p: ProductListItem) {
+    const next = !p.is_active;
+    setProducts(ps => ps.map(x => x.id === p.id ? { ...x, is_active: next } : x));
+    await api.put(`/admin/products/${p.id}`, { is_active: next, version: p.version }).catch(() => {
+      setProducts(ps => ps.map(x => x.id === p.id ? { ...x, is_active: p.is_active } : x));
+    });
   }
 
   return (
@@ -149,15 +189,15 @@ export default function AdminProductsPage() {
               <tr>
                 <th className="text-left px-4 py-3">Sản phẩm</th>
                 <th className="text-left px-4 py-3">Giá lẻ</th>
-                <th className="text-left px-4 py-3">Giá B2B min</th>
-                <th className="text-left px-4 py-3">Trạng thái</th>
-                <th className="text-left px-4 py-3">Tuỳ chỉnh</th>
+                <th className="text-left px-4 py-3">B2B min</th>
+                <th className="text-left px-4 py-3">Kho</th>
+                <th className="text-left px-4 py-3">Hiển thị</th>
                 <th className="text-left px-4 py-3">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {displayed.map(p => (
-                <tr key={p.slug} className="hover:bg-gray-50">
+                <tr key={p.slug} className={`hover:bg-gray-50 ${p.is_active === false ? "opacity-50" : ""}`}>
                   <td className="px-4 py-3">
                     <div>
                       <p className="font-medium text-gray-900">{p.name}</p>
@@ -169,36 +209,29 @@ export default function AdminProductsPage() {
                     {p.b2b_min_price ? formatPrice(p.b2b_min_price) : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                      p.stock_status === "in_stock" ? "bg-green-100 text-green-700" :
-                      p.stock_status === "pre_order" ? "bg-amber-100 text-amber-700" :
-                      "bg-gray-100 text-gray-500"
-                    }`}>
-                      {p.stock_status === "in_stock" ? "Còn hàng" : p.stock_status === "pre_order" ? "Pre-order" : "Hết hàng"}
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STOCK_COLORS[p.stock_status] ?? "bg-gray-100"}`}>
+                      {STOCK_LABELS[p.stock_status] ?? p.stock_status}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    {p.is_customizable ? (
-                      <span className="text-xs text-purple-600 font-semibold">✓ Có</span>
-                    ) : (
-                      <span className="text-xs text-gray-400">—</span>
-                    )}
+                    <button
+                      onClick={() => toggleActive(p)}
+                      title={p.is_active ? "Đang hiển thị — nhấn để ẩn" : "Đang ẩn — nhấn để hiện"}
+                      className={`text-lg transition-opacity ${p.is_active !== false ? "opacity-100" : "opacity-30 hover:opacity-60"}`}
+                    >
+                      👁
+                    </button>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-3">
                       <a href={`/san-pham/${p.slug}`} target="_blank"
                         className="text-xs text-blue-600 hover:underline">Xem</a>
-                      <button
-                        onClick={() => openEdit(p)}
-                        className="text-xs text-gray-500 hover:text-gray-700 font-medium"
-                      >
-                        Sửa
-                      </button>
+                      <button onClick={() => openEdit(p)}
+                        className="text-xs text-gray-500 hover:text-gray-700 font-medium">Sửa</button>
                       <button
                         onClick={() => handleDelete(p.id, p.name)}
                         disabled={deleteId === p.id}
-                        className="text-xs text-red-500 hover:text-red-700 font-medium disabled:opacity-40"
-                      >
+                        className="text-xs text-red-500 hover:text-red-700 font-medium disabled:opacity-40">
                         {deleteId === p.id ? "..." : "Xóa"}
                       </button>
                     </div>
@@ -215,11 +248,10 @@ export default function AdminProductsPage() {
 
       {/* Add / Edit Modal */}
       {modal && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setModal(null)}>
-          <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          onClick={() => setModal(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
               <h2 className="font-bold text-gray-900">
                 {modal.mode === "add" ? "Thêm sản phẩm mới" : "Chỉnh sửa sản phẩm"}
@@ -228,110 +260,87 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="p-6 space-y-4">
+              {saveError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                  {saveError}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Tên sản phẩm *</label>
-                <input
-                  className="input-field"
-                  value={form.name}
+                <input className="input-field" value={form.name}
                   onChange={e => {
                     const name = e.target.value;
                     set({ name, ...(modal.mode === "add" ? { slug: autoSlug(name) } : {}) });
-                  }}
-                />
+                  }} />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Slug (URL)</label>
-                <input
-                  className="input-field font-mono text-sm"
-                  placeholder="ten-san-pham"
-                  value={form.slug}
-                  onChange={e => set({ slug: e.target.value })}
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Slug</label>
+                <input className="input-field font-mono text-sm" value={form.slug}
+                  onChange={e => set({ slug: e.target.value })} />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Mô tả ngắn</label>
-                <input
-                  className="input-field"
-                  placeholder="Mô tả hiển thị dưới tên sản phẩm"
-                  value={form.short_description}
-                  onChange={e => set({ short_description: e.target.value })}
-                />
+                <input className="input-field" value={form.short_description}
+                  onChange={e => set({ short_description: e.target.value })} />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">Giá lẻ (VNĐ) *</label>
-                  <input
-                    type="number"
-                    className="input-field"
-                    placeholder="350000"
-                    value={form.retail_price}
-                    onChange={e => set({ retail_price: e.target.value })}
-                  />
+                  <input type="number" className="input-field" placeholder="350000" value={form.retail_price}
+                    onChange={e => set({ retail_price: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">Cân nặng (gram)</label>
-                  <input
-                    type="number"
-                    className="input-field"
-                    placeholder="500"
-                    value={form.weight_grams}
-                    onChange={e => set({ weight_grams: e.target.value })}
-                  />
+                  <input type="number" className="input-field" placeholder="500" value={form.weight_grams}
+                    onChange={e => set({ weight_grams: e.target.value })} />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Trạng thái kho</label>
-                <select
-                  className="input-field"
-                  value={form.stock_status}
-                  onChange={e => set({ stock_status: e.target.value as ProductForm["stock_status"] })}
-                >
-                  <option value="in_stock">Còn hàng</option>
-                  <option value="pre_order">Pre-order</option>
-                  <option value="out_of_stock">Hết hàng</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Trạng thái kho</label>
+                  <select className="input-field" value={form.stock_status}
+                    onChange={e => set({ stock_status: e.target.value as ProductForm["stock_status"] })}>
+                    <option value="in_stock">Còn hàng</option>
+                    <option value="pre_order">Pre-order</option>
+                    <option value="out_of_stock">Hết hàng</option>
+                  </select>
+                </div>
+                <div className="flex flex-col justify-end gap-2 pb-1">
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+                    <input type="checkbox" checked={form.is_active}
+                      onChange={e => set({ is_active: e.target.checked })} className="rounded" />
+                    Hiển thị trên shop
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+                    <input type="checkbox" checked={form.is_customizable}
+                      onChange={e => set({ is_customizable: e.target.checked })} className="rounded" />
+                    Cho phép tuỳ chỉnh
+                  </label>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">URL ảnh chính</label>
-                <input
-                  className="input-field"
-                  placeholder="https://..."
-                  value={form.cover_image}
-                  onChange={e => set({ cover_image: e.target.value })}
-                />
+                <input className="input-field" placeholder="https://..."
+                  value={form.cover_image} onChange={e => set({ cover_image: e.target.value })} />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Ảnh gallery (mỗi URL 1 dòng)</label>
-                <textarea
-                  className="input-field h-20 resize-none font-mono text-xs"
-                  placeholder={"https://...\nhttps://..."}
-                  value={form.images}
-                  onChange={e => set({ images: e.target.value })}
-                />
+                <textarea className="input-field h-20 resize-none font-mono text-xs"
+                  placeholder={"https://...\nhttps://..."} value={form.images}
+                  onChange={e => set({ images: e.target.value })} />
               </div>
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.is_customizable}
-                  onChange={e => set({ is_customizable: e.target.checked })}
-                  className="w-4 h-4 rounded"
-                />
-                <span className="text-sm font-medium text-gray-700">Cho phép tuỳ chỉnh (in logo, khắc tên...)</span>
-              </label>
-
               <div className="flex gap-3 pt-2 border-t border-gray-100">
-                <button
-                  onClick={handleSave}
+                <button onClick={handleSave}
                   disabled={saving || !form.name || !form.retail_price}
-                  className="btn-primary flex-1 disabled:opacity-40"
-                >
+                  className="btn-primary flex-1 disabled:opacity-40">
                   {saving ? "Đang lưu..." : modal.mode === "add" ? "Thêm sản phẩm" : "Lưu thay đổi"}
                 </button>
                 <button onClick={() => setModal(null)} className="btn-outline px-6">Hủy</button>

@@ -10,6 +10,7 @@ interface Props {
   onClose: () => void;
 }
 
+
 export default function B2bQuoteModal({ productSlug, productName, defaultQty = 50, onClose }: Props) {
   const [form, setForm] = useState({
     company_name: "",
@@ -27,7 +28,10 @@ export default function B2bQuoteModal({ productSlug, productName, defaultQty = 5
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/b2b/quotes", { ...form, product_slug: productSlug });
+      await api.post("/b2b/quotes", {
+        ...form,
+        product_slug: productSlug,   // backend resolves slug → id
+      });
       setSent(true);
     } finally {
       setLoading(false);

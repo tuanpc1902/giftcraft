@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GiftFinderController;
 use App\Http\Controllers\Api\B2bQuoteController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
@@ -57,6 +58,9 @@ Route::prefix('cart')->group(function () {
 // --- Shipping fee calculator ---
 Route::post('/shipping/calculate', [ShippingController::class, 'calculate']);
 
+// --- Gift Finder ---
+Route::post('/gift-finder', [GiftFinderController::class, 'suggest']);
+
 // --- B2B Quotes ---
 Route::post('/b2b/quotes', [B2bQuoteController::class, 'store']);
 Route::middleware('auth:sanctum')->group(function () {
@@ -78,10 +82,11 @@ Route::post('/payment/momo/ipn', [PaymentController::class, 'momoIpn']);
 
 // --- Admin catalogue management ---
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/products', [AdminProductController::class, 'index']);
     Route::post('/products', [AdminProductController::class, 'store']);
     Route::put('/products/{id}', [AdminProductController::class, 'update'])->whereNumber('id');
     Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->whereNumber('id');
-    Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])->whereNumber('id');
+    Route::put('/orders/{orderNumber}/status', [OrderController::class, 'updateStatus']);
     Route::get('/orders', [OrderController::class, 'adminIndex']);
     Route::get('/b2b/quotes', [B2bQuoteController::class, 'adminIndex']);
     Route::put('/b2b/quotes/{id}', [B2bQuoteController::class, 'adminUpdate'])->whereNumber('id');

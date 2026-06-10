@@ -10,6 +10,7 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class ProductController extends Controller
 {
@@ -18,7 +19,8 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $params = $request->only(['category', 'occasion', 'min_price', 'max_price', 'sort', 'page', 'per_page']);
-        $cacheKey = 'products:' . md5(json_encode($params));
+        $bust = (int) Redis::get('products_cache_bust') ?: 0;
+        $cacheKey = "products:v{$bust}:" . md5(json_encode($params));
 
         $payload = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($request) {
             $query = Product::query()->where('is_active', true);

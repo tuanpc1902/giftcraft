@@ -9,12 +9,43 @@ use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductDetailResource;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
     use ApiResponse;
+
+    /**
+     * Admin product listing — all products (including inactive), never cached.
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $query = Product::with('category')->latest();
+
+        if ($request->filled('search')) {
+            $q = $request->query('search');
+            $query->where(fn ($q2) => $q2->where('name', 'ilike', "%{$q}%")->orWhere('slug', 'ilike', "%{$q}%"));
+        }
+        if ($request->filled('stock_status')) {
+            $query->where('stock_status', $request->query('stock_status'));
+        }
+
+        $perPage = min((int) $request->query('per_page', 50), 200);
+        $paginator = $query->paginate($perPage);
+
+        return $this->success([
+            'items' => ProductDetailResource::collection($paginator->items()),
+            'meta'  => [
+                'current_page' => $paginator->currentPage(),
+                'last_page'    => $paginator->lastPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+            ],
+        ]);
+    }
 
     public function store(StoreProductRequest $request): JsonResponse
     {
@@ -78,7 +109,8 @@ class ProductController extends Controller
         if ($slug) {
             Cache::forget("product:{$slug}");
         }
-        // Product list cache keys are hashed; clear the store-wide list prefix pragmatically.
-        Cache::flush();
+        // Bump the generation counter so all paginated product list caches become stale.
+        // We NEVER call Cache::flush() — that would wipe carts + idempotency keys from Redis.
+        Redis::incr('products_cache_bust');
     }
 }

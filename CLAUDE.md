@@ -111,9 +111,9 @@ Browser → Nginx :80
 3. On success, caches the response for 24h (idempotency), dispatches email job, returns order number + optional payment URL.
 4. For VNPay/MoMo, the frontend redirects to `payment_url`; callbacks land on `/api/payment/{gateway}/callback`.
 
-**Product optimistic locking**: `PUT /api/admin/products/{id}` requires a `version` field matching the DB value; returns 409 on mismatch.
+**Product optimistic locking**: `PUT /api/admin/products/{id}` requires a `version` field matching the DB value; returns 409 on mismatch. The admin products page fetches from `GET /api/admin/products` (not the public endpoint) which returns `version` in every item, so the edit modal always has the current version.
 
-**Caching**: Product list/detail are cached in Redis via `Cache::remember()` in `ProductController`. Admin product writes call `Cache::flush()` to invalidate.
+**Caching**: Product list/detail are cached in Redis via `Cache::remember()`. Cache keys include a generation counter (`products:v{N}:...`) stored at `products_cache_bust` in Redis. Admin product writes increment this counter via `Redis::incr('products_cache_bust')` — never `Cache::flush()`, which would call `FLUSHDB` and wipe all carts and idempotency keys.
 
 **Queue**: Horizon with two supervisors — `default` (×3 workers) and `emails` (×2 workers). Jobs use `$this->onQueue('emails')` in the constructor, not a `$queue` property (PHP 8.4 restriction).
 
@@ -205,7 +205,7 @@ Required for email:
 | 3 — Loyalty + Reviews + Blog CMS | ⏳ | Schema exists (`loyalty_points`, `reviews` table) |
 | 4 — AI Chatbot + PWA + Scale | ⏳ | — |
 
-**Remaining Phase 2 backend**: `GET /api/search?q=` (Meilisearch), supplier/job application endpoints.
+**Remaining backend**: `GET /api/search?q=` (Meilisearch full-text, Phase 2), supplier/job application endpoints (Phase 2), loyalty/reviews/blog CMS (Phase 3).
 
 ---
 

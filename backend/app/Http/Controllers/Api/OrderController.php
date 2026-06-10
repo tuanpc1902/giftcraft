@@ -72,14 +72,15 @@ class OrderController extends Controller
 
     /**
      * Admin: update order status and notify the customer.
+     * Accepts order_number (e.g. GC-20260610-00001) — NOT a numeric ID.
      */
-    public function updateStatus(Request $request, int $id): JsonResponse
+    public function updateStatus(Request $request, string $orderNumber): JsonResponse
     {
         $data = $request->validate([
             'status' => ['required', 'in:pending,confirmed,processing,shipped,delivered,cancelled'],
         ]);
 
-        $order = Order::findOrFail($id);
+        $order = Order::where('order_number', $orderNumber)->firstOrFail();
         $order->update(['status' => $data['status']]);
 
         SendOrderStatusUpdate::dispatch($order->id, $data['status']);

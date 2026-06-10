@@ -38,6 +38,12 @@ export interface ProductListItem {
   stock_status: "in_stock" | "out_of_stock" | "pre_order";
   cover_image: string | null;
   is_customizable: boolean;
+  // Admin-only fields (present when fetched from /admin/products)
+  is_active?: boolean;
+  version?: number;
+  sku?: string | null;
+  weight_grams?: number;
+  category?: { id: number; name: string; slug: string } | null;
 }
 
 export interface Category {
@@ -75,6 +81,7 @@ export interface ShippingOption {
 }
 
 export interface Order {
+  id: number;
   order_number: string;
   status: string;
   subtotal: number;
