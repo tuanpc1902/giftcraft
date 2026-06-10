@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Admin\PortfolioController as AdminPortfolioControll
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GiftFinderController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\B2bQuoteController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
@@ -36,6 +37,9 @@ Route::prefix('auth')->group(function () {
         Route::post('/refresh', [AuthController::class, 'refresh']);
     });
 });
+
+// --- Search ---
+Route::get('/search', SearchController::class);
 
 // --- Catalogue (public) ---
 Route::get('/products', [ProductController::class, 'index']);

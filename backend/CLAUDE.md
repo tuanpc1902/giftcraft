@@ -61,6 +61,7 @@ GET    /api/products/{slug}
 GET    /api/categories
 GET    /api/portfolio                ?per_page=
 GET    /api/portfolio/{id}
+GET    /api/search                   ?q=&per_page=&page=  (Meilisearch full-text)
 POST   /api/cart/items               X-Session-ID header for guest
 GET    /api/cart
 PUT    /api/cart/items/{productId}
@@ -103,7 +104,6 @@ GET    /api/admin/stats
 
 ### Still TODO (Phase 2 remaining)
 ```
-GET    /api/search?q=          Meilisearch full-text search
 POST   /api/supplier/apply     Supplier application form
 POST   /api/jobs/apply         Job application form
 ```

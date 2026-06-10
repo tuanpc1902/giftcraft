@@ -10,7 +10,9 @@
         "laravel/framework": "^13.8",
         "laravel/horizon": "^5.47",
         "laravel/sanctum": "^4.3",
+        "laravel/scout": "^11.2",
         "laravel/tinker": "^3.0",
+        "meilisearch/meilisearch-php": "^1.16",
         "predis/predis": "^3.5",
         "spatie/laravel-activitylog": "^5.0",
         "spatie/laravel-permission": "^8.0"
