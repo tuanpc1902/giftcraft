@@ -11,8 +11,8 @@
 | **Phase 1** | MVP Core (Backend) | 3–6 | ✅ DONE | `f2e4826` |
 | **Phase 1** | MVP Core (Frontend) | 6–8 | ✅ DONE | `d802840` |
 | **Phase 2** | B2B + Forfolio | 9–12 | ✅ DONE | — |
-| **Phase 3** | Loyalty + SEO | 13–16 | 🔄 IN PROGRESS | — |
-| **Phase 4** | Scale + AI | 17–20 | ⏳ TODO | — |
+| **Phase 3** | Loyalty + SEO | 13–16 | ✅ DONE | — |
+| **Phase 4** | Scale + AI | 17–20 | 🔄 IN PROGRESS | — |
 
 ---
 
@@ -112,7 +112,7 @@
 
 ---
 
-## 🔄 Phase 3 — Loyalty + SEO
+## ✅ Phase 3 — Loyalty + SEO
 
 | Bước | Nội dung | Trạng thái |
 |------|----------|-----------|
@@ -121,19 +121,19 @@
 | 03 | Review System | ✅ DONE |
 | 04 | Blog CMS (admin CRUD + public API + detail page) | ✅ DONE |
 | 05 | Email Automation (review request +3d, birthday voucher) | ✅ DONE |
-| 06 | SEO Structured Data (JSON-LD on blog/product) | ⏳ TODO |
-| 07 | Abandoned cart email (scheduled job) | ⏳ TODO |
+| 06 | SEO Structured Data (JSON-LD on blog/product detail) | ✅ DONE |
+| 07 | Abandoned cart email (Redis SCAN + scheduled job) | ✅ DONE |
 
 ---
 
-## ⏳ Phase 4 — Scale + AI
+## 🔄 Phase 4 — Scale + AI
 
-| Bước | Nội dung |
-|------|----------|
-| 01 | ISR + Redis Cache Tags + Image Optimization |
-| 02 | AI Chatbot tư vấn quà (Claude API, streaming) |
-| 03 | PWA + Zalo OA + Web Push |
-| 04 | PITR Backup + Security Audit |
+| Bước | Nội dung | Trạng thái |
+|------|----------|-----------|
+| 01 | ISR + Redis Cache Tags + Image Optimization | ⏳ TODO |
+| 02 | AI Chatbot tư vấn quà (Claude API, streaming SSE) | ✅ DONE |
+| 03 | PWA + Zalo OA + Web Push | ⏳ TODO |
+| 04 | PITR Backup + Security Audit | ⏳ TODO |
 
 ---
 
@@ -173,4 +173,4 @@ docker compose -f infra/docker-compose.yml -p giftcraft ps
 
 ---
 
-*Cập nhật: 2026-06-10 | Phase 1 hoàn tất | Phase 2 Frontend + Backend (core) hoàn tất | Còn lại: Meilisearch Search + Supplier Portal*
+*Cập nhật: 2026-06-11 | Phase 3 hoàn tất | Phase 4 đang triển khai — AI Chatbot (Claude API streaming) đã xong | Còn lại: ISR cache tags, PWA, Security audit*

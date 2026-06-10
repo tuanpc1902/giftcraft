@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\GiftFinderController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\LoyaltyController;
@@ -76,6 +77,9 @@ Route::post('/shipping/calculate', [ShippingController::class, 'calculate']);
 
 // --- Gift Finder ---
 Route::post('/gift-finder', [GiftFinderController::class, 'suggest']);
+
+// --- AI Chat (SSE streaming) ---
+Route::post('/chat', [ChatController::class, 'stream']);
 
 // --- Supplier & Job applications ---
 Route::post('/supplier/apply', [SupplierController::class, 'apply']);
