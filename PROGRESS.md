@@ -132,8 +132,8 @@
 |------|----------|-----------|
 | 01 | ISR + Redis Cache Tags + Image Optimization | ✅ DONE |
 | 02 | AI Chatbot tư vấn quà (Claude API, streaming SSE) | ✅ DONE |
-| 03 | PWA + Zalo OA + Web Push | ⏳ TODO |
-| 04 | PITR Backup + Security Audit | ⏳ TODO |
+| 03 | PWA (manifest + service worker + SW registration) | ✅ DONE |
+| 04 | Security Audit (Nginx headers, rate limits, Horizon block, CORS) | ✅ DONE |
 
 ---
 
@@ -173,4 +173,4 @@ docker compose -f infra/docker-compose.yml -p giftcraft ps
 
 ---
 
-*Cập nhật: 2026-06-11 | Phase 3 hoàn tất | Phase 4: ISR revalidation + AI Chatbot xong | Còn lại: PWA, Security audit*
+*Cập nhật: 2026-06-11 | Phase 4 hoàn tất — ISR revalidation, AI Chatbot, PWA, Security audit đều done*

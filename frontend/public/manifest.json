@@ -1,0 +1,46 @@
+{
+  "name": "GiftCraft Studio",
+  "short_name": "GiftCraft",
+  "description": "Quà tặng cao cấp cá nhân hoá, giao toàn quốc",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "lang": "vi",
+  "dir": "ltr",
+  "orientation": "portrait-primary",
+  "categories": ["shopping"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Sản phẩm",
+      "url": "/san-pham",
+      "description": "Xem tất cả sản phẩm"
+    },
+    {
+      "name": "Giỏ hàng",
+      "url": "/gio-hang",
+      "description": "Xem giỏ hàng"
+    },
+    {
+      "name": "Báo giá B2B",
+      "url": "/bat-dau-du-an-moi",
+      "description": "Gửi yêu cầu báo giá doanh nghiệp"
+    }
+  ]
+}

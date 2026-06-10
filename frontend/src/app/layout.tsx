@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import Header from "@/components/Header";
 import ChatWidget from "@/components/ChatWidget";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,6 +23,19 @@ export const metadata: Metadata = {
   },
   description:
     "Quà tặng cao cấp, đặt theo yêu cầu, giao nhanh toàn quốc. Chuyên B2B từ 20 sản phẩm.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "GiftCraft",
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#111827",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -38,6 +52,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <ChatWidget />
         </Providers>
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );
