@@ -70,4 +70,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Voucher::class);
     }
+
+    public function loyaltyTransactions()
+    {
+        return $this->hasMany(LoyaltyTransaction::class);
+    }
+
+    public function blogPosts()
+    {
+        return $this->hasMany(BlogPost::class, 'author_id');
+    }
 }

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
-import { Order } from "@/types";
+import { Order, LoyaltySummary } from "@/types";
 import { formatPrice } from "@/lib/formatPrice";
 
 const ORDER_STATUS: Record<string, { label: string; color: string }> = {
@@ -17,7 +17,13 @@ const ORDER_STATUS: Record<string, { label: string; color: string }> = {
   cancelled:   { label: "Đã hủy",       color: "bg-gray-100 text-gray-500" },
 };
 
-type Tab = "profile" | "orders" | "projects";
+type Tab = "profile" | "orders" | "loyalty" | "projects";
+
+const TIER_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  silver:  { label: "Silver",  color: "text-gray-600",  bg: "bg-gray-100" },
+  gold:    { label: "Gold",    color: "text-amber-700", bg: "bg-amber-100" },
+  diamond: { label: "Diamond", color: "text-blue-700",  bg: "bg-blue-100" },
+};
 
 export default function AccountPage() {
   const router = useRouter();
@@ -26,6 +32,8 @@ export default function AccountPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersLoaded, setOrdersLoaded] = useState(false);
+  const [loyalty, setLoyalty] = useState<LoyaltySummary | null>(null);
+  const [loyaltyLoaded, setLoyaltyLoaded] = useState(false);
 
   // Profile edit state
   const [editName, setEditName] = useState("");
@@ -56,6 +64,15 @@ export default function AccountPage() {
         .finally(() => { setOrdersLoading(false); setOrdersLoaded(true); });
     }
   }, [tab, ordersLoaded]);
+
+  useEffect(() => {
+    if (tab === "loyalty" && !loyaltyLoaded) {
+      api.get("/loyalty/summary")
+        .then(r => setLoyalty(r.data.data))
+        .catch(() => {})
+        .finally(() => setLoyaltyLoaded(true));
+    }
+  }, [tab, loyaltyLoaded]);
 
   async function handleSaveProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -99,6 +116,7 @@ export default function AccountPage() {
         {([
           { key: "profile", label: "👤 Thông tin" },
           { key: "orders", label: "📦 Đơn hàng" },
+          { key: "loyalty", label: "⭐ Điểm thưởng" },
           { key: "projects", label: "📋 Dự án B2B" },
         ] as { key: Tab; label: string }[]).map(t => (
           <button
@@ -223,6 +241,88 @@ export default function AccountPage() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Loyalty tab */}
+      {tab === "loyalty" && (
+        <div>
+          {!loyaltyLoaded ? (
+            <div className="text-center py-16 text-gray-400">Đang tải...</div>
+          ) : loyalty ? (
+            <div className="space-y-6">
+              {/* Points + tier card */}
+              <div className="bg-gray-900 text-white rounded-3xl p-6 sm:p-8">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <p className="text-gray-400 text-sm mb-1">Điểm tích lũy</p>
+                    <p className="text-5xl font-bold">{loyalty.points.toLocaleString("vi-VN")}</p>
+                    <p className="text-gray-400 text-xs mt-1">1 điểm = 10.000đ mua hàng</p>
+                  </div>
+                  <span className={`text-sm font-bold px-3 py-1.5 rounded-full ${TIER_CONFIG[loyalty.tier]?.bg} ${TIER_CONFIG[loyalty.tier]?.color}`}>
+                    {TIER_CONFIG[loyalty.tier]?.label ?? loyalty.tier}
+                  </span>
+                </div>
+
+                {loyalty.next_tier && (
+                  <div>
+                    <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                      <span>Tiến tới {TIER_CONFIG[loyalty.next_tier.tier]?.label}</span>
+                      <span>{loyalty.next_tier.remaining.toLocaleString("vi-VN")} điểm nữa</span>
+                    </div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-amber-400 rounded-full transition-all"
+                        style={{ width: `${loyalty.next_tier.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Benefits */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { tier: "silver", label: "Silver", benefits: ["Tích điểm mua hàng", "Ưu tiên hỗ trợ"] },
+                  { tier: "gold",   label: "Gold 500đ+", benefits: ["Voucher nâng cấp 50k", "Double điểm sinh nhật"] },
+                  { tier: "diamond",label: "Diamond 2000đ+", benefits: ["Voucher 15%", "Giao hàng ưu tiên"] },
+                ].map(t => (
+                  <div key={t.tier} className={`rounded-2xl border p-4 ${loyalty.tier === t.tier ? "border-amber-300 bg-amber-50" : "border-gray-100"}`}>
+                    <p className={`font-bold text-sm mb-2 ${TIER_CONFIG[t.tier]?.color}`}>{t.label}</p>
+                    <ul className="space-y-1">
+                      {t.benefits.map(b => (
+                        <li key={b} className="text-xs text-gray-600 flex items-center gap-1.5">
+                          <span className="text-amber-400">✓</span> {b}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+
+              {/* Transaction history */}
+              <div>
+                <h3 className="font-bold text-gray-900 mb-3">Lịch sử điểm</h3>
+                {loyalty.transactions.length === 0 ? (
+                  <p className="text-sm text-gray-400 py-4 text-center">Chưa có giao dịch điểm nào.</p>
+                ) : (
+                  <div className="divide-y divide-gray-50 border border-gray-100 rounded-2xl overflow-hidden">
+                    {loyalty.transactions.map(tx => (
+                      <div key={tx.id} className="flex items-center justify-between px-4 py-3">
+                        <div>
+                          <p className="text-sm font-medium text-gray-800">{tx.description}</p>
+                          <p className="text-xs text-gray-400">{new Date(tx.created_at).toLocaleDateString("vi-VN")}</p>
+                        </div>
+                        <span className={`text-sm font-bold ${tx.points > 0 ? "text-green-600" : "text-red-500"}`}>
+                          {tx.points > 0 ? "+" : ""}{tx.points}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : null}
         </div>
       )}
 

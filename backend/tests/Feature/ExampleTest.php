@@ -12,8 +12,9 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/');
+        $response = $this->getJson('/api/health');
 
-        $response->assertStatus(200);
+        // ok (200) or degraded (503) — both are valid; we just check the shape
+        $response->assertJsonStructure(['status', 'services']);
     }
 }

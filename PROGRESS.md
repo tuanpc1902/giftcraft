@@ -10,8 +10,8 @@
 | **Phase 0** | Chuẩn bị & Setup | 1–2 | ✅ DONE | `c88a492` |
 | **Phase 1** | MVP Core (Backend) | 3–6 | ✅ DONE | `f2e4826` |
 | **Phase 1** | MVP Core (Frontend) | 6–8 | ✅ DONE | `d802840` |
-| **Phase 2** | B2B + Forfolio | 9–12 | 🔄 IN PROGRESS | — |
-| **Phase 3** | Loyalty + SEO | 13–16 | ⏳ TODO | — |
+| **Phase 2** | B2B + Forfolio | 9–12 | ✅ DONE | — |
+| **Phase 3** | Loyalty + SEO | 13–16 | 🔄 IN PROGRESS | — |
 | **Phase 4** | Scale + AI | 17–20 | ⏳ TODO | — |
 
 ---
@@ -112,15 +112,17 @@
 
 ---
 
-## ⏳ Phase 3 — Loyalty + SEO
+## 🔄 Phase 3 — Loyalty + SEO
 
-| Bước | Nội dung |
-|------|----------|
-| 01 | Loyalty Engine (tier: Silver/Gold/Diamond, points) |
-| 02 | Voucher System + Birthday Reward |
-| 03 | Review System |
-| 04 | Blog CMS + SEO Structured Data |
-| 05 | Email Automation (abandoned cart, review request, birthday) |
+| Bước | Nội dung | Trạng thái |
+|------|----------|-----------|
+| 01 | Loyalty Engine (tier: Silver/Gold/Diamond, points) | ✅ DONE |
+| 02 | Voucher System + Birthday Reward | ✅ DONE |
+| 03 | Review System | ✅ DONE |
+| 04 | Blog CMS (admin CRUD + public API + detail page) | ✅ DONE |
+| 05 | Email Automation (review request +3d, birthday voucher) | ✅ DONE |
+| 06 | SEO Structured Data (JSON-LD on blog/product) | ⏳ TODO |
+| 07 | Abandoned cart email (scheduled job) | ⏳ TODO |
 
 ---
 

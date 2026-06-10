@@ -137,11 +137,48 @@ export interface BlogPost {
   title: string;
   slug: string;
   excerpt: string | null;
+  content?: string;
   cover_image: string | null;
   category: string;
   author: string;
   published_at: string;
   read_minutes: number;
+  meta_title?: string;
+  meta_description?: string;
+}
+
+export interface Review {
+  id: number;
+  user: { id: number; name: string };
+  rating: number;
+  title: string | null;
+  body: string;
+  images: string[] | null;
+  is_verified_purchase: boolean;
+  helpful_count: number;
+  status: "pending" | "approved" | "rejected";
+  created_at: string;
+}
+
+export interface LoyaltyTransaction {
+  id: number;
+  type: string;
+  points: number;
+  balance_after: number;
+  description: string;
+  created_at: string;
+}
+
+export interface LoyaltySummary {
+  points: number;
+  tier: "silver" | "gold" | "diamond";
+  next_tier: {
+    tier: string;
+    required: number;
+    remaining: number;
+    progress: number;
+  } | null;
+  transactions: LoyaltyTransaction[];
 }
 
 export interface PortfolioProject {

@@ -6,7 +6,9 @@ use App\Http\Concerns\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Jobs\SendOrderStatusUpdate;
+use App\Jobs\SendReviewRequestEmail;
 use App\Models\Order;
+use App\Services\LoyaltyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -74,16 +76,27 @@ class OrderController extends Controller
      * Admin: update order status and notify the customer.
      * Accepts order_number (e.g. GC-20260610-00001) — NOT a numeric ID.
      */
-    public function updateStatus(Request $request, string $orderNumber): JsonResponse
+    public function updateStatus(Request $request, string $orderNumber, LoyaltyService $loyalty): JsonResponse
     {
         $data = $request->validate([
             'status' => ['required', 'in:pending,confirmed,processing,shipped,delivered,cancelled'],
         ]);
 
-        $order = Order::where('order_number', $orderNumber)->firstOrFail();
+        $order = Order::with('user')->where('order_number', $orderNumber)->firstOrFail();
+        $previousStatus = $order->status;
         $order->update(['status' => $data['status']]);
 
         SendOrderStatusUpdate::dispatch($order->id, $data['status']);
+
+        // Award loyalty points once order is delivered
+        if ($data['status'] === 'delivered' && $previousStatus !== 'delivered' && $order->user) {
+            $loyalty->awardOrderPoints($order);
+        }
+
+        // Request review email 3 days after delivery
+        if ($data['status'] === 'delivered' && $previousStatus !== 'delivered') {
+            SendReviewRequestEmail::dispatch($order->id)->delay(now()->addDays(3));
+        }
 
         return $this->success(new OrderResource($order->load('items')), 'Đã cập nhật trạng thái');
     }

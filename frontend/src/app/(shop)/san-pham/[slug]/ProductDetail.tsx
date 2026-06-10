@@ -6,6 +6,7 @@ import { Product } from "@/types";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCartStore } from "@/store/cart";
 import B2bQuoteModal from "@/components/B2bQuoteModal";
+import ProductReviews from "@/components/ProductReviews";
 
 export default function ProductDetail({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
@@ -215,9 +216,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             </dl>
           )}
           {activeTab === "reviews" && (
-            <div className="text-sm text-gray-500 py-6 text-center">
-              Hệ thống đánh giá sẽ được kích hoạt ở Phase 3.
-            </div>
+            <ProductReviews slug={product.slug} />
           )}
         </div>
       </div>

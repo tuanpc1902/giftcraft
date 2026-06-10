@@ -38,6 +38,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../backend:/var/www/html
+      - laravel_vendor:/var/www/html/vendor
     env_file:
       - ../.env
     environment:
@@ -58,6 +59,7 @@ services:
     command: php artisan horizon
     volumes:
       - ../backend:/var/www/html
+      - laravel_vendor:/var/www/html/vendor
     env_file:
       - ../.env
     environment:
@@ -124,3 +126,4 @@ volumes:
   postgres_data:
   redis_data:
   meilisearch_data:
+  laravel_vendor:

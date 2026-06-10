@@ -1,10 +1,15 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Api\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\GiftFinderController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\LoyaltyController;
+use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\B2bQuoteController;
@@ -46,9 +51,14 @@ Route::get('/search', SearchController::class);
 // --- Catalogue (public) ---
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
+Route::get('/products/{slug}/reviews', [ReviewController::class, 'index']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/portfolio', [PortfolioController::class, 'index']);
 Route::get('/portfolio/{id}', [PortfolioController::class, 'show'])->whereNumber('id');
+
+// --- Blog (public) ---
+Route::get('/blog', [BlogController::class, 'index']);
+Route::get('/blog/{slug}', [BlogController::class, 'show']);
 
 // --- Cart (works for guest via X-Session-ID, or authed user) ---
 Route::prefix('cart')->group(function () {
@@ -84,6 +94,15 @@ Route::post('/orders/checkout', [CheckoutController::class, 'checkout']);
 Route::get('/orders/{orderNumber}', [OrderController::class, 'show']);
 Route::middleware('auth:sanctum')->get('/orders', [OrderController::class, 'index']);
 
+// --- Reviews (auth) ---
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/products/{slug}/reviews', [ReviewController::class, 'store']);
+    Route::post('/reviews/{id}/helpful', [ReviewController::class, 'helpful'])->whereNumber('id');
+});
+
+// --- Loyalty (auth) ---
+Route::middleware('auth:sanctum')->get('/loyalty/summary', [LoyaltyController::class, 'summary']);
+
 // --- Payment gateways (callbacks + IPN) ---
 Route::get('/payment/vnpay/callback', [PaymentController::class, 'vnpayCallback']);
 Route::post('/payment/vnpay/ipn', [PaymentController::class, 'vnpayIpn']);
@@ -114,6 +133,17 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Job applications admin
     Route::get('/job-applications', [JobController::class, 'adminIndex']);
     Route::put('/job-applications/{id}', [JobController::class, 'adminUpdate'])->whereNumber('id');
+
+    // Reviews admin
+    Route::get('/reviews', [AdminReviewController::class, 'index']);
+    Route::put('/reviews/{id}', [AdminReviewController::class, 'update'])->whereNumber('id');
+    Route::delete('/reviews/{id}', [AdminReviewController::class, 'destroy'])->whereNumber('id');
+
+    // Blog admin
+    Route::get('/blog', [AdminBlogController::class, 'index']);
+    Route::post('/blog', [AdminBlogController::class, 'store']);
+    Route::put('/blog/{id}', [AdminBlogController::class, 'update'])->whereNumber('id');
+    Route::delete('/blog/{id}', [AdminBlogController::class, 'destroy'])->whereNumber('id');
 
     // Dashboard stats
     Route::get('/stats', function () {
