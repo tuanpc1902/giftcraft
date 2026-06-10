@@ -62,6 +62,8 @@ GET    /api/categories
 GET    /api/portfolio                ?per_page=
 GET    /api/portfolio/{id}
 GET    /api/search                   ?q=&per_page=&page=  (Meilisearch full-text)
+POST   /api/supplier/apply
+POST   /api/jobs/apply
 POST   /api/cart/items               X-Session-ID header for guest
 GET    /api/cart
 PUT    /api/cart/items/{productId}
@@ -99,14 +101,14 @@ GET    /api/admin/orders             ?delivery_type=
 PUT    /api/admin/orders/{id}/status
 GET    /api/admin/b2b/quotes
 PUT    /api/admin/b2b/quotes/{id}
+GET    /api/admin/supplier-applications
+PUT    /api/admin/supplier-applications/{id}
+GET    /api/admin/job-applications
+PUT    /api/admin/job-applications/{id}
 GET    /api/admin/stats
 ```
 
-### Still TODO (Phase 2 remaining)
-```
-POST   /api/supplier/apply     Supplier application form
-POST   /api/jobs/apply         Job application form
-```
+### Phase 2 complete — all endpoints implemented
 
 ---
 

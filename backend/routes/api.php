@@ -4,7 +4,9 @@ use App\Http\Controllers\Api\Admin\PortfolioController as AdminPortfolioControll
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GiftFinderController;
+use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\B2bQuoteController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
@@ -65,6 +67,10 @@ Route::post('/shipping/calculate', [ShippingController::class, 'calculate']);
 // --- Gift Finder ---
 Route::post('/gift-finder', [GiftFinderController::class, 'suggest']);
 
+// --- Supplier & Job applications ---
+Route::post('/supplier/apply', [SupplierController::class, 'apply']);
+Route::post('/jobs/apply', [JobController::class, 'apply']);
+
 // --- B2B Quotes ---
 Route::post('/b2b/quotes', [B2bQuoteController::class, 'store']);
 Route::middleware('auth:sanctum')->group(function () {
@@ -100,6 +106,14 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::post('/portfolio', [AdminPortfolioController::class, 'store']);
     Route::put('/portfolio/{id}', [AdminPortfolioController::class, 'update'])->whereNumber('id');
     Route::delete('/portfolio/{id}', [AdminPortfolioController::class, 'destroy'])->whereNumber('id');
+
+    // Supplier applications admin
+    Route::get('/supplier-applications', [SupplierController::class, 'adminIndex']);
+    Route::put('/supplier-applications/{id}', [SupplierController::class, 'adminUpdate'])->whereNumber('id');
+
+    // Job applications admin
+    Route::get('/job-applications', [JobController::class, 'adminIndex']);
+    Route::put('/job-applications/{id}', [JobController::class, 'adminUpdate'])->whereNumber('id');
 
     // Dashboard stats
     Route::get('/stats', function () {

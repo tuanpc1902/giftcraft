@@ -108,7 +108,7 @@
 | 03 | Admin Portfolio CRUD — `GET/POST/PUT/DELETE /admin/portfolio` | ✅ DONE |
 | 04 | Admin stats — real B2B count, fix `new_b2b_quotes` | ✅ DONE |
 | 05 | Meilisearch + Search API — `GET /api/search?q=` | ✅ DONE |
-| 06 | Supplier Portal + Tuyển dụng | ⏳ TODO |
+| 06 | Supplier Portal + Tuyển dụng — `POST /api/supplier/apply`, `POST /api/jobs/apply` + admin CRUD | ✅ DONE |
 
 ---
 
