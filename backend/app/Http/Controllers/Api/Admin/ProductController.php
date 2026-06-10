@@ -8,6 +8,7 @@ use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductDetailResource;
 use App\Models\Product;
+use App\Services\NextRevalidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -17,6 +18,8 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     use ApiResponse;
+
+    public function __construct(private readonly NextRevalidationService $revalidation) {}
 
     /**
      * Admin product listing — all products (including inactive), never cached.
@@ -55,6 +58,7 @@ class ProductController extends Controller
 
         $product = Product::create($data);
         $this->flushCaches();
+        $this->revalidation->revalidateProducts();
 
         return $this->success(new ProductDetailResource($product->load('category')), 'Đã tạo sản phẩm', 201);
     }
@@ -78,6 +82,7 @@ class ProductController extends Controller
 
         $product->update($data);
         $this->flushCaches($product->slug);
+        $this->revalidation->revalidateProducts($product->slug);
 
         return $this->success(new ProductDetailResource($product->fresh()->load('category')), 'Đã cập nhật');
     }
@@ -88,6 +93,7 @@ class ProductController extends Controller
         $slug = $product->slug;
         $product->delete(); // soft delete
         $this->flushCaches($slug);
+        $this->revalidation->revalidateProducts($slug);
 
         return $this->success(null, 'Đã xóa sản phẩm');
     }

@@ -10,7 +10,7 @@ interface Pagination { current_page: number; last_page: number; total: number; }
 async function getProducts(params: Record<string, string>): Promise<{ items: ProductListItem[]; meta: Pagination }> {
   const qs = new URLSearchParams({ per_page: "20", ...params }).toString();
   try {
-    const res = await fetch(`${API}/products?${qs}`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/products?${qs}`, { next: { revalidate: 300, tags: ["products"] } });
     const json = await res.json();
     return { items: json.data?.items ?? [], meta: json.data?.meta ?? { current_page: 1, last_page: 1, total: 0 } };
   } catch { return { items: [], meta: { current_page: 1, last_page: 1, total: 0 } }; }
@@ -18,7 +18,7 @@ async function getProducts(params: Record<string, string>): Promise<{ items: Pro
 
 async function getCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(`${API}/categories`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API}/categories`, { next: { revalidate: 3600, tags: ["categories"] } });
     const json = await res.json();
     return json.data ?? [];
   } catch { return []; }

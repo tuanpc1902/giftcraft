@@ -5,7 +5,7 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost/api";
 
 async function getProjects() {
   try {
-    const res = await fetch(`${API}/portfolio`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API}/portfolio`, { next: { revalidate: 3600, tags: ["portfolio"] } });
     const json = await res.json();
     return json.data ?? [];
   } catch { return []; }

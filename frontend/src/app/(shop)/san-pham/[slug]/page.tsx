@@ -8,7 +8,7 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost/api";
 async function getProduct(slug: string): Promise<Product | null> {
   try {
     const res = await fetch(`${API}/products/${slug}`, {
-      next: { revalidate: 3600, tags: [`product-${slug}`] },
+      next: { revalidate: 3600, tags: ["products", `product-${slug}`] },
     });
     if (!res.ok) return null;
     const json = await res.json();

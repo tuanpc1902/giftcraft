@@ -6,12 +6,15 @@ use App\Http\Concerns\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PortfolioResource;
 use App\Models\PortfolioProject;
+use App\Services\NextRevalidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PortfolioController extends Controller
 {
     use ApiResponse;
+
+    public function __construct(private readonly NextRevalidationService $revalidation) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -51,6 +54,7 @@ class PortfolioController extends Controller
         $data['gallery_images'] = $data['gallery_images'] ?? [];
 
         $project = PortfolioProject::create($data);
+        $this->revalidation->revalidatePortfolio();
 
         return $this->success(new PortfolioResource($project), 'Đã thêm dự án', 201);
     }
@@ -74,6 +78,7 @@ class PortfolioController extends Controller
         ]);
 
         $project->update($data);
+        $this->revalidation->revalidatePortfolio();
 
         return $this->success(new PortfolioResource($project->fresh()), 'Đã cập nhật');
     }
@@ -81,6 +86,7 @@ class PortfolioController extends Controller
     public function destroy(int $id): JsonResponse
     {
         PortfolioProject::findOrFail($id)->delete();
+        $this->revalidation->revalidatePortfolio();
 
         return $this->success(null, 'Đã xóa dự án');
     }

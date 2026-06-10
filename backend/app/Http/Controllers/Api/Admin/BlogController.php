@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Concerns\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Services\NextRevalidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -13,6 +14,8 @@ use Illuminate\Support\Str;
 class BlogController extends Controller
 {
     use ApiResponse;
+
+    public function __construct(private readonly NextRevalidationService $revalidation) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -40,6 +43,7 @@ class BlogController extends Controller
             'slug'         => $data['slug'] ?? Str::slug($data['title']),
             'published_at' => $data['status'] === 'published' ? now() : null,
         ]));
+        $this->revalidation->revalidateBlog($post->slug);
 
         return $this->success($post, 'Đã tạo bài viết', 201);
     }
@@ -55,6 +59,7 @@ class BlogController extends Controller
 
         $post->update($data);
         Cache::forget("blog:{$post->slug}");
+        $this->revalidation->revalidateBlog($post->slug);
 
         return $this->success($post, 'Đã cập nhật bài viết');
     }
@@ -63,7 +68,9 @@ class BlogController extends Controller
     {
         $post = BlogPost::findOrFail($id);
         Cache::forget("blog:{$post->slug}");
+        $slug = $post->slug;
         $post->delete();
+        $this->revalidation->revalidateBlog($slug);
 
         return $this->success(null, 'Đã xóa bài viết');
     }

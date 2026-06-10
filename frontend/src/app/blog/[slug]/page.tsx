@@ -8,7 +8,7 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? "http://nginx/api";
 
 async function getPost(slug: string): Promise<BlogPost | null> {
   try {
-    const res = await fetch(`${API}/blog/${slug}`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API}/blog/${slug}`, { next: { revalidate: 300, tags: ["blog", `blog-${slug}`] } });
     if (!res.ok) return null;
     const json = await res.json();
     return json.data ?? null;

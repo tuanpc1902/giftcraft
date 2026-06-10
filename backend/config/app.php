@@ -56,6 +56,10 @@ return [
 
     'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
 
+    'nextjs_internal_url' => env('NEXTJS_INTERNAL_URL', 'http://nextjs:3000'),
+
+    'revalidation_secret' => env('REVALIDATION_SECRET', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
