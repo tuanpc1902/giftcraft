@@ -103,9 +103,12 @@
 
 | Bước | Nội dung | Trạng thái |
 |------|----------|-----------|
-| 01 | B2B Quote API | ⏳ TODO |
-| 04 | Meilisearch + Search API | ⏳ TODO |
-| 05 | Supplier Portal + Tuyển dụng | ⏳ TODO |
+| 01 | B2B Quote API — `GET /b2b/quotes/my`, status enum fix, `admin_note` field | ✅ DONE |
+| 02 | `PUT /auth/profile` — update name/phone | ✅ DONE |
+| 03 | Admin Portfolio CRUD — `GET/POST/PUT/DELETE /admin/portfolio` | ✅ DONE |
+| 04 | Admin stats — real B2B count, fix `new_b2b_quotes` | ✅ DONE |
+| 05 | Meilisearch + Search API | ⏳ TODO |
+| 06 | Supplier Portal + Tuyển dụng | ⏳ TODO |
 
 ---
 
@@ -168,4 +171,4 @@ docker compose -f infra/docker-compose.yml -p giftcraft ps
 
 ---
 
-*Cập nhật: 2026-06-10 | Phase 1 hoàn tất | Phase 2 Frontend hoàn tất | Backend Phase 2 đang triển khai*
+*Cập nhật: 2026-06-10 | Phase 1 hoàn tất | Phase 2 Frontend + Backend (core) hoàn tất | Còn lại: Meilisearch Search + Supplier Portal*

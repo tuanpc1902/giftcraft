@@ -68,7 +68,7 @@ export default function AdminForfolioPage() {
   const set = (patch: Partial<ProjectForm>) => dispatchForm(patch);
 
   useEffect(() => {
-    api.get("/portfolio?per_page=100")
+    api.get("/admin/portfolio?per_page=100")
       .then(r => setProjects(r.data.data?.items ?? r.data.data ?? []))
       .catch(() => setProjects([]))
       .finally(() => setLoading(false));
@@ -151,8 +151,7 @@ export default function AdminForfolioPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                        <Image src={p.cover_image} alt={p.title} fill className="object-cover" sizes="40px"
-                          onError={() => {}} />
+                        <Image src={p.cover_image} alt={p.title} fill className="object-cover" sizes="40px" />
                       </div>
                       <p className="font-medium text-gray-900 truncate max-w-[160px]">{p.title}</p>
                     </div>

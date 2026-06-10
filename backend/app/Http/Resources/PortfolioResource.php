@@ -19,7 +19,9 @@ class PortfolioResource extends JsonResource
             'cover_image' => $this->cover_image,
             'gallery_images' => $this->gallery_images ?? [],
             'description' => $this->description,
-            'is_featured' => (bool) $this->is_featured,
+            'is_featured'  => (bool) $this->is_featured,
+            'sort_order'   => $this->sort_order,
+            'created_at'   => $this->created_at?->toIso8601String(),
         ];
     }
 }

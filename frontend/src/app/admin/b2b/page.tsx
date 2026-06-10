@@ -38,10 +38,10 @@ export default function AdminB2bPage() {
   async function updateQuote(id: number, patch: Partial<B2bQuote>) {
     setSaving(true);
     try {
-      const { data } = await api.put(`/admin/b2b/quotes/${id}`, patch);
-      const updated = data.data ?? { ...selected, ...patch };
-      setQuotes(qs => qs.map(q => q.id === id ? { ...q, ...updated } : q));
-      setSelected(s => s?.id === id ? { ...s, ...updated } : s);
+      const res = await api.put(`/admin/b2b/quotes/${id}`, patch);
+      const serverData: Partial<B2bQuote> = res.data?.data ?? patch;
+      setQuotes(qs => qs.map(q => q.id === id ? { ...q, ...serverData } : q));
+      setSelected(s => s?.id === id ? { ...s, ...serverData } : s);
     } finally {
       setSaving(false);
     }

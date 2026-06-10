@@ -46,20 +46,33 @@ class B2bQuoteController extends Controller
         ], 'Gửi yêu cầu thành công', 201);
     }
 
+    /** Alias for /b2b/quotes/my — user's own quotes */
+    public function my(Request $request): JsonResponse
+    {
+        return $this->index($request);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $quotes = B2bQuote::where('user_id', $request->user()->id)
-            ->orderByDesc('created_at')->paginate(15);
+            ->orderByDesc('created_at')
+            ->paginate(20);
 
         return $this->success([
             'items' => $quotes->items(),
-            'meta' => ['current_page' => $quotes->currentPage(), 'last_page' => $quotes->lastPage(), 'total' => $quotes->total()],
+            'meta' => [
+                'current_page' => $quotes->currentPage(),
+                'last_page'    => $quotes->lastPage(),
+                'total'        => $quotes->total(),
+            ],
         ]);
     }
 
     public function show(Request $request, int $id): JsonResponse
     {
-        $quote = B2bQuote::where('id', $id)->where('user_id', $request->user()->id)->firstOrFail();
+        $quote = B2bQuote::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
 
         return $this->success($quote);
     }
@@ -81,10 +94,11 @@ class B2bQuoteController extends Controller
     public function adminUpdate(Request $request, int $id): JsonResponse
     {
         $data = $request->validate([
-            'status' => ['sometimes', 'in:new,contacted,quoted,won,lost'],
-            'quoted_price' => ['nullable', 'numeric'],
-            'sales_notes' => ['nullable', 'string'],
-            'assigned_to' => ['nullable', 'exists:users,id'],
+            'status'       => ['sometimes', 'in:new,reviewing,quoted,approved,in_production,delivered,cancelled'],
+            'quoted_price' => ['nullable', 'numeric', 'min:0'],
+            'admin_note'   => ['nullable', 'string', 'max:2000'],
+            'sales_notes'  => ['nullable', 'string', 'max:2000'],
+            'assigned_to'  => ['nullable', 'exists:users,id'],
         ]);
 
         $quote = B2bQuote::findOrFail($id);

@@ -82,6 +82,18 @@ class AuthController extends Controller
         return $this->success(new UserResource($request->user()));
     }
 
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'name'  => ['sometimes', 'string', 'max:255'],
+            'phone' => ['sometimes', 'nullable', 'string', 'max:20'],
+        ]);
+
+        $request->user()->update($data);
+
+        return $this->success(new UserResource($request->user()->fresh()), 'Cập nhật thành công');
+    }
+
     public function refresh(Request $request): JsonResponse
     {
         $user = $request->user();

@@ -48,6 +48,7 @@ export default function Header() {
   function handleLogout() {
     logout();
     setUserMenuOpen(false);
+    setMobileOpen(false);
   }
 
   return (
@@ -78,7 +79,7 @@ export default function Header() {
             <Link href="/gio-hang" className="relative p-2 hover:bg-gray-50 rounded-xl transition-colors">
               <ShoppingCartIcon className="h-6 w-6 text-gray-700" />
               {cart && cart.total_items > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4.5 min-w-[18px] flex items-center justify-center px-1">
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
                   {cart.total_items > 99 ? "99+" : cart.total_items}
                 </span>
               )}

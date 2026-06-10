@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\PortfolioController as AdminPortfolioController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\B2bQuoteController;
@@ -30,6 +31,7 @@ Route::prefix('auth')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
+        Route::put('/profile', [AuthController::class, 'updateProfile']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
     });
 });
@@ -58,6 +60,7 @@ Route::post('/shipping/calculate', [ShippingController::class, 'calculate']);
 // --- B2B Quotes ---
 Route::post('/b2b/quotes', [B2bQuoteController::class, 'store']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/b2b/quotes/my', [B2bQuoteController::class, 'my']);   // must be before {id}
     Route::get('/b2b/quotes', [B2bQuoteController::class, 'index']);
     Route::get('/b2b/quotes/{id}', [B2bQuoteController::class, 'show'])->whereNumber('id');
 });
@@ -83,14 +86,20 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/b2b/quotes', [B2bQuoteController::class, 'adminIndex']);
     Route::put('/b2b/quotes/{id}', [B2bQuoteController::class, 'adminUpdate'])->whereNumber('id');
 
-    // Dashboard stats (placeholder returns zeros — fleshed out Phase 2)
+    // Portfolio admin CRUD
+    Route::get('/portfolio', [AdminPortfolioController::class, 'index']);
+    Route::post('/portfolio', [AdminPortfolioController::class, 'store']);
+    Route::put('/portfolio/{id}', [AdminPortfolioController::class, 'update'])->whereNumber('id');
+    Route::delete('/portfolio/{id}', [AdminPortfolioController::class, 'destroy'])->whereNumber('id');
+
+    // Dashboard stats
     Route::get('/stats', function () {
         $today = now()->startOfDay();
         return response()->json(['success' => true, 'data' => [
             'today_revenue' => (int) \App\Models\Order::where('created_at', '>=', $today)->sum('total'),
             'pending_orders' => \App\Models\Order::where('status', 'pending')->count(),
             'express_orders' => \App\Models\Order::where('status', 'pending')->where('delivery_type', 'express')->count(),
-            'new_b2b_quotes' => 0, // Phase 2
+            'new_b2b_quotes' => \App\Models\B2bQuote::where('status', 'new')->count(),
         ]]);
     });
 });

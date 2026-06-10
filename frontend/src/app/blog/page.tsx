@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
 
 const CATEGORIES = ["Tất cả", "Xu hướng quà tặng", "Bí quyết B2B", "Câu chuyện thương hiệu", "Hướng dẫn"];
 
@@ -71,6 +75,13 @@ const POSTS = [
 ];
 
 export default function BlogPage() {
+  const [activeCategory, setActiveCategory] = useState("Tất cả");
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+
+  const visiblePosts = activeCategory === "Tất cả"
+    ? POSTS
+    : POSTS.filter(p => p.category === activeCategory);
+
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
@@ -94,8 +105,9 @@ export default function BlogPage() {
           {CATEGORIES.map(c => (
             <button
               key={c}
+              onClick={() => setActiveCategory(c)}
               className={`text-sm px-4 py-2 rounded-full border transition-colors ${
-                c === "Tất cả"
+                activeCategory === c
                   ? "bg-gray-900 text-white border-gray-900"
                   : "border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
@@ -110,11 +122,12 @@ export default function BlogPage() {
           <Link href={`/blog/${FEATURED_POST.slug}`} className="group block">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-gray-50 rounded-3xl p-6 sm:p-8 hover:bg-gray-100 transition-colors">
               <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-gray-200">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={FEATURED_POST.cover}
                   alt={FEATURED_POST.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>
               <div>
@@ -139,7 +152,7 @@ export default function BlogPage() {
 
         {/* Posts grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {POSTS.map(post => (
+          {visiblePosts.map(post => (
             <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
               <article className="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-md transition-all h-full flex flex-col">
                 {/* Placeholder cover */}
@@ -175,9 +188,15 @@ export default function BlogPage() {
           <p className="text-3xl mb-3">📬</p>
           <h2 className="text-2xl font-bold mb-3">Nhận bài viết mới nhất</h2>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">Xu hướng quà tặng, bí quyết B2B, và ưu đãi độc quyền gửi thẳng đến hộp thư của bạn.</p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <form
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+            onSubmit={e => { e.preventDefault(); setNewsletterEmail(""); }}
+          >
             <input
               type="email"
+              required
+              value={newsletterEmail}
+              onChange={e => setNewsletterEmail(e.target.value)}
               className="flex-1 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               placeholder="Email của bạn"
             />

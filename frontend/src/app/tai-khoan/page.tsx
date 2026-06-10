@@ -48,14 +48,14 @@ export default function AccountPage() {
   }, [user, router]);
 
   useEffect(() => {
-    if (tab === "orders" && orders.length === 0) {
+    if (tab === "orders" && !ordersLoaded) {
       setOrdersLoading(true);
       api.get("/orders")
         .then(r => setOrders(r.data.data?.items ?? r.data.data ?? []))
         .catch(() => setOrders([]))
-        .finally(() => setOrdersLoading(false));
+        .finally(() => { setOrdersLoading(false); setOrdersLoaded(true); });
     }
-  }, [tab, orders.length]);
+  }, [tab, ordersLoaded]);
 
   async function handleSaveProfile(e: React.FormEvent) {
     e.preventDefault();

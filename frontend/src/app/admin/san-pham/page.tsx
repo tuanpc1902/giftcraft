@@ -111,9 +111,11 @@ export default function AdminProductsPage() {
   }
 
   function autoSlug(name: string) {
-    return name.toLowerCase()
-      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    return name
+      .toLowerCase()
       .replace(/đ/g, "d")
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
   }
