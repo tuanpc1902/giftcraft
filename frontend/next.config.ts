@@ -1,20 +1,17 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
-  output: "standalone", // Required for production Docker image
+  output: "standalone",
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**.r2.cloudflarestorage.com",
-      },
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
+      { protocol: "https", hostname: "**.r2.cloudflarestorage.com" },
+      { protocol: "https", hostname: "placehold.co" },
     ],
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

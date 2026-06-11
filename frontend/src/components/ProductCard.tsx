@@ -26,12 +26,12 @@ export default function ProductCard({ product }: { product: ProductListItem }) {
           </div>
         )}
         {product.is_customizable && (
-          <span className="absolute top-2 left-2 bg-amber-400 text-amber-900 text-xs font-semibold px-2 py-1 rounded-full">
+          <span className="absolute top-2 left-2 text-white text-xs font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: "var(--color-gold-mid)" }}>
             Tùy chỉnh
           </span>
         )}
       </div>
-      <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1 group-hover:text-amber-600 transition-colors">
+      <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1 group-hover:text-red-700 transition-colors">
         {product.name}
       </h3>
       <p className="text-gray-700 font-bold">{formatPrice(product.retail_price)}</p>

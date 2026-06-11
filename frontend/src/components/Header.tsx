@@ -1,25 +1,19 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { ShoppingCartIcon, Bars3Icon, XMarkIcon, UserCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { getOrCreateSessionId } from "@/lib/session";
-
-const NAV_LINKS = [
-  { href: "/san-pham", label: "Sản phẩm" },
-  { href: "/forfolio", label: "Forfolio" },
-  { href: "/qua-tang-doanh-nghiep", label: "B2B" },
-  { href: "/bat-dau-du-an-moi", label: "Bắt đầu dự án" },
-  { href: "/gift-finder", label: "Gift Finder" },
-  { href: "/blog", label: "Blog" },
-];
+import Link from "next/link";
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("nav");
   const { cart, fetch } = useCartStore();
   const { user, logout, init } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -29,13 +23,21 @@ export default function Header() {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  const NAV_LINKS = [
+    { href: "/san-pham", label: t("products") },
+    { href: "/forfolio", label: t("portfolio") },
+    { href: "/qua-tang-doanh-nghiep", label: t("b2b") },
+    { href: "/bat-dau-du-an-moi", label: t("startProject") },
+    { href: "/gift-finder", label: t("giftFinder") },
+    { href: "/blog", label: t("blog") },
+  ];
+
   useEffect(() => {
     getOrCreateSessionId();
     fetch().catch(() => {});
     init();
   }, [fetch, init]);
 
-  // Close user dropdown on outside click
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
@@ -46,10 +48,8 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false); setSearchOpen(false); }, [pathname]);
 
-  // Focus search input when search bar opens
   useEffect(() => {
     if (searchOpen) setTimeout(() => searchInputRef.current?.focus(), 50);
   }, [searchOpen]);
@@ -70,12 +70,17 @@ export default function Header() {
     setMobileOpen(false);
   }
 
+  function switchLocale() {
+    const next = locale === "vi" ? "en" : "vi";
+    router.replace(pathname, { locale: next });
+  }
+
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+      <header className="sticky top-0 z-40 bg-[#fffdf8] border-b border-amber-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="font-bold text-xl tracking-tight text-gray-900 flex-shrink-0">
+          <Link href="/" className="font-bold text-xl tracking-tight flex-shrink-0" style={{ color: "var(--color-brand)" }}>
             GiftCraft Studio
           </Link>
 
@@ -85,7 +90,8 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`hover:text-gray-900 transition-colors ${pathname?.startsWith(link.href) ? "text-gray-900 font-semibold" : ""}`}
+                className={`transition-colors ${pathname?.startsWith(link.href) ? "font-semibold" : "hover:text-gray-900"}`}
+                style={pathname?.startsWith(link.href) ? { color: "var(--color-brand)" } : undefined}
               >
                 {link.label}
               </Link>
@@ -94,11 +100,20 @@ export default function Header() {
 
           {/* Right side */}
           <div className="flex items-center gap-1">
+            {/* Language switcher */}
+            <button
+              onClick={switchLocale}
+              className="hidden sm:flex items-center text-xs font-bold px-2.5 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-gray-600"
+              aria-label="Switch language"
+            >
+              {t("switchLang")}
+            </button>
+
             {/* Search */}
             <button
               onClick={() => setSearchOpen(v => !v)}
               className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
-              aria-label="Tìm kiếm"
+              aria-label={t("searchBtn")}
             >
               <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
             </button>
@@ -113,7 +128,7 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Auth state */}
+            {/* Auth */}
             {user ? (
               <div className="relative hidden sm:block" ref={userMenuRef}>
                 <button
@@ -132,16 +147,16 @@ export default function Header() {
                     </div>
                     <Link href="/tai-khoan" onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-gray-50 text-gray-700 transition-colors">
-                      👤 Tài khoản
+                      👤 {t("account")}
                     </Link>
                     <Link href="/tai-khoan/du-an" onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-gray-50 text-gray-700 transition-colors">
-                      📋 Dự án B2B
+                      📋 {t("b2bProjects")}
                     </Link>
                     {user.role === "admin" && (
                       <Link href="/admin" onClick={() => setUserMenuOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-gray-50 text-gray-700 transition-colors">
-                        ⚙️ Admin Panel
+                        ⚙️ {t("adminPanel")}
                       </Link>
                     )}
                     <div className="border-t border-gray-50 mt-1">
@@ -149,7 +164,7 @@ export default function Header() {
                         onClick={handleLogout}
                         className="w-full flex items-center gap-2.5 px-4 py-2.5 hover:bg-red-50 text-red-600 transition-colors"
                       >
-                        Đăng xuất
+                        {t("logout")}
                       </button>
                     </div>
                   </div>
@@ -160,7 +175,7 @@ export default function Header() {
                 href="/dang-nhap"
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 border border-gray-200 rounded-xl px-3.5 py-2 hover:bg-gray-50 transition-colors"
               >
-                Đăng nhập
+                {t("login")}
               </Link>
             )}
 
@@ -204,31 +219,37 @@ export default function Header() {
                     </Link>
                     <Link href="/tai-khoan/du-an"
                       className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
-                      📋 Dự án B2B
+                      📋 {t("b2bProjects")}
                     </Link>
                     {user.role === "admin" && (
                       <Link href="/admin"
                         className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        ⚙️ Admin Panel
+                        ⚙️ {t("adminPanel")}
                       </Link>
                     )}
                     <button
                       onClick={handleLogout}
                       className="w-full text-left flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50"
                     >
-                      Đăng xuất
+                      {t("logout")}
                     </button>
                   </>
                 ) : (
                   <div className="flex gap-2 px-3 py-2">
                     <Link href="/dang-nhap" className="flex-1 text-center border border-gray-200 rounded-xl py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
-                      Đăng nhập
+                      {t("login")}
                     </Link>
                     <Link href="/dang-ky" className="flex-1 text-center bg-gray-900 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-700 transition-colors">
-                      Đăng ký
+                      {t("register")}
                     </Link>
                   </div>
                 )}
+                <button
+                  onClick={switchLocale}
+                  className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 w-full"
+                >
+                  🌐 {locale === "vi" ? "Switch to English" : "Chuyển sang Tiếng Việt"}
+                </button>
               </div>
             </nav>
           </div>
@@ -245,11 +266,11 @@ export default function Header() {
                 type="search"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Tìm sản phẩm... (vd: hộp quà, bút ký)"
+                placeholder={t("searchPlaceholder")}
                 className="input-field flex-1"
               />
               <button type="submit" className="btn-primary px-5 py-2.5 text-sm font-semibold flex-shrink-0">
-                Tìm
+                {t("searchBtn")}
               </button>
               <button type="button" onClick={() => setSearchOpen(false)} className="p-2.5 hover:bg-gray-50 rounded-xl transition-colors">
                 <XMarkIcon className="h-5 w-5 text-gray-500" />
