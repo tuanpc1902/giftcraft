@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ShoppingCartIcon, Bars3Icon, XMarkIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { usePathname, useRouter } from "next/navigation";
+import { ShoppingCartIcon, Bars3Icon, XMarkIcon, UserCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useRef, useState } from "react";
@@ -19,11 +19,15 @@ const NAV_LINKS = [
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { cart, fetch } = useCartStore();
   const { user, logout, init } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getOrCreateSessionId();
@@ -43,7 +47,22 @@ export default function Header() {
   }, []);
 
   // Close mobile menu on route change
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
+  useEffect(() => { setMobileOpen(false); setSearchOpen(false); }, [pathname]);
+
+  // Focus search input when search bar opens
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => searchInputRef.current?.focus(), 50);
+  }, [searchOpen]);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) {
+      router.push(`/tim-kiem?q=${encodeURIComponent(q)}`);
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
+  }
 
   function handleLogout() {
     logout();
@@ -75,6 +94,15 @@ export default function Header() {
 
           {/* Right side */}
           <div className="flex items-center gap-1">
+            {/* Search */}
+            <button
+              onClick={() => setSearchOpen(v => !v)}
+              className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
+              aria-label="Tìm kiếm"
+            >
+              <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
+            </button>
+
             {/* Cart */}
             <Link href="/gio-hang" className="relative p-2 hover:bg-gray-50 rounded-xl transition-colors">
               <ShoppingCartIcon className="h-6 w-6 text-gray-700" />
@@ -206,6 +234,30 @@ export default function Header() {
           </div>
         )}
       </header>
+
+      {/* Search overlay */}
+      {searchOpen && (
+        <div className="fixed inset-0 z-50" onClick={() => setSearchOpen(false)}>
+          <div className="absolute top-0 left-0 right-0 bg-white border-b border-gray-100 shadow-lg px-4 py-4" onClick={e => e.stopPropagation()}>
+            <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex gap-2">
+              <input
+                ref={searchInputRef}
+                type="search"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Tìm sản phẩm... (vd: hộp quà, bút ký)"
+                className="input-field flex-1"
+              />
+              <button type="submit" className="btn-primary px-5 py-2.5 text-sm font-semibold flex-shrink-0">
+                Tìm
+              </button>
+              <button type="button" onClick={() => setSearchOpen(false)} className="p-2.5 hover:bg-gray-50 rounded-xl transition-colors">
+                <XMarkIcon className="h-5 w-5 text-gray-500" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

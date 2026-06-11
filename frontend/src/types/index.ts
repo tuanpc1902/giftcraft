@@ -194,3 +194,30 @@ export interface PortfolioProject {
   is_featured: boolean;
   created_at: string;
 }
+
+export interface SupplierApplication {
+  id: number;
+  company_name: string;
+  tax_code: string;
+  contact_name: string;
+  phone: string;
+  email: string;
+  product_types: string;
+  has_vat_invoice: boolean;
+  min_order_quantity: number | null;
+  description: string | null;
+  status: "new" | "reviewing" | "approved" | "rejected";
+  created_at: string;
+}
+
+export interface JobApplication {
+  id: number;
+  job_title: string;
+  applicant_name: string;
+  phone: string;
+  email: string;
+  cv_url: string;
+  cover_letter: string | null;
+  status: "new" | "reviewing" | "interviewed" | "hired" | "rejected";
+  created_at: string;
+}

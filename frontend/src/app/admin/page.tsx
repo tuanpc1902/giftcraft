@@ -64,6 +64,8 @@ export default function AdminDashboard() {
           { href: "/admin/forfolio", label: "Forfolio", icon: "🖼️" },
           { href: "/admin/danh-gia", label: "Đánh giá", icon: "⭐" },
           { href: "/admin/blog", label: "Blog CMS", icon: "✍️" },
+          { href: "/admin/nha-cung-cap", label: "Nhà cung cấp", icon: "🏭" },
+          { href: "/admin/tuyen-dung", label: "Tuyển dụng", icon: "👥" },
         ].map(link => (
           <Link key={link.href} href={link.href}
             className="border border-gray-100 rounded-2xl p-5 hover:bg-gray-50 transition-colors text-center">

@@ -12,7 +12,8 @@
 | **Phase 1** | MVP Core (Frontend) | 6–8 | ✅ DONE | `d802840` |
 | **Phase 2** | B2B + Forfolio | 9–12 | ✅ DONE | — |
 | **Phase 3** | Loyalty + SEO | 13–16 | ✅ DONE | — |
-| **Phase 4** | Scale + AI | 17–20 | 🔄 IN PROGRESS | — |
+| **Phase 4** | Scale + AI | 17–20 | ✅ DONE | `f0c1c50` |
+| **Phase 5** | Missing Pages + Admin | 21–22 | ✅ DONE | — |
 
 ---
 
@@ -126,7 +127,7 @@
 
 ---
 
-## 🔄 Phase 4 — Scale + AI
+## ✅ Phase 4 — Scale + AI
 
 | Bước | Nội dung | Trạng thái |
 |------|----------|-----------|
@@ -134,6 +135,21 @@
 | 02 | AI Chatbot tư vấn quà (Claude API, streaming SSE) | ✅ DONE |
 | 03 | PWA (manifest + service worker + SW registration) | ✅ DONE |
 | 04 | Security Audit (Nginx headers, rate limits, Horizon block, CORS) | ✅ DONE |
+
+---
+
+## ✅ Phase 5 — Missing Pages & Admin Completion
+
+| Bước | Nội dung | Trạng thái |
+|------|----------|-----------|
+| 01 | `/tim-kiem` — Search results page (Meilisearch, load-more pagination) | ✅ DONE |
+| 02 | `/tuyen-dung` — Careers page (open positions + job application form) | ✅ DONE |
+| 03 | `/tro-thanh-doi-tac` — Become a supplier form | ✅ DONE |
+| 04 | `/admin/nha-cung-cap` — Supplier applications management | ✅ DONE |
+| 05 | `/admin/tuyen-dung` — Job applications management | ✅ DONE |
+| 06 | Admin dashboard — links to Nhà cung cấp + Tuyển dụng pages | ✅ DONE |
+| 07 | Header — search icon with dropdown overlay → `/tim-kiem` | ✅ DONE |
+| 08 | Types — `SupplierApplication`, `JobApplication` added to `types/index.ts` | ✅ DONE |
 
 ---
 
@@ -173,4 +189,4 @@ docker compose -f infra/docker-compose.yml -p giftcraft ps
 
 ---
 
-*Cập nhật: 2026-06-11 | Phase 4 hoàn tất — ISR revalidation, AI Chatbot, PWA, Security audit đều done*
+*Cập nhật: 2026-06-11 | Phase 5 hoàn tất — Search, Careers, Supplier form, Admin Nhà cung cấp/Tuyển dụng, Header search*
