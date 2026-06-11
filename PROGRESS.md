@@ -14,6 +14,7 @@
 | **Phase 3** | Loyalty + SEO | 13–16 | ✅ DONE | — |
 | **Phase 4** | Scale + AI | 17–20 | ✅ DONE | `f0c1c50` |
 | **Phase 5** | Missing Pages + Admin | 21–22 | ✅ DONE | — |
+| **Phase 6** | i18n (vi/en) | 23 | ✅ DONE | `9737eb9` |
 
 ---
 
@@ -150,6 +151,19 @@
 | 06 | Admin dashboard — links to Nhà cung cấp + Tuyển dụng pages | ✅ DONE |
 | 07 | Header — search icon with dropdown overlay → `/tim-kiem` | ✅ DONE |
 | 08 | Types — `SupplierApplication`, `JobApplication` added to `types/index.ts` | ✅ DONE |
+
+---
+
+## ✅ Phase 6 — i18n (vi / en) (commit `9737eb9`)
+
+| Bước | Nội dung | Trạng thái |
+|------|----------|-----------|
+| 01 | next-intl v4 — routing, middleware, NextIntlClientProvider | ✅ DONE |
+| 02 | All routes moved to `app/[locale]/`; vi at `/`, en at `/en/` | ✅ DONE |
+| 03 | `messages/vi.json` + `messages/en.json` — all namespaces | ✅ DONE |
+| 04 | Header — locale-aware navigation, language switcher | ✅ DONE |
+| 05 | HomePage, san-pham, forfolio, blog, qua-tang-doanh-nghiep — getTranslations | ✅ DONE |
+| 06 | dang-nhap, dang-ky, tai-khoan, tuyen-dung, tro-thanh-doi-tac, tim-kiem — useTranslations | ✅ DONE |
 
 ---
 
