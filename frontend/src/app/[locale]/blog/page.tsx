@@ -93,14 +93,14 @@ export default function BlogPage() {
 
   return (
     <div className="bg-white min-h-screen">
-      <div className="bg-gray-900 text-white">
+      <div className="bg-ink text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="max-w-2xl">
-            <span className="inline-block bg-amber-400/20 text-amber-300 text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4">
+            <span className="inline-block bg-brand-light text-brand text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-sm mb-4">
               Blog
             </span>
             <h1 className="text-4xl font-bold mb-4">{t("title")}</h1>
-            <p className="text-gray-300 leading-relaxed">{t("subtitle")}</p>
+            <p className="text-ink-muted leading-relaxed">{t("subtitle")}</p>
           </div>
         </div>
       </div>
@@ -111,10 +111,10 @@ export default function BlogPage() {
             <button
               key={c}
               onClick={() => setActiveCategory(c)}
-              className={`text-sm px-4 py-2 rounded-full border transition-colors ${
+              className={`text-sm px-4 py-2 rounded-sm border transition-colors ${
                 activeCategory === c
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                  ? "bg-ink text-white border-ink"
+                  : "border-border text-ink-muted hover:bg-surface-alt"
               }`}
             >
               {c}
@@ -124,8 +124,8 @@ export default function BlogPage() {
 
         <div className="mb-12">
           <Link href={`/blog/${FEATURED_POST.slug}`} className="group block">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-gray-50 rounded-3xl p-6 sm:p-8 hover:bg-gray-100 transition-colors">
-              <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-200">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-surface-alt rounded-sm p-6 sm:p-8 hover:bg-surface-alt transition-colors">
+              <div className="relative aspect-video rounded-sm overflow-hidden bg-surface-alt">
                 <Image
                   src={FEATURED_POST.cover}
                   alt={FEATURED_POST.title}
@@ -135,14 +135,14 @@ export default function BlogPage() {
                 />
               </div>
               <div>
-                <span className="inline-block bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full mb-3">
+                <span className="inline-block bg-brand-light text-brand text-xs font-semibold px-2.5 py-1 rounded-sm mb-3">
                   {FEATURED_POST.category}
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-amber-700 transition-colors">
+                <h2 className="text-2xl font-bold text-ink mb-3 group-hover:text-brand transition-colors">
                   {FEATURED_POST.title}
                 </h2>
-                <p className="text-gray-500 leading-relaxed mb-5">{FEATURED_POST.excerpt}</p>
-                <div className="flex items-center gap-4 text-sm text-gray-400">
+                <p className="text-ink-muted leading-relaxed mb-5">{FEATURED_POST.excerpt}</p>
+                <div className="flex items-center gap-4 text-sm text-ink-muted">
                   <span>{FEATURED_POST.author}</span>
                   <span>·</span>
                   <span>{FEATURED_POST.date}</span>
@@ -157,19 +157,19 @@ export default function BlogPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visiblePosts.map(post => (
             <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
-              <article className="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-md transition-all h-full flex flex-col">
+              <article className="bg-white border border-border rounded-sm overflow-hidden hover:border-border hover:shadow-md transition-all h-full flex flex-col">
                 <div className="aspect-video bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                   <span className="text-4xl opacity-50">
                     {CATEGORY_ICONS[post.category] ?? "📖"}
                   </span>
                 </div>
                 <div className="p-5 flex flex-col flex-1">
-                  <span className="inline-block text-xs font-semibold text-amber-600 mb-2">{post.category}</span>
-                  <h3 className="font-bold text-gray-900 mb-2 group-hover:text-amber-700 transition-colors leading-snug">
+                  <span className="inline-block text-xs font-semibold text-brand mb-2">{post.category}</span>
+                  <h3 className="font-bold text-ink mb-2 group-hover:text-brand transition-colors leading-snug">
                     {post.title}
                   </h3>
-                  <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-4">{post.excerpt}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mt-auto">
+                  <p className="text-sm text-ink-muted leading-relaxed flex-1 mb-4">{post.excerpt}</p>
+                  <div className="flex items-center gap-2 text-xs text-ink-muted mt-auto">
                     <span>{post.author}</span>
                     <span>·</span>
                     <span>{post.date}</span>
@@ -182,12 +182,12 @@ export default function BlogPage() {
           ))}
         </div>
 
-        <div className="mt-16 bg-gray-900 text-white rounded-3xl px-8 py-12 text-center">
+        <div className="mt-16 bg-ink text-white rounded-sm px-8 py-12 text-center">
           <p className="text-3xl mb-3">📬</p>
           <h2 className="text-2xl font-bold mb-3">{t("newsletter")}</h2>
-          <p className="text-gray-400 mb-6 max-w-md mx-auto">{t("newsletterDesc")}</p>
+          <p className="text-ink-muted mb-6 max-w-md mx-auto">{t("newsletterDesc")}</p>
           {subscribed ? (
-            <p className="text-amber-300 font-semibold">{t("subscribeSuccess")}</p>
+            <p className="text-brand font-semibold">{t("subscribeSuccess")}</p>
           ) : (
             <form
               className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
@@ -198,15 +198,15 @@ export default function BlogPage() {
                 required
                 value={newsletterEmail}
                 onChange={e => setNewsletterEmail(e.target.value)}
-                className="flex-1 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="flex-1 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-sm px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder={t("newsletterPlaceholder")}
               />
-              <button type="submit" className="bg-amber-400 text-gray-900 font-bold py-3 px-6 rounded-xl hover:bg-amber-300 transition-colors text-sm whitespace-nowrap">
+              <button type="submit" className="bg-brand text-white font-bold py-3 px-6 rounded-sm hover:bg-brand-light transition-colors text-sm whitespace-nowrap">
                 {t("subscribe")} →
               </button>
             </form>
           )}
-          <p className="text-xs text-gray-500 mt-3">{t("subscribeNote")}</p>
+          <p className="text-xs text-ink-muted mt-3">{t("subscribeNote")}</p>
         </div>
       </div>
     </div>

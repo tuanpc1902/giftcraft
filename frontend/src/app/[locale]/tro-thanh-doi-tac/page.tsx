@@ -64,8 +64,8 @@ export default function TroThanhDoiTacPage() {
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">🎉</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">{t("successTitle")}</h2>
-          <p className="text-gray-500 mb-8">{t("successMsg")}</p>
+          <h2 className="text-2xl font-bold text-ink mb-3">{t("successTitle")}</h2>
+          <p className="text-ink-muted mb-8">{t("successMsg")}</p>
           <Link href="/" className="btn-primary px-8 py-3">{t("backHome")}</Link>
         </div>
       </div>
@@ -76,8 +76,8 @@ export default function TroThanhDoiTacPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{t("title")}</h1>
-        <p className="text-gray-500 text-lg max-w-xl mx-auto">{t("subtitle")}</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-ink mb-4">{t("title")}</h1>
+        <p className="text-ink-muted text-lg max-w-xl mx-auto">{t("subtitle")}</p>
       </div>
 
       {/* Benefits */}
@@ -85,23 +85,23 @@ export default function TroThanhDoiTacPage() {
         {(["benefit1", "benefit2", "benefit3"] as const).map((key, i) => {
           const icons = ["📦", "💳", "🤝"];
           return (
-            <div key={key} className="bg-gray-50 rounded-2xl p-5 text-center">
+            <div key={key} className="bg-surface-alt rounded-sm p-5 text-center">
               <div className="text-3xl mb-3">{icons[i]}</div>
-              <h3 className="font-semibold text-gray-900 mb-1">{t(`${key}Title`)}</h3>
-              <p className="text-sm text-gray-500">{t(`${key}Desc`)}</p>
+              <h3 className="font-semibold text-ink mb-1">{t(`${key}Title`)}</h3>
+              <p className="text-sm text-ink-muted">{t(`${key}Desc`)}</p>
             </div>
           );
         })}
       </div>
 
       {/* Form */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">{t("formTitle")}</h2>
+      <div className="bg-white rounded-3xl border border-border shadow-sm p-8">
+        <h2 className="text-xl font-bold text-ink mb-6">{t("formTitle")}</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("company")} <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-ink mb-1.5">{t("company")} <span className="text-brand">*</span></label>
               <input
                 type="text"
                 value={form.company_name}
@@ -112,7 +112,7 @@ export default function TroThanhDoiTacPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("taxCode")} <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-ink mb-1.5">{t("taxCode")} <span className="text-brand">*</span></label>
               <input
                 type="text"
                 value={form.tax_code}
@@ -126,7 +126,7 @@ export default function TroThanhDoiTacPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contact")} <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-ink mb-1.5">{t("contact")} <span className="text-brand">*</span></label>
               <input
                 type="text"
                 value={form.contact_name}
@@ -137,7 +137,7 @@ export default function TroThanhDoiTacPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("phone")} <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-ink mb-1.5">{t("phone")} <span className="text-brand">*</span></label>
               <input
                 type="tel"
                 value={form.phone}
@@ -150,7 +150,7 @@ export default function TroThanhDoiTacPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("email")} <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-ink mb-1.5">{t("email")} <span className="text-brand">*</span></label>
             <input
               type="email"
               value={form.email}
@@ -162,7 +162,7 @@ export default function TroThanhDoiTacPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("productTypes")} <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-ink mb-1.5">{t("productTypes")} <span className="text-brand">*</span></label>
             <textarea
               value={form.product_types}
               onChange={e => set({ product_types: e.target.value })}
@@ -175,7 +175,7 @@ export default function TroThanhDoiTacPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("moq")}</label>
+              <label className="block text-sm font-medium text-ink mb-1.5">{t("moq")}</label>
               <input
                 type="number"
                 min="1"
@@ -191,14 +191,14 @@ export default function TroThanhDoiTacPage() {
                 id="vat"
                 checked={form.has_vat_invoice}
                 onChange={e => set({ has_vat_invoice: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-300 accent-gray-900"
+                className="w-4 h-4 rounded border-border accent-gray-900"
               />
-              <label htmlFor="vat" className="text-sm font-medium text-gray-700">{t("vatInvoice")}</label>
+              <label htmlFor="vat" className="text-sm font-medium text-ink">{t("vatInvoice")}</label>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("description")}</label>
+            <label className="block text-sm font-medium text-ink mb-1.5">{t("description")}</label>
             <textarea
               value={form.description}
               onChange={e => set({ description: e.target.value })}
@@ -209,7 +209,7 @@ export default function TroThanhDoiTacPage() {
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl">{error}</div>
+            <div className="bg-brand-light text-brand text-sm px-4 py-3 rounded-sm">{error}</div>
           )}
 
           <button

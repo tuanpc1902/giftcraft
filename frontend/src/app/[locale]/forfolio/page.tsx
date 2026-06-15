@@ -26,10 +26,10 @@ export default async function ForfolioPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">{t("title")}</h1>
-        <p className="text-gray-500 max-w-xl mx-auto">{t("subtitle")}</p>
+        <h1 className="text-4xl font-bold text-ink mb-3">{t("title")}</h1>
+        <p className="text-ink-muted max-w-xl mx-auto">{t("subtitle")}</p>
       </div>
-      <Suspense fallback={<div className="text-center py-12 text-gray-400">{t("loading")}</div>}>
+      <Suspense fallback={<div className="text-center py-12 text-ink-muted">{t("loading")}</div>}>
         <ForfolioClient projects={projects} />
       </Suspense>
     </div>

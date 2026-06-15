@@ -1,370 +1,256 @@
 "use client";
-
-import { useReducer, useRef, useEffect, useState } from "react";
+import { useReducer, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useCartStore } from "@/store/cart";
+import { useAuthStore } from "@/store/auth";
+import { useToastStore } from "@/store/toast";
 import { formatPrice } from "@/lib/formatPrice";
+import Button from "@/components/ui/Button";
+import { Input, Textarea } from "@/components/ui/Input";
 
 interface CheckoutState {
   step: 1 | 2 | 3 | 4;
-  // Step 1
-  name: string;
-  phone: string;
-  address: string;
-  ward: string;
-  district: string;
-  city: string;
-  // Step 2
+  name: string; phone: string; address: string;
+  ward: string; district: string; city: string;
   deliveryType: "standard" | "express";
-  requestedDate: string;
-  giftMessage: string;
-  customerNote: string;
+  requestedDate: string; giftMessage: string; customerNote: string;
   shippingFee: number | null;
-  // Step 3
   paymentMethod: "cod" | "vnpay" | "momo";
-  voucherCode: string;
+  idempotencyKey: string;
 }
 
-type Action =
-  | { type: "SET"; key: keyof CheckoutState; value: string | number | null }
-  | { type: "NEXT" }
-  | { type: "BACK" };
-
-function reducer(state: CheckoutState, action: Action): CheckoutState {
-  switch (action.type) {
-    case "SET":
-      return { ...state, [action.key]: action.value };
-    case "NEXT":
-      return { ...state, step: Math.min(state.step + 1, 4) as CheckoutState["step"] };
-    case "BACK":
-      return { ...state, step: Math.max(state.step - 1, 1) as CheckoutState["step"] };
-    default:
-      return state;
-  }
-}
-
-const initialState: CheckoutState = {
-  step: 1,
-  name: "", phone: "", address: "", ward: "", district: "", city: "",
-  deliveryType: "standard",
-  requestedDate: "", giftMessage: "", customerNote: "",
-  shippingFee: null,
-  paymentMethod: "cod",
-  voucherCode: "",
+const INIT: CheckoutState = {
+  step: 1, name: "", phone: "", address: "",
+  ward: "", district: "", city: "",
+  deliveryType: "standard", requestedDate: "", giftMessage: "", customerNote: "",
+  shippingFee: null, paymentMethod: "cod",
+  idempotencyKey: crypto.randomUUID(),
 };
 
-const CITIES = ["TP.HCM", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Hải Phòng", "Bình Dương", "Đồng Nai", "Vũng Tàu"];
+function reducer(s: CheckoutState, patch: Partial<CheckoutState>) {
+  return { ...s, ...patch };
+}
+
+const STEPS = ["Thông tin", "Vận chuyển", "Thanh toán", "Xác nhận"];
 
 export default function CheckoutPage() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const idempotencyKey = useRef(crypto.randomUUID());
-  const [submitting, setSubmitting] = useState(false);
-  const [shippingLoading, setShippingLoading] = useState(false);
   const router = useRouter();
-  const { cart, fetch: fetchCart } = useCartStore();
+  const { cart, fetch: fetchCart, clear } = useCartStore();
+  const { user, init } = useAuthStore();
+  const { add: addToast } = useToastStore();
+  const [state, dispatch] = useReducer(reducer, INIT);
+  const set = (patch: Partial<CheckoutState>) => dispatch(patch);
+  const [loading, setLoading] = useState(false);
+  const [shippingLoading, setShippingLoading] = useState(false);
 
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+  useEffect(() => { init(); fetchCart(); }, [init, fetchCart]);
+  useEffect(() => {
+    if (user) set({ name: user.name ?? "", phone: "" });
+  }, [user]);
 
-  const set = (key: keyof CheckoutState, value: string | number | null) =>
-    dispatch({ type: "SET", key, value });
-
-  async function calculateShipping() {
-    if (!state.city) return;
+  async function fetchShipping() {
+    if (!state.city || !state.district) return;
     setShippingLoading(true);
     try {
       const { data } = await api.post("/shipping/calculate", {
-        address: { city: state.city, district: state.district },
+        city: state.city, district: state.district,
+        weight_grams: 500,
         delivery_type: state.deliveryType,
       });
-      const fee = state.deliveryType === "express"
-        ? (data.data.express?.fee ?? data.data.standard.fee)
-        : data.data.standard.fee;
-      set("shippingFee", fee);
-    } finally {
-      setShippingLoading(false);
-    }
+      set({ shippingFee: data.data?.[state.deliveryType]?.fee ?? null });
+    } catch { set({ shippingFee: null }); }
+    finally { setShippingLoading(false); }
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/purity
-  useEffect(() => { if (state.step === 2 && state.city) { calculateShipping(); } },
-    [state.deliveryType, state.city, state.step]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (state.step === 2) fetchShipping(); }, [state.step, state.deliveryType]);
 
   async function handleSubmit() {
-    setSubmitting(true);
+    setLoading(true);
     try {
       const { data } = await api.post(
         "/orders/checkout",
         {
           shipping_address: {
-            name: state.name, phone: state.phone, address: state.address,
-            ward: state.ward, district: state.district, city: state.city,
+            name: state.name, phone: state.phone,
+            address: state.address, ward: state.ward,
+            district: state.district, city: state.city,
           },
           delivery_type: state.deliveryType,
           requested_delivery_date: state.requestedDate || null,
           gift_message: state.giftMessage || null,
           customer_note: state.customerNote || null,
           payment_method: state.paymentMethod,
-          voucher_code: state.voucherCode || undefined,
         },
-        { headers: { "Idempotency-Key": idempotencyKey.current } }
+        { headers: { "Idempotency-Key": state.idempotencyKey } }
       );
-
-      if (data.data.payment_url) {
+      if (data.data?.payment_url) {
         window.location.href = data.data.payment_url;
       } else {
+        await clear();
         router.push(`/don-hang/${data.data.order_number}`);
       }
     } catch {
-      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+      addToast("Đặt hàng thất bại. Vui lòng thử lại.", "error");
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   }
 
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
   const subtotal = cart?.subtotal ?? 0;
   const discount = cart?.discount_amount ?? 0;
   const shipping = state.shippingFee ?? 0;
   const total = subtotal - discount + shipping;
 
-  if (!cart || cart.total_items === 0) {
-    return (
-      <div className="max-w-xl mx-auto px-4 py-24 text-center">
-        <p className="text-gray-400 mb-4">Giỏ hàng trống.</p>
-        <Link href="/san-pham" className="btn-primary">Xem sản phẩm</Link>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Thanh toán</h1>
-
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Step indicator */}
-      <div className="flex items-center mb-10 overflow-x-auto scrollbar-none">
-        {["Địa chỉ", "Giao hàng", "Thanh toán", "Xác nhận"].map((label, i) => (
-          <div key={i} className="flex items-center flex-shrink-0">
-            <div className="flex flex-col items-center gap-1">
-              <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                  state.step > i + 1 ? "bg-green-500 text-white" : state.step < i + 1 ? "bg-gray-100 text-gray-400" : ""
-                }`}
-                style={state.step === i + 1 ? { backgroundColor: "var(--color-brand)", color: "#fff" } : undefined}
-              >
-                {state.step > i + 1 ? "✓" : i + 1}
+      <div className="flex items-center gap-3 mb-10">
+        {STEPS.map((label, i) => {
+          const num = i + 1;
+          const active = state.step === num;
+          const done = state.step > num;
+          return (
+            <div key={label} className="flex items-center gap-2">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                done ? "bg-brand text-white" : active ? "bg-ink text-white" : "bg-border text-ink-muted"
+              }`}>
+                {done ? "✓" : num}
               </div>
-              <span className={`text-[10px] sm:text-xs font-medium whitespace-nowrap ${state.step === i + 1 ? "text-gray-900 font-semibold" : "text-gray-400"}`}>
+              <span className={`text-sm hidden sm:block ${active ? "font-semibold text-ink" : "text-ink-muted"}`}>
                 {label}
               </span>
+              {i < STEPS.length - 1 && <div className="w-8 h-px bg-border mx-1" />}
             </div>
-            {i < 3 && <div className="h-px bg-gray-200 w-6 sm:w-12 mx-1 mb-4 flex-shrink-0" />}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* ── Main form ── */}
-        <div className="lg:col-span-2 space-y-4">
-
-          {/* STEP 1 — Address */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10">
+        {/* Steps */}
+        <div>
+          {/* Step 1: Shipping info */}
           {state.step === 1 && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
-              <h2 className="font-bold text-gray-900 text-lg">Địa chỉ giao hàng</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input className="input-field col-span-2" placeholder="Họ và tên *" value={state.name}
-                  onChange={e => set("name", e.target.value)} />
-                <input className="input-field" placeholder="Số điện thoại *" value={state.phone}
-                  onChange={e => set("phone", e.target.value)} />
-                <select className="input-field" value={state.city}
-                  onChange={e => set("city", e.target.value)}>
-                  <option value="">Tỉnh / Thành phố *</option>
-                  {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-                <input className="input-field" placeholder="Quận / Huyện *" value={state.district}
-                  onChange={e => set("district", e.target.value)} />
-                <input className="input-field" placeholder="Phường / Xã" value={state.ward}
-                  onChange={e => set("ward", e.target.value)} />
-                <input className="input-field col-span-2" placeholder="Số nhà, tên đường *" value={state.address}
-                  onChange={e => set("address", e.target.value)} />
+            <div className="space-y-4">
+              <h2 className="section-title mb-6">Thông tin giao hàng</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <Input placeholder="Họ tên *" required value={state.name} onChange={(e) => set({ name: e.target.value })} />
+                <Input placeholder="Số điện thoại *" required type="tel" value={state.phone} onChange={(e) => set({ phone: e.target.value })} />
               </div>
-              <div className="flex justify-end">
-                <button
-                  disabled={!state.name || !state.phone || !state.city || !state.district || !state.address}
-                  onClick={() => dispatch({ type: "NEXT" })}
-                  className="btn-primary px-8 disabled:opacity-40"
-                >
-                  Tiếp tục →
-                </button>
+              <Input placeholder="Địa chỉ *" required value={state.address} onChange={(e) => set({ address: e.target.value })} />
+              <div className="grid grid-cols-3 gap-4">
+                <Input placeholder="Phường/Xã" value={state.ward} onChange={(e) => set({ ward: e.target.value })} />
+                <Input placeholder="Quận/Huyện *" required value={state.district} onChange={(e) => set({ district: e.target.value })} />
+                <Input placeholder="Tỉnh/TP *" required value={state.city} onChange={(e) => set({ city: e.target.value })} />
               </div>
+              <Button
+                onClick={() => set({ step: 2 })}
+                disabled={!state.name || !state.phone || !state.address || !state.district || !state.city}
+                className="w-full mt-2"
+              >
+                Tiếp tục
+              </Button>
             </div>
           )}
 
-          {/* STEP 2 — Delivery */}
+          {/* Step 2: Delivery */}
           {state.step === 2 && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-6">
-              <h2 className="font-bold text-gray-900 text-lg">Phương thức giao hàng</h2>
-
-              <div className="space-y-3">
-                <label className={`flex items-start gap-3 border-2 rounded-xl p-4 cursor-pointer transition-colors ${
-                  state.deliveryType === "standard" ? "bg-red-50" : "border-gray-100"
-                }`}
-                style={state.deliveryType === "standard" ? { borderColor: "var(--color-brand)" } : undefined}>
-                  <input type="radio" name="delivery" value="standard" checked={state.deliveryType === "standard"}
-                    onChange={() => set("deliveryType", "standard")} className="mt-1" />
-                  <div>
-                    <p className="font-semibold text-gray-900">Giao tiêu chuẩn</p>
-                    <p className="text-sm text-gray-500">24h nội thành HCM / 2–5 ngày tỉnh thành</p>
+            <div className="space-y-4">
+              <h2 className="section-title mb-6">Phương thức vận chuyển</h2>
+              {(["standard", "express"] as const).map((type) => (
+                <label key={type} className={`flex items-center gap-4 p-4 border rounded-sm cursor-pointer transition-colors ${
+                  state.deliveryType === type ? "border-brand bg-brand-light" : "border-border hover:border-ink-muted"
+                }`}>
+                  <input
+                    type="radio"
+                    name="delivery"
+                    value={type}
+                    checked={state.deliveryType === type}
+                    onChange={() => set({ deliveryType: type })}
+                    className="accent-brand"
+                  />
+                  <div className="flex-1">
+                    <p className="font-medium text-ink">
+                      {type === "standard" ? "Tiêu chuẩn (3–5 ngày)" : "Nhanh (1–2 ngày)"}
+                    </p>
+                    {shippingLoading ? (
+                      <p className="text-sm text-ink-muted">Đang tính phí...</p>
+                    ) : state.shippingFee !== null ? (
+                      <p className="text-sm text-brand font-semibold">
+                        {type === "express"
+                          ? formatPrice((state.shippingFee ?? 0) + 30000)
+                          : formatPrice(state.shippingFee ?? 0)}
+                      </p>
+                    ) : null}
                   </div>
                 </label>
-
-                {state.city.toLowerCase().includes("hcm") || state.city.toLowerCase().includes("hồ chí minh") ? (
-                  <label className={`flex items-start gap-3 border-2 rounded-xl p-4 cursor-pointer transition-colors ${
-                    state.deliveryType === "express" ? "bg-red-50" : "border-gray-100"
-                  }`}
-                  style={state.deliveryType === "express" ? { borderColor: "var(--color-brand)" } : undefined}>
-                    <input type="radio" name="delivery" value="express" checked={state.deliveryType === "express"}
-                      onChange={() => set("deliveryType", "express")} className="mt-1" />
-                    <div>
-                      <p className="font-semibold text-gray-900">🚀 Giao hỏa tốc</p>
-                      <p className="text-sm text-gray-500">
-                        Giao trong ngày {new Date().toLocaleDateString("vi-VN")} — Chỉ nội thành HCM
-                      </p>
-                    </div>
-                  </label>
-                ) : null}
-              </div>
-
-              {state.deliveryType === "standard" && (
-                <div>
-                  <label className="text-sm font-medium text-gray-700 block mb-1">Ngày nhận mong muốn (tùy chọn)</label>
-                  <input type="date" className="input-field max-w-xs"
-                    min={tomorrow}
-                    value={state.requestedDate}
-                    onChange={e => set("requestedDate", e.target.value)} />
-                </div>
-              )}
-
-              {state.shippingFee !== null && (
-                <p className="text-sm text-gray-600 font-medium">
-                  Phí vận chuyển: {shippingLoading ? "Đang tính..." : formatPrice(state.shippingFee)}
-                </p>
-              )}
-
-              {/* Gift message */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 block mb-1">🎁 Lời nhắn trên thiệp</label>
-                <div className="relative">
-                  <textarea className="input-field h-24 resize-none pr-16" maxLength={200} placeholder="Chúc mừng sinh nhật..."
-                    value={state.giftMessage}
-                    onChange={e => set("giftMessage", e.target.value)} />
-                  <span className="absolute bottom-3 right-3 text-xs text-gray-400">{state.giftMessage.length}/200</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 block mb-1">📝 Ghi chú thêm</label>
-                <input className="input-field" maxLength={100} placeholder="Ví dụ: Giao giờ hành chính (tùy chọn)"
-                  value={state.customerNote}
-                  onChange={e => set("customerNote", e.target.value)} />
-              </div>
-
-              <div className="flex justify-between">
-                <button onClick={() => dispatch({ type: "BACK" })} className="text-gray-500 hover:text-gray-700 font-medium">← Quay lại</button>
-                <button onClick={() => dispatch({ type: "NEXT" })} className="btn-primary px-8">Tiếp tục →</button>
+              ))}
+              <Input placeholder="Ngày giao dự kiến (không bắt buộc)" type="date" value={state.requestedDate} onChange={(e) => set({ requestedDate: e.target.value })} />
+              <Textarea placeholder="Lời nhắn trong thiệp quà (không bắt buộc)" rows={3} value={state.giftMessage} onChange={(e) => set({ giftMessage: e.target.value })} />
+              <Textarea placeholder="Ghi chú cho người giao hàng (không bắt buộc)" rows={2} value={state.customerNote} onChange={(e) => set({ customerNote: e.target.value })} />
+              <div className="flex gap-3">
+                <Button variant="secondary" onClick={() => set({ step: 1 })}>Quay lại</Button>
+                <Button onClick={() => set({ step: 3 })} className="flex-1">Tiếp tục</Button>
               </div>
             </div>
           )}
 
-          {/* STEP 3 — Payment */}
+          {/* Step 3: Payment */}
           {state.step === 3 && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-6">
-              <h2 className="font-bold text-gray-900 text-lg">Phương thức thanh toán</h2>
-
-              <div className="space-y-3">
-                {[
-                  { value: "cod", label: "Thanh toán khi nhận hàng (COD)", icon: "💵" },
-                  { value: "vnpay", label: "VNPay (QR / Thẻ / Ví)", icon: "🏦" },
-                  { value: "momo", label: "Ví MoMo", icon: "💜" },
-                ].map(opt => (
-                  <label key={opt.value} className={`flex items-center gap-3 border-2 rounded-xl p-4 cursor-pointer transition-colors ${
-                    state.paymentMethod === opt.value ? "bg-red-50" : "border-gray-100"
-                  }`}
-                  style={state.paymentMethod === opt.value ? { borderColor: "var(--color-brand)" } : undefined}>
-                    <input type="radio" name="payment" value={opt.value}
-                      checked={state.paymentMethod === opt.value}
-                      onChange={() => set("paymentMethod", opt.value)} />
-                    <span className="text-lg">{opt.icon}</span>
-                    <span className="font-medium text-gray-800">{opt.label}</span>
-                  </label>
-                ))}
-              </div>
-
-              <div className="flex justify-between">
-                <button onClick={() => dispatch({ type: "BACK" })} className="text-gray-500 hover:text-gray-700 font-medium">← Quay lại</button>
-                <button onClick={() => dispatch({ type: "NEXT" })} className="btn-primary px-8">Xem lại đơn →</button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4 — Confirm */}
-          {state.step === 4 && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
-              <h2 className="font-bold text-gray-900 text-lg">Xác nhận đơn hàng</h2>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p><span className="font-medium">Giao đến:</span> {state.name} — {state.phone}</p>
-                <p>{state.address}, {state.ward}, {state.district}, {state.city}</p>
-                <p><span className="font-medium">Giao hàng:</span> {state.deliveryType === "express" ? "🚀 Hỏa tốc" : "Tiêu chuẩn"}</p>
-                {state.giftMessage && <p><span className="font-medium">Lời nhắn:</span> {state.giftMessage}</p>}
-                <p><span className="font-medium">Thanh toán:</span> {{cod:"COD",vnpay:"VNPay",momo:"MoMo"}[state.paymentMethod]}</p>
-              </div>
-
-              <div className="flex justify-between pt-2">
-                <button onClick={() => dispatch({ type: "BACK" })} className="text-gray-500 hover:text-gray-700 font-medium">← Quay lại</button>
-                <button onClick={handleSubmit} disabled={submitting}
-                  className="btn-primary px-10 disabled:opacity-50 text-base">
-                  {submitting ? "Đang xử lý..." : "Đặt hàng"}
-                </button>
+            <div className="space-y-4">
+              <h2 className="section-title mb-6">Phương thức thanh toán</h2>
+              {([
+                { value: "cod", label: "Thanh toán khi nhận hàng (COD)" },
+                { value: "vnpay", label: "VNPay — ATM / Internet Banking / QR" },
+                { value: "momo", label: "Ví MoMo" },
+              ] as const).map((m) => (
+                <label key={m.value} className={`flex items-center gap-4 p-4 border rounded-sm cursor-pointer transition-colors ${
+                  state.paymentMethod === m.value ? "border-brand bg-brand-light" : "border-border hover:border-ink-muted"
+                }`}>
+                  <input
+                    type="radio"
+                    name="payment"
+                    value={m.value}
+                    checked={state.paymentMethod === m.value}
+                    onChange={() => set({ paymentMethod: m.value })}
+                    className="accent-brand"
+                  />
+                  <span className="font-medium text-ink">{m.label}</span>
+                </label>
+              ))}
+              <div className="flex gap-3 mt-4">
+                <Button variant="secondary" onClick={() => set({ step: 2 })}>Quay lại</Button>
+                <Button onClick={handleSubmit} loading={loading} className="flex-1">
+                  Đặt hàng
+                </Button>
               </div>
             </div>
           )}
         </div>
 
-        {/* ── Order summary sidebar ── */}
-        <div className="lg:sticky lg:top-24 h-fit">
-          <div className="bg-white rounded-2xl border border-gray-100 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">Tóm tắt đơn hàng</h3>
-            <div className="space-y-3 max-h-64 overflow-y-auto mb-4">
-              {cart?.items.map(item => (
-                <div key={item.product_id} className="flex gap-3 text-sm">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-800 truncate">{item.name}</p>
-                    <p className="text-gray-400">x{item.quantity}</p>
-                  </div>
-                  <p className="font-medium text-gray-900 whitespace-nowrap">{formatPrice(item.line_total)}</p>
-                </div>
-              ))}
+        {/* Order summary */}
+        <div className="border border-border rounded-sm p-5 space-y-3 h-fit">
+          <p className="font-semibold text-ink">Đơn hàng ({cart?.total_items ?? 0} sản phẩm)</p>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-ink-muted">Tạm tính</span>
+              <span>{formatPrice(subtotal)}</span>
             </div>
-            <div className="border-t border-gray-100 pt-3 space-y-1.5 text-sm">
-              <div className="flex justify-between text-gray-600">
-                <span>Tạm tính</span>
-                <span>{formatPrice(subtotal)}</span>
+            {discount > 0 && (
+              <div className="flex justify-between text-brand">
+                <span>Giảm giá</span>
+                <span>−{formatPrice(discount)}</span>
               </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span>Giảm giá</span>
-                  <span>−{formatPrice(discount)}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-gray-600">
-                <span>Phí vận chuyển</span>
-                <span>{state.shippingFee !== null ? formatPrice(shipping) : "Chưa tính"}</span>
-              </div>
-              <div className="flex justify-between font-bold text-gray-900 text-base pt-1 border-t border-gray-100">
-                <span>Tổng cộng</span>
-                <span>{formatPrice(state.shippingFee !== null ? total : subtotal - discount)}</span>
-              </div>
+            )}
+            <div className="flex justify-between">
+              <span className="text-ink-muted">Vận chuyển</span>
+              <span>{shipping > 0 ? formatPrice(shipping) : "—"}</span>
+            </div>
+            <div className="flex justify-between font-bold border-t border-border pt-2 mt-2">
+              <span className="text-ink">Tổng cộng</span>
+              <span className="text-brand">{formatPrice(total)}</span>
             </div>
           </div>
         </div>
