@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
-import ProductCard from "@/components/ProductCard";
 import { ProductListItem } from "@/types";
+import ProductCard from "@/components/shop/ProductCard";
 
 const API = process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost/api";
 
@@ -14,131 +14,198 @@ async function getFeaturedProducts(): Promise<ProductListItem[]> {
 }
 
 const OCCASIONS = [
-  { key: "tet", icon: "🏮", slug: "tet" },
-  { key: "sinhNhat", icon: "🎂", slug: "sinh-nhat" },
-  { key: "cuoiHoi", icon: "💍", slug: "cuoi-hoi" },
-  { key: "khaiTruong", icon: "🎊", slug: "khai-truong" },
-  { key: "triAn", icon: "🙏", slug: "tri-an" },
-  { key: "trungThu", icon: "🌕", slug: "trung-thu" },
+  { label: "Quà Tết", slug: "tet", icon: "🏮" },
+  { label: "Trung Thu", slug: "trung-thu", icon: "🌕" },
+  { label: "Sinh nhật", slug: "sinh-nhat", icon: "🎂" },
+  { label: "Khai trương", slug: "khai-truong", icon: "🎊" },
+  { label: "Tri ân", slug: "tri-an", icon: "🙏" },
+  { label: "Cưới hỏi", slug: "cuoi-hoi", icon: "💍" },
 ] as const;
 
-const STATS =[["500+", "stat1"], ["50.000+", "stat2"], ["24h", "stat3"], ["-30%", "stat4"]] as const;
+const PARTNERS = ["Tập đoàn ABC", "Vingroup", "FPT", "Masan", "Vinamilk", "MB Bank"];
+
+const PORTFOLIO_IMAGES = Array.from({ length: 6 }, (_, i) =>
+  `https://placehold.co/600x600/F9FAFB/6B7280?text=Project+${i + 1}`
+);
 
 export default async function HomePage() {
-  const [products, t] = await Promise.all([
-    getFeaturedProducts(),
-    getTranslations("home"),
-  ]);
-
-  const WHY_US = [
-    { icon: "🎨", title: t("whyCustom"), desc: t("whyCustomDesc") },
-    { icon: "📦", title: t("whyDelivery"), desc: t("whyDeliveryDesc") },
-    { icon: "💼", title: t("whyB2B"), desc: t("whyB2BDesc") },
-    { icon: "✅", title: t("whyQuality"), desc: t("whyQualityDesc") },
-  ];
+  const products = await getFeaturedProducts();
 
   return (
     <div className="bg-white">
-      {/* Hero */}
-      <section className="relative bg-gray-900 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-amber-900" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
-          <div className="max-w-2xl">
-            <span className="inline-block bg-amber-400/20 text-amber-300 text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4">
-              {t("badge")}
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              {t("heroTitle")}<br /><span className="text-amber-400">{t("heroHighlight")}</span>
+
+      {/* ── Hero ── */}
+      <section className="relative h-[75vh] min-h-[500px] bg-ink overflow-hidden">
+        <Image
+          src="https://placehold.co/1920x1080/111111/FFFFFF?text=GiftCraft+Hero"
+          alt="GiftCraft Studio — Quà tặng cao cấp"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-60"
+        />
+        <div className="absolute inset-0 flex items-end">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 w-full">
+            <p className="text-xs font-semibold text-brand uppercase tracking-widest mb-4">
+              Bộ sưu tập Tết 2026
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-2xl leading-tight">
+              Quà tặng tinh tế,<br />giao đúng cảm xúc
             </h1>
-            <p className="text-lg text-gray-300 mb-10 leading-relaxed">{t("heroDesc")}</p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/san-pham" className="inline-flex items-center justify-center bg-amber-400 text-gray-900 font-bold py-4 px-8 rounded-2xl hover:bg-amber-300 transition-colors">
-                {t("exploreBtn")}
+            <p className="text-white/70 text-base mb-8 max-w-md">
+              Thiết kế riêng cho từng dịp — từ quà Tết cá nhân đến quà doanh nghiệp số lượng lớn.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/san-pham" className="btn-primary">
+                Xem bộ sưu tập
               </Link>
-              <Link href="/bat-dau-du-an-moi" className="inline-flex items-center justify-center border-2 border-white/30 text-white font-semibold py-4 px-8 rounded-2xl hover:bg-white/10 transition-colors">
-                {t("b2bQuoteBtn")}
+              <Link href="/bat-dau-du-an-moi" className="btn-secondary border-white/30 text-white hover:bg-white/10">
+                Báo giá doanh nghiệp
               </Link>
             </div>
           </div>
         </div>
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block text-[180px] opacity-10 select-none">🎁</div>
       </section>
 
-      {/* Occasions */}
+      {/* ── Category Split ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">{t("occasionsTitle")}</h2>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-          {OCCASIONS.map(o => (
-            <Link key={o.slug} href={`/san-pham?occasion=${o.slug}`}
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl hover:bg-red-50 transition-colors group">
-              <span className="text-3xl">{o.icon}</span>
-              <span className="text-xs sm:text-sm font-medium text-gray-600 group-hover:text-red-700 text-center">
-                {t(`occasions.${o.key}`)}
-              </span>
-            </Link>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Link href="/san-pham" className="group relative h-64 bg-surface-alt overflow-hidden block">
+            <Image
+              src="https://placehold.co/800x600/F9FAFB/6B7280?text=Qua+ca+nhan"
+              alt="Quà cá nhân"
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-ink/30 group-hover:bg-ink/40 transition-colors" />
+            <div className="absolute inset-0 flex flex-col justify-end p-6">
+              <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-1">
+                Tết · Trung Thu · Sinh nhật
+              </p>
+              <h2 className="font-display text-2xl font-bold text-white">Quà cá nhân</h2>
+            </div>
+          </Link>
+          <Link href="/qua-tang-doanh-nghiep" className="group relative h-64 bg-ink overflow-hidden block">
+            <Image
+              src="https://placehold.co/800x600/111111/FFFFFF?text=Qua+doanh+nghiep"
+              alt="Quà doanh nghiệp"
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover opacity-50 transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 flex flex-col justify-end p-6">
+              <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
+                In logo · Số lượng lớn · Báo giá 24h
+              </p>
+              <h2 className="font-display text-2xl font-bold text-white">Quà doanh nghiệp</h2>
+            </div>
+          </Link>
         </div>
       </section>
 
-      {/* Featured products */}
+      {/* ── Occasions ── */}
+      <section className="border-y border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            {OCCASIONS.map((o) => (
+              <Link
+                key={o.slug}
+                href={`/san-pham?occasion=${o.slug}`}
+                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-border rounded-sm text-sm text-ink-muted hover:border-brand hover:text-brand transition-colors"
+              >
+                <span>{o.icon}</span>
+                <span className="font-medium">{o.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Featured Products ── */}
       {products.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">{t("featuredTitle")}</h2>
-            <Link href="/san-pham" className="text-sm font-semibold hover:underline" style={{ color: "var(--color-brand)" }}>
-              {t("b2bLearnMore") === "Tìm hiểu thêm" ? "Xem tất cả →" : "View All →"}
+            <h2 className="section-title">Sản phẩm nổi bật</h2>
+            <Link href="/san-pham" className="text-sm text-brand hover:underline font-medium">
+              Xem tất cả
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {products.map(p => <ProductCard key={p.slug} product={p} />)}
+            {products.map((p) => (
+              <ProductCard key={p.slug} product={p} />
+            ))}
           </div>
         </section>
       )}
 
-      {/* B2B banner */}
-      <section className="text-white" style={{ backgroundColor: "var(--color-brand-dark)" }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="inline-block bg-amber-400/20 text-amber-300 text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4">
-                {t("b2bBadge")}
-              </span>
-              <h2 className="text-3xl font-bold mb-4 whitespace-pre-line">{t("b2bTitle")}</h2>
-              <p className="text-gray-300 mb-6 leading-relaxed">{t("b2bDesc")}</p>
-              <div className="flex gap-4 flex-wrap">
-                <Link href="/qua-tang-doanh-nghiep" className="font-bold py-3 px-6 rounded-xl transition-colors text-sm" style={{ backgroundColor: "var(--color-gold-mid)", color: "#fff" }}>
-                  {t("b2bLearnMore")}
-                </Link>
-                <Link href="/bat-dau-du-an-moi" className="border border-white/30 text-white font-semibold py-3 px-6 rounded-xl hover:bg-white/10 transition-colors text-sm">
-                  {t("b2bStartProject")}
-                </Link>
-              </div>
+      {/* ── Portfolio Gallery ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="section-title">Dự án thực tế</h2>
+          <Link href="/forfolio" className="text-sm text-brand hover:underline font-medium">
+            Xem portfolio
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {PORTFOLIO_IMAGES.map((src, i) => (
+            <div key={i} className="relative aspect-square bg-surface-alt overflow-hidden group">
+              <Image
+                src={src}
+                alt={`Portfolio ${i + 1}`}
+                fill
+                sizes="(max-width: 640px) 50vw, 33vw"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {STATS.map(([n, key]) => (
-                <div key={n} className="bg-white/5 rounded-2xl p-4">
-                  <p className="text-2xl font-bold text-amber-400">{n}</p>
-                  <p className="text-gray-400 text-sm mt-1">{t(key)}</p>
-                </div>
-              ))}
+          ))}
+        </div>
+      </section>
+
+      {/* ── Partner Logos ── */}
+      <section className="border-y border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <p className="text-xs font-semibold text-ink-muted uppercase tracking-widest text-center mb-8">
+            Đối tác doanh nghiệp
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            {PARTNERS.map((name) => (
+              <div
+                key={name}
+                className="text-sm font-semibold text-ink-muted opacity-40 hover:opacity-70 transition-opacity"
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── B2B CTA Banner ── */}
+      <section className="bg-dark text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="max-w-xl">
+            <p className="text-xs font-semibold text-brand uppercase tracking-widest mb-4">
+              Dành cho doanh nghiệp
+            </p>
+            <h2 className="font-display text-3xl font-bold text-white mb-4">
+              Quà tặng in logo,<br />số lượng lớn, giao đúng hạn
+            </h2>
+            <p className="text-white/60 mb-8">
+              Phục vụ 500+ doanh nghiệp. Báo giá trong 24 giờ. Đóng gói và giao hàng toàn quốc.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/bat-dau-du-an-moi" className="btn-primary">
+                Bắt đầu dự án
+              </Link>
+              <Link href="/qua-tang-doanh-nghiep" className="btn-ghost text-white hover:text-brand">
+                Tìm hiểu thêm
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why us */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-10 text-center">{t("whyTitle")}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {WHY_US.map(item => (
-            <div key={item.title} className="text-center p-6 rounded-2xl bg-gray-50">
-              <div className="text-4xl mb-4">{item.icon}</div>
-              <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
