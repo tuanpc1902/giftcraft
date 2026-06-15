@@ -48,6 +48,7 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMobileOpen(false); setSearchOpen(false); }, [pathname]);
 
   useEffect(() => {

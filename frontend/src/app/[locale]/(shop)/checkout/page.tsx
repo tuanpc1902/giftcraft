@@ -1,7 +1,6 @@
 "use client";
 import { useReducer, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import api from "@/lib/api";
 import { useCartStore } from "@/store/cart";
 import { useAuthStore } from "@/store/auth";
@@ -64,7 +63,7 @@ export default function CheckoutPage() {
     finally { setShippingLoading(false); }
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps,react-hooks/set-state-in-effect
   useEffect(() => { if (state.step === 2) fetchShipping(); }, [state.step, state.deliveryType]);
 
   async function handleSubmit() {

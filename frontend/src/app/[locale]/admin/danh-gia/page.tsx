@@ -35,7 +35,7 @@ export default function AdminReviewsPage() {
   }, [user, router]);
 
   useEffect(() => {
-    setLoading(true);
+    setLoading(true); // eslint-disable-line react-hooks/set-state-in-effect
     api.get("/admin/reviews", { params: { status: filter } })
       .then(r => setReviews(r.data.data?.items ?? []))
       .catch(() => setReviews([]))

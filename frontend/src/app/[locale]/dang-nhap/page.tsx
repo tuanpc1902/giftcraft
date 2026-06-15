@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "@/i18n/navigation";
 import { useAuthStore } from "@/store/auth";
 import { useToastStore } from "@/store/toast";
+import api from "@/lib/api";
 import Button from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
@@ -24,7 +25,9 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await login(email, password);
+      const res = await api.post("/auth/login", { email, password });
+      login(res.data.data.token, res.data.data.user);
+      router.push("/tai-khoan");
     } catch {
       addToast("Email hoặc mật khẩu không đúng.", "error");
     } finally {

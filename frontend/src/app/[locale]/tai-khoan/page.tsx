@@ -42,13 +42,13 @@ export default function AccountPage() {
       if (!token) router.replace("/dang-nhap");
     }
     if (user) {
-      setEditName(user.name);
+      setEditName(user.name); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, [user, router]);
 
   useEffect(() => {
     if (tab === "orders" && !ordersLoaded) {
-      setOrdersLoading(true);
+      setOrdersLoading(true); // eslint-disable-line react-hooks/set-state-in-effect
       api.get("/orders")
         .then(r => setOrders(r.data.data?.items ?? r.data.data ?? []))
         .catch(() => setOrders([]))

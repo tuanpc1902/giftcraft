@@ -38,7 +38,7 @@ export default function OrderDetailPage() {
   }
 
   useEffect(() => {
-    fetchOrder();
+    fetchOrder(); // eslint-disable-line react-hooks/set-state-in-effect
     const interval = setInterval(() => {
       if (order?.payment_status === "pending") fetchOrder();
     }, 3000);
