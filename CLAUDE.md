@@ -195,17 +195,17 @@ Required for email:
 
 ---
 
-## Phase status (as of 2026-06-10)
+## Phase status (as of 2026-06-15)
 
 | Phase | Status | Notes |
 |---|---|---|
 | 0 — Setup | ✅ | Docker, 19 migrations, seeders |
 | 1 — MVP API + UI | ✅ | Auth, Products, Cart, Checkout, VNPay/MoMo, Admin base |
 | 2 — B2B + Portfolio | ✅ | All frontend pages + B2B/Portfolio backend CRUD |
-| 3 — Loyalty + Reviews + Blog CMS | ⏳ | Schema exists (`loyalty_points`, `reviews` table) |
-| 4 — AI Chatbot + PWA + Scale | ⏳ | — |
+| 3 — Loyalty + Reviews + Blog CMS | ✅ | All APIs + frontend + admin pages implemented |
+| 4 — AI Chatbot + PWA + Scale | ✅ | Claude streaming chatbot, PWA, Meilisearch search |
 
-**Remaining backend**: `GET /api/search?q=` (Meilisearch full-text, Phase 2), supplier/job application endpoints (Phase 2), loyalty/reviews/blog CMS (Phase 3).
+**Frontend rewrite**: Branch `rewrite/frontend` — full design system overhaul (Tailwind v4 design tokens, dark sidebar admin, Vietnamese-first copy). ~62 backend tests covering all feature areas.
 
 ---
 
