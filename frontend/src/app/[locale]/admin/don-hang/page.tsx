@@ -1,5 +1,6 @@
 "use client";
 
+import AdminLayout from "@/components/layout/AdminLayout";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import api from "@/lib/api";
@@ -11,12 +12,12 @@ const STATUS_LABELS: Record<string, string> = {
   shipped: "Đang giao", delivered: "Đã giao", cancelled: "Đã hủy",
 };
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-amber-100 text-amber-700",
+  pending: "bg-brand-light text-amber-700",
   confirmed: "bg-blue-100 text-blue-700",
   processing: "bg-purple-100 text-purple-700",
   shipped: "bg-cyan-100 text-cyan-700",
   delivered: "bg-green-100 text-green-700",
-  cancelled: "bg-gray-100 text-gray-500",
+  cancelled: "bg-surface-alt text-ink-muted",
 };
 
 function AdminOrdersInner() {
@@ -44,21 +45,21 @@ function AdminOrdersInner() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Quản lý đơn hàng</h1>
+        <h1 className="text-2xl font-bold text-ink">Quản lý đơn hàng</h1>
         <div className="flex gap-2">
-          <a href="?delivery=express" className="text-xs border border-red-300 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50">🚀 Hỏa tốc</a>
-          <a href="/admin/don-hang" className="text-xs border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50">Tất cả</a>
+          <a href="?delivery=express" className="text-xs border border-red-300 text-brand px-3 py-1.5 rounded-sm hover:bg-brand-light">🚀 Hỏa tốc</a>
+          <a href="/admin/don-hang" className="text-xs border border-border text-ink-muted px-3 py-1.5 rounded-sm hover:bg-surface-alt">Tất cả</a>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-gray-400">Đang tải...</div>
+        <div className="text-center py-12 text-ink-muted">Đang tải...</div>
       ) : orders.length === 0 ? (
-        <div className="text-center py-12 text-gray-400">Chưa có đơn hàng nào.</div>
+        <div className="text-center py-12 text-ink-muted">Chưa có đơn hàng nào.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-sm border border-border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+            <thead className="bg-surface-alt text-ink-muted text-xs uppercase">
               <tr>
                 <th className="text-left px-4 py-3">Đơn hàng</th>
                 <th className="text-left px-4 py-3">Khách hàng</th>
@@ -68,27 +69,27 @@ function AdminOrdersInner() {
                 <th className="text-left px-4 py-3">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-border">
               {orders.map(order => (
-                <tr key={order.order_number} className="hover:bg-gray-50 cursor-pointer"
+                <tr key={order.order_number} className="hover:bg-surface-alt cursor-pointer"
                   onClick={() => setSelectedOrder(order)}>
-                  <td className="px-4 py-3 font-mono text-xs text-gray-700">{order.order_number}</td>
-                  <td className="px-4 py-3 text-gray-700">{order.shipping_address?.name ?? "Khách"}</td>
-                  <td className="px-4 py-3 font-semibold text-gray-900">{formatPrice(order.total)}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-ink">{order.order_number}</td>
+                  <td className="px-4 py-3 text-ink">{order.shipping_address?.name ?? "Khách"}</td>
+                  <td className="px-4 py-3 font-semibold text-ink">{formatPrice(order.total)}</td>
                   <td className="px-4 py-3">
                     {order.delivery_type === "express" ? (
-                      <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">🚀 HỎA TỐC</span>
+                      <span className="bg-red-100 text-brand text-xs font-bold px-2 py-1 rounded-full">🚀 HỎA TỐC</span>
                     ) : (
-                      <span className="text-gray-400 text-xs">Tiêu chuẩn</span>
+                      <span className="text-ink-muted text-xs">Tiêu chuẩn</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_COLORS[order.status] ?? "bg-gray-100"}`}>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_COLORS[order.status] ?? "bg-surface-alt"}`}>
                       {STATUS_LABELS[order.status] ?? order.status}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <select className="text-xs border border-gray-200 rounded-lg px-2 py-1"
+                    <select className="text-xs border border-border rounded-sm px-2 py-1"
                       value={order.status}
                       onClick={e => e.stopPropagation()}
                       onChange={e => updateStatus(order.order_number, e.target.value)}>
@@ -108,10 +109,10 @@ function AdminOrdersInner() {
           <div className="bg-white w-full max-w-md h-full overflow-y-auto p-6 shadow-2xl"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-gray-900">Chi tiết đơn</h2>
-              <button onClick={() => setSelectedOrder(null)} className="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+              <h2 className="font-bold text-ink">Chi tiết đơn</h2>
+              <button onClick={() => setSelectedOrder(null)} className="text-ink-muted hover:text-ink-muted text-2xl">&times;</button>
             </div>
-            <div className="space-y-3 text-sm text-gray-600">
+            <div className="space-y-3 text-sm text-ink-muted">
               <div><span className="font-medium">Mã đơn:</span> <span className="font-mono">{selectedOrder.order_number}</span></div>
               <div><span className="font-medium">Loại giao:</span> {selectedOrder.delivery_type === "express" ? "🚀 Hỏa tốc" : "Tiêu chuẩn"}</div>
               {selectedOrder.requested_delivery_date && (
@@ -123,12 +124,12 @@ function AdminOrdersInner() {
               {selectedOrder.customer_note && (
                 <div><span className="font-medium">Ghi chú:</span> {selectedOrder.customer_note}</div>
               )}
-              <div className="border-t border-gray-100 pt-3">
+              <div className="border-t border-border pt-3">
                 <span className="font-medium">Địa chỉ:</span>
                 <p className="mt-1">{selectedOrder.shipping_address?.name} — {selectedOrder.shipping_address?.phone}</p>
                 <p>{selectedOrder.shipping_address?.address}, {selectedOrder.shipping_address?.district}, {selectedOrder.shipping_address?.city}</p>
               </div>
-              <div className="border-t border-gray-100 pt-3">
+              <div className="border-t border-border pt-3">
                 <p className="font-medium mb-2">Sản phẩm:</p>
                 {selectedOrder.items?.map((item, i) => (
                   <div key={i} className="flex justify-between">
@@ -137,12 +138,12 @@ function AdminOrdersInner() {
                   </div>
                 ))}
               </div>
-              <div className="border-t border-gray-100 pt-2 font-bold text-gray-900 flex justify-between">
+              <div className="border-t border-border pt-2 font-bold text-ink flex justify-between">
                 <span>Tổng cộng</span>
                 <span>{formatPrice(selectedOrder.total)}</span>
               </div>
               <button onClick={() => window.print()}
-                className="w-full border border-gray-200 text-gray-700 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 mt-2">
+                className="w-full border border-border text-ink py-2 rounded-sm text-sm font-medium hover:bg-surface-alt mt-2">
                 🖨️ In phiếu giao
               </button>
             </div>
@@ -155,8 +156,10 @@ function AdminOrdersInner() {
 
 export default function AdminOrdersPage() {
   return (
-    <Suspense fallback={<div className="p-12 text-center text-gray-400">Đang tải...</div>}>
-      <AdminOrdersInner />
-    </Suspense>
+    <AdminLayout>
+      <Suspense fallback={<div className="p-12 text-center text-ink-muted">Đang tải...</div>}>
+        <AdminOrdersInner />
+      </Suspense>
+    </AdminLayout>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import AdminLayout from "@/components/layout/AdminLayout";
 import { useEffect, useReducer, useState } from "react";
 import Image from "next/image";
 import api from "@/lib/api";
@@ -120,21 +121,22 @@ export default function AdminForfolioPage() {
   }
 
   return (
+    <AdminLayout>
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Forfolio</h1>
-          <p className="text-gray-500 text-sm mt-0.5">{projects.length} dự án · {projects.filter(p => p.is_featured).length} nổi bật</p>
+          <h1 className="text-2xl font-bold text-ink">Forfolio</h1>
+          <p className="text-ink-muted text-sm mt-0.5">{projects.length} dự án · {projects.filter(p => p.is_featured).length} nổi bật</p>
         </div>
         <button onClick={openAdd} className="btn-primary text-sm px-5">+ Thêm dự án</button>
       </div>
 
       {loading ? (
-        <div className="text-center py-16 text-gray-400">Đang tải...</div>
+        <div className="text-center py-16 text-ink-muted">Đang tải...</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-sm border border-border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+            <thead className="bg-surface-alt text-ink-muted text-xs uppercase">
               <tr>
                 <th className="text-left px-4 py-3">Dự án</th>
                 <th className="text-left px-4 py-3">Khách hàng</th>
@@ -145,21 +147,21 @@ export default function AdminForfolioPage() {
                 <th className="text-left px-4 py-3">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-border">
               {projects.map(p => (
-                <tr key={p.id} className="hover:bg-gray-50">
+                <tr key={p.id} className="hover:bg-surface-alt">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                      <div className="relative w-10 h-10 rounded-sm overflow-hidden bg-surface-alt flex-shrink-0">
                         <Image src={p.cover_image} alt={p.title} fill className="object-cover" sizes="40px" />
                       </div>
-                      <p className="font-medium text-gray-900 truncate max-w-[160px]">{p.title}</p>
+                      <p className="font-medium text-ink truncate max-w-[160px]">{p.title}</p>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{p.client_name ?? "—"}</td>
-                  <td className="px-4 py-3 text-gray-600">{p.occasion}</td>
-                  <td className="px-4 py-3 text-gray-600">{p.industry ?? "—"}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-ink-muted">{p.client_name ?? "—"}</td>
+                  <td className="px-4 py-3 text-ink-muted">{p.occasion}</td>
+                  <td className="px-4 py-3 text-ink-muted">{p.industry ?? "—"}</td>
+                  <td className="px-4 py-3 text-ink-muted">
                     {p.quantity ? p.quantity.toLocaleString() : "—"}
                   </td>
                   <td className="px-4 py-3">
@@ -175,14 +177,14 @@ export default function AdminForfolioPage() {
                     <div className="flex gap-3">
                       <button
                         onClick={() => openEdit(p)}
-                        className="text-xs text-gray-500 hover:text-gray-700 font-medium"
+                        className="text-xs text-ink-muted hover:text-ink font-medium"
                       >
                         Sửa
                       </button>
                       <button
                         onClick={() => handleDelete(p.id)}
                         disabled={deleting === p.id}
-                        className="text-xs text-red-500 hover:text-red-700 font-medium disabled:opacity-40"
+                        className="text-xs text-brand hover:text-red-700 font-medium disabled:opacity-40"
                       >
                         {deleting === p.id ? "..." : "Xóa"}
                       </button>
@@ -198,55 +200,55 @@ export default function AdminForfolioPage() {
       {/* Add / Edit Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setModal(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+          <div className="bg-white rounded-sm shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-              <h2 className="font-bold text-gray-900">{modal.mode === "add" ? "Thêm dự án mới" : "Chỉnh sửa dự án"}</h2>
-              <button onClick={() => setModal(null)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+            <div className="sticky top-0 bg-white border-b border-border px-6 py-4 flex items-center justify-between">
+              <h2 className="font-bold text-ink">{modal.mode === "add" ? "Thêm dự án mới" : "Chỉnh sửa dự án"}</h2>
+              <button onClick={() => setModal(null)} className="text-ink-muted hover:text-ink-muted text-2xl leading-none">×</button>
             </div>
 
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Tên dự án *</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Tên dự án *</label>
                   <input className="input-field" value={form.title} onChange={e => set({ title: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Khách hàng</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Khách hàng</label>
                   <input className="input-field" placeholder="Vingroup, FPT..." value={form.client_name} onChange={e => set({ client_name: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Số lượng (bộ)</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Số lượng (bộ)</label>
                   <input type="number" className="input-field" placeholder="500" value={form.quantity} onChange={e => set({ quantity: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Dịp *</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Dịp *</label>
                   <select className="input-field" value={form.occasion} onChange={e => set({ occasion: e.target.value })}>
                     {OCCASIONS.map(o => <option key={o}>{o}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Ngành</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Ngành</label>
                   <select className="input-field" value={form.industry} onChange={e => set({ industry: e.target.value })}>
                     {INDUSTRIES.map(i => <option key={i}>{i}</option>)}
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Ảnh bìa (URL) *</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Ảnh bìa (URL) *</label>
                   <input className="input-field" placeholder="https://..." value={form.cover_image} onChange={e => set({ cover_image: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Ảnh gallery (mỗi URL 1 dòng)</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Ảnh gallery (mỗi URL 1 dòng)</label>
                   <textarea className="input-field h-24 resize-none text-xs font-mono" placeholder={"https://...\\nhttps://..."} value={form.gallery_images} onChange={e => set({ gallery_images: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Mô tả</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Mô tả</label>
                   <textarea className="input-field h-24 resize-none" placeholder="Mô tả ngắn về dự án..." value={form.description} onChange={e => set({ description: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input type="checkbox" checked={form.is_featured} onChange={e => set({ is_featured: e.target.checked })} className="w-4 h-4 rounded" />
-                    <span className="text-sm font-medium text-gray-700">⭐ Đánh dấu nổi bật</span>
+                    <span className="text-sm font-medium text-ink">⭐ Đánh dấu nổi bật</span>
                   </label>
                 </div>
               </div>
@@ -266,5 +268,6 @@ export default function AdminForfolioPage() {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }

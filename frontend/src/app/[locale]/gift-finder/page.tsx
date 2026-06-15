@@ -110,15 +110,15 @@ export default function GiftFinderPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <div className="text-center mb-10">
         <span className="text-4xl block mb-3">🎯</span>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gift Finder</h1>
-        <p className="text-gray-500">Trả lời 4 câu hỏi — nhận gợi ý quà phù hợp ngay.</p>
+        <h1 className="text-3xl font-bold text-ink mb-2">Gift Finder</h1>
+        <p className="text-ink-muted">Trả lời 4 câu hỏi — nhận gợi ý quà phù hợp ngay.</p>
       </div>
 
       {/* Progress */}
       {!results && !loading && (
         <div className="flex gap-1.5 mb-10">
           {STEPS.map((_, i) => (
-            <div key={i} className={`flex-1 h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-amber-400" : "bg-gray-100"}`} />
+            <div key={i} className={`flex-1 h-1.5 rounded-sm transition-colors ${i <= stepIndex ? "bg-brand" : "bg-surface-alt"}`} />
           ))}
         </div>
       )}
@@ -126,24 +126,24 @@ export default function GiftFinderPage() {
       {loading && (
         <div className="text-center py-20">
           <div className="text-5xl mb-4 animate-bounce">🔍</div>
-          <p className="text-gray-500">Đang tìm quà phù hợp...</p>
+          <p className="text-ink-muted">Đang tìm quà phù hợp...</p>
         </div>
       )}
 
       {!results && !loading && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">{currentStep.question}</h2>
+        <div className="bg-white rounded-sm border border-border p-8">
+          <h2 className="text-xl font-bold text-ink mb-6 text-center">{currentStep.question}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {currentStep.options.map(opt => (
               <button key={opt.value} onClick={() => handleSelect(opt.value)}
-                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all hover:border-amber-400 hover:bg-amber-50 ${answers[stepKey] === opt.value ? "border-amber-400 bg-amber-50" : "border-gray-100"}`}>
+                className={`flex flex-col items-center gap-2 p-4 rounded-sm border-2 transition-all hover:border-amber-400 hover:bg-brand-light ${answers[stepKey] === opt.value ? "border-amber-400 bg-brand-light" : "border-border"}`}>
                 <span className="text-3xl">{opt.icon}</span>
-                <span className="text-sm font-medium text-gray-700 text-center">{opt.label}</span>
+                <span className="text-sm font-medium text-ink text-center">{opt.label}</span>
               </button>
             ))}
           </div>
           {stepIndex > 0 && (
-            <button onClick={() => setStepIndex(i => i - 1)} className="mt-6 text-sm text-gray-400 hover:text-gray-600 w-full text-center">
+            <button onClick={() => setStepIndex(i => i - 1)} className="mt-6 text-sm text-ink-muted hover:text-ink-muted w-full text-center">
               ← Câu trước
             </button>
           )}
@@ -153,36 +153,36 @@ export default function GiftFinderPage() {
       {results && !loading && (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-ink">
               {results.length > 0 ? `${results.length} gợi ý phù hợp cho bạn` : "Không tìm thấy sản phẩm phù hợp"}
             </h2>
-            <button onClick={reset} className="text-sm text-amber-600 hover:text-amber-700 font-medium">
+            <button onClick={reset} className="text-sm text-brand hover:text-brand font-medium">
               Tìm lại →
             </button>
           </div>
 
           {results.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-400 mb-4">Thử điều chỉnh ngân sách hoặc tìm lại.</p>
+              <p className="text-ink-muted mb-4">Thử điều chỉnh ngân sách hoặc tìm lại.</p>
               <Link href="/san-pham" className="btn-primary px-6">Xem tất cả sản phẩm</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {results.map(p => (
                 <Link key={p.slug} href={`/san-pham/${p.slug}`} className="group">
-                  <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-                    <div className="relative aspect-square bg-gray-50">
+                  <div className="bg-white border border-border rounded-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="relative aspect-square bg-surface-alt">
                       {p.cover_image ? (
                         <Image src={p.cover_image} alt={p.name} fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="33vw" />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-4xl text-gray-200">🎁</div>
+                        <div className="absolute inset-0 flex items-center justify-center text-4xl text-ink-muted">🎁</div>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 text-sm group-hover:text-amber-600 transition-colors">{p.name}</h3>
-                      <p className="text-amber-600 text-xs mt-1">✓ {(p as SuggestedProduct).match_reason}</p>
-                      <p className="font-bold text-gray-900 mt-2">{formatPrice(p.retail_price)}</p>
+                      <h3 className="font-semibold text-ink text-sm group-hover:text-brand transition-colors">{p.name}</h3>
+                      <p className="text-brand text-xs mt-1">✓ {(p as SuggestedProduct).match_reason}</p>
+                      <p className="font-bold text-ink mt-2">{formatPrice(p.retail_price)}</p>
                     </div>
                   </div>
                 </Link>
@@ -192,10 +192,10 @@ export default function GiftFinderPage() {
 
           {/* B2B upsell if recipient is corporate */}
           {answers.recipient === "doanh-nghiep" && (
-            <div className="mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
-              <p className="text-amber-800 font-semibold mb-1">Mua số lượng lớn? Tiết kiệm đến 30%!</p>
-              <p className="text-amber-700 text-sm mb-4">Đặt từ 20 sản phẩm để được giá B2B ưu đãi.</p>
-              <Link href="/bat-dau-du-an-moi" className="btn-primary bg-amber-400 text-gray-900 hover:bg-amber-300 px-8">
+            <div className="mt-8 bg-brand-light border border-border rounded-sm p-6 text-center">
+              <p className="text-brand font-semibold mb-1">Mua số lượng lớn? Tiết kiệm đến 30%!</p>
+              <p className="text-brand text-sm mb-4">Đặt từ 20 sản phẩm để được giá B2B ưu đãi.</p>
+              <Link href="/bat-dau-du-an-moi" className="btn-primary bg-brand text-white hover:bg-brand-light px-8">
                 Xem giá B2B →
               </Link>
             </div>

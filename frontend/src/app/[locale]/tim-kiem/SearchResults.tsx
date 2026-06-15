@@ -83,20 +83,20 @@ export default function SearchResults() {
       </form>
 
       {!initialQ && (
-        <div className="text-center py-24 text-gray-400">
+        <div className="text-center py-24 text-ink-muted">
           <p className="text-lg mb-2">{t("empty")}</p>
           <p className="text-sm">{t("emptyHint")}</p>
         </div>
       )}
 
       {initialQ && results === null && (
-        <div className="text-center py-24 text-gray-400">{t("loading")}</div>
+        <div className="text-center py-24 text-ink-muted">{t("loading")}</div>
       )}
 
       {initialQ && results !== null && results.length === 0 && (
         <div className="text-center py-24">
-          <p className="text-gray-500 text-lg mb-2">{t("noResults", { q: initialQ })}</p>
-          <p className="text-sm text-gray-400">{t("noResultsHint")}</p>
+          <p className="text-ink-muted text-lg mb-2">{t("noResults", { q: initialQ })}</p>
+          <p className="text-sm text-ink-muted">{t("noResultsHint")}</p>
           <Link href="/san-pham" className="inline-block mt-6 btn-primary px-6 py-2.5 text-sm">{t("browseAll")}</Link>
         </div>
       )}
@@ -104,7 +104,7 @@ export default function SearchResults() {
       {results !== null && results.length > 0 && (
         <>
           {meta && (
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-ink-muted mb-6">
               {t("found", { total: meta.total, q: initialQ })}
             </p>
           )}

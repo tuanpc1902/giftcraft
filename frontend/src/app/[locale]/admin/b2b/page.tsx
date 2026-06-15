@@ -1,5 +1,6 @@
 "use client";
 
+import AdminLayout from "@/components/layout/AdminLayout";
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { B2bQuote } from "@/types";
@@ -7,12 +8,12 @@ import { formatPrice } from "@/lib/formatPrice";
 
 const STATUS_MAP: Record<B2bQuote["status"], { label: string; color: string }> = {
   new:           { label: "Mới",            color: "bg-blue-100 text-blue-700" },
-  reviewing:     { label: "Đang xem xét",   color: "bg-amber-100 text-amber-700" },
+  reviewing:     { label: "Đang xem xét",   color: "bg-brand-light text-amber-700" },
   quoted:        { label: "Đã báo giá",     color: "bg-purple-100 text-purple-700" },
   approved:      { label: "Đã duyệt",       color: "bg-teal-100 text-teal-700" },
   in_production: { label: "Đang sản xuất",  color: "bg-indigo-100 text-indigo-700" },
   delivered:     { label: "Đã giao",        color: "bg-green-100 text-green-700" },
-  cancelled:     { label: "Đã hủy",         color: "bg-gray-100 text-gray-500" },
+  cancelled:     { label: "Đã hủy",         color: "bg-surface-alt text-ink-muted" },
 };
 
 const ALL_STATUSES = Object.entries(STATUS_MAP) as [B2bQuote["status"], { label: string; color: string }][];
@@ -56,11 +57,12 @@ export default function AdminB2bPage() {
   const countByStatus = (s: B2bQuote["status"]) => quotes.filter(q => q.status === s).length;
 
   return (
+    <AdminLayout>
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">B2B Quotes</h1>
-          <p className="text-gray-500 text-sm mt-0.5">{quotes.length} yêu cầu tổng cộng</p>
+          <h1 className="text-2xl font-bold text-ink">B2B Quotes</h1>
+          <p className="text-ink-muted text-sm mt-0.5">{quotes.length} yêu cầu tổng cộng</p>
         </div>
         <div className="flex gap-2 items-center">
           {countByStatus("new") > 0 && (
@@ -75,7 +77,7 @@ export default function AdminB2bPage() {
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setFilter("all")}
-          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === "all" ? "bg-gray-900 text-white border-gray-900" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === "all" ? "bg-gray-900 text-white border-gray-900" : "border-border text-ink-muted hover:bg-surface-alt"}`}
         >
           Tất cả ({quotes.length})
         </button>
@@ -86,7 +88,7 @@ export default function AdminB2bPage() {
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === s ? "bg-gray-900 text-white border-gray-900" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+              className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === s ? "bg-gray-900 text-white border-gray-900" : "border-border text-ink-muted hover:bg-surface-alt"}`}
             >
               {label} ({count})
             </button>
@@ -95,13 +97,13 @@ export default function AdminB2bPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-16 text-gray-400">Đang tải...</div>
+        <div className="text-center py-16 text-ink-muted">Đang tải...</div>
       ) : displayed.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">Không có yêu cầu nào.</div>
+        <div className="text-center py-16 text-ink-muted">Không có yêu cầu nào.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-sm border border-border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+            <thead className="bg-surface-alt text-ink-muted text-xs uppercase">
               <tr>
                 <th className="text-left px-4 py-3">Công ty</th>
                 <th className="text-left px-4 py-3">Liên hệ</th>
@@ -112,39 +114,39 @@ export default function AdminB2bPage() {
                 <th className="text-left px-4 py-3">Ngày gửi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-border">
               {displayed.map(q => (
                 <tr
                   key={q.id}
                   onClick={() => openDrawer(q)}
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-surface-alt cursor-pointer"
                 >
                   <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900">{q.company_name}</p>
-                    <p className="text-xs text-gray-400">#{q.id}</p>
+                    <p className="font-medium text-ink">{q.company_name}</p>
+                    <p className="text-xs text-ink-muted">#{q.id}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="text-gray-700">{q.contact_name}</p>
-                    <p className="text-xs text-gray-400">{q.phone}</p>
+                    <p className="text-ink">{q.contact_name}</p>
+                    <p className="text-xs text-ink-muted">{q.phone}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="text-gray-700">{q.occasion ?? "—"}</p>
-                    <p className="text-xs text-gray-400">{q.quantity_requested.toLocaleString()} sản phẩm</p>
+                    <p className="text-ink">{q.occasion ?? "—"}</p>
+                    <p className="text-xs text-ink-muted">{q.quantity_requested.toLocaleString()} sản phẩm</p>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-ink-muted">
                     {q.budget_min ? (
                       <span>{q.budget_min.toLocaleString()} – {q.budget_max?.toLocaleString() ?? "?"}đ</span>
                     ) : "—"}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-ink-muted">
                     {q.deadline ? new Date(q.deadline).toLocaleDateString("vi-VN") : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_MAP[q.status]?.color ?? "bg-gray-100"}`}>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_MAP[q.status]?.color ?? "bg-surface-alt"}`}>
                       {STATUS_MAP[q.status]?.label ?? q.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-400">
+                  <td className="px-4 py-3 text-xs text-ink-muted">
                     {new Date(q.created_at).toLocaleDateString("vi-VN")}
                   </td>
                 </tr>
@@ -161,18 +163,18 @@ export default function AdminB2bPage() {
             className="bg-white w-full max-w-lg h-full overflow-y-auto shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+            <div className="sticky top-0 bg-white border-b border-border px-6 py-4 flex items-center justify-between">
               <div>
-                <h2 className="font-bold text-gray-900">Quote #{selected.id}</h2>
-                <p className="text-xs text-gray-500">{selected.company_name}</p>
+                <h2 className="font-bold text-ink">Quote #{selected.id}</h2>
+                <p className="text-xs text-ink-muted">{selected.company_name}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+              <button onClick={() => setSelected(null)} className="text-ink-muted hover:text-ink-muted text-2xl leading-none">×</button>
             </div>
 
             <div className="p-6 space-y-6">
               {/* Status update */}
               <div>
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-2">Cập nhật trạng thái</label>
+                <label className="text-xs font-semibold text-ink-muted uppercase tracking-wide block mb-2">Cập nhật trạng thái</label>
                 <select
                   className="input-field text-sm"
                   value={selected.status}
@@ -187,7 +189,7 @@ export default function AdminB2bPage() {
 
               {/* Quote price */}
               <div>
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-2">Giá báo (đ/bộ)</label>
+                <label className="text-xs font-semibold text-ink-muted uppercase tracking-wide block mb-2">Giá báo (đ/bộ)</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -205,13 +207,13 @@ export default function AdminB2bPage() {
                   </button>
                 </div>
                 {selected.quoted_price && (
-                  <p className="text-xs text-gray-500 mt-1">Hiện tại: {formatPrice(selected.quoted_price)}/bộ</p>
+                  <p className="text-xs text-ink-muted mt-1">Hiện tại: {formatPrice(selected.quoted_price)}/bộ</p>
                 )}
               </div>
 
               {/* Admin note */}
               <div>
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-2">Ghi chú nội bộ / gửi khách</label>
+                <label className="text-xs font-semibold text-ink-muted uppercase tracking-wide block mb-2">Ghi chú nội bộ / gửi khách</label>
                 <textarea
                   className="input-field h-24 resize-none text-sm"
                   placeholder="Ghi chú để khách xem hoặc ghi chú nội bộ..."
@@ -228,31 +230,31 @@ export default function AdminB2bPage() {
               </div>
 
               {/* Contact info */}
-              <div className="bg-gray-50 rounded-2xl p-4 space-y-2 text-sm">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Thông tin liên hệ</p>
+              <div className="bg-surface-alt rounded-sm p-4 space-y-2 text-sm">
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Thông tin liên hệ</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <div><span className="text-gray-500 text-xs">Công ty</span><p className="font-medium text-gray-900">{selected.company_name}</p></div>
-                  <div><span className="text-gray-500 text-xs">Người liên hệ</span><p className="font-medium text-gray-900">{selected.contact_name}</p></div>
-                  <div><span className="text-gray-500 text-xs">SĐT</span><p className="font-medium text-gray-900">{selected.phone}</p></div>
-                  <div><span className="text-gray-500 text-xs">Email</span><p className="font-medium text-gray-900 break-all">{selected.email}</p></div>
+                  <div><span className="text-ink-muted text-xs">Công ty</span><p className="font-medium text-ink">{selected.company_name}</p></div>
+                  <div><span className="text-ink-muted text-xs">Người liên hệ</span><p className="font-medium text-ink">{selected.contact_name}</p></div>
+                  <div><span className="text-ink-muted text-xs">SĐT</span><p className="font-medium text-ink">{selected.phone}</p></div>
+                  <div><span className="text-ink-muted text-xs">Email</span><p className="font-medium text-ink break-all">{selected.email}</p></div>
                 </div>
               </div>
 
               {/* Project details */}
               <div className="space-y-2 text-sm">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Chi tiết dự án</p>
-                {selected.occasion && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-gray-500">Dịp / Loại</span><span className="font-medium">{selected.occasion}</span></div>}
-                <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-gray-500">Số lượng</span><span className="font-medium">{selected.quantity_requested.toLocaleString()} sản phẩm</span></div>
-                {selected.budget_min != null && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-gray-500">Ngân sách</span><span className="font-medium">{selected.budget_min.toLocaleString()} – {selected.budget_max?.toLocaleString() ?? "?"}đ/bộ</span></div>}
-                {selected.deadline && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-gray-500">Deadline</span><span className="font-medium">{new Date(selected.deadline).toLocaleDateString("vi-VN")}</span></div>}
-                <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-gray-500">Ngày gửi</span><span className="font-medium">{new Date(selected.created_at).toLocaleDateString("vi-VN")}</span></div>
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wide">Chi tiết dự án</p>
+                {selected.occasion && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Dịp / Loại</span><span className="font-medium">{selected.occasion}</span></div>}
+                <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Số lượng</span><span className="font-medium">{selected.quantity_requested.toLocaleString()} sản phẩm</span></div>
+                {selected.budget_min != null && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Ngân sách</span><span className="font-medium">{selected.budget_min.toLocaleString()} – {selected.budget_max?.toLocaleString() ?? "?"}đ/bộ</span></div>}
+                {selected.deadline && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Deadline</span><span className="font-medium">{new Date(selected.deadline).toLocaleDateString("vi-VN")}</span></div>}
+                <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Ngày gửi</span><span className="font-medium">{new Date(selected.created_at).toLocaleDateString("vi-VN")}</span></div>
               </div>
 
               {/* Requirements */}
               {selected.custom_requirements && (
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Yêu cầu tùy chỉnh</p>
-                  <p className="text-sm text-gray-700 bg-gray-50 rounded-xl p-4 leading-relaxed whitespace-pre-wrap">{selected.custom_requirements}</p>
+                  <p className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Yêu cầu tùy chỉnh</p>
+                  <p className="text-sm text-ink bg-surface-alt rounded-sm p-4 leading-relaxed whitespace-pre-wrap">{selected.custom_requirements}</p>
                 </div>
               )}
 
@@ -266,7 +268,7 @@ export default function AdminB2bPage() {
                 </a>
                 <a
                   href={`tel:${selected.phone}`}
-                  className="flex-1 border border-gray-200 text-gray-700 text-sm font-semibold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors text-center"
+                  className="flex-1 border border-border text-ink text-sm font-semibold py-3 px-4 rounded-sm hover:bg-surface-alt transition-colors text-center"
                 >
                   📞 Gọi điện
                 </a>
@@ -276,5 +278,6 @@ export default function AdminB2bPage() {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }

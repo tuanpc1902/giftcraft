@@ -1,5 +1,6 @@
 "use client";
 
+import AdminLayout from "@/components/layout/AdminLayout";
 import { useEffect, useReducer, useState } from "react";
 import api from "@/lib/api";
 import { ProductListItem } from "@/types";
@@ -66,8 +67,8 @@ const STOCK_LABELS: Record<string, string> = {
 };
 const STOCK_COLORS: Record<string, string> = {
   in_stock: "bg-green-100 text-green-700",
-  pre_order: "bg-amber-100 text-amber-700",
-  out_of_stock: "bg-gray-100 text-gray-500",
+  pre_order: "bg-brand-light text-amber-700",
+  out_of_stock: "bg-surface-alt text-ink-muted",
 };
 
 export default function AdminProductsPage() {
@@ -161,11 +162,12 @@ export default function AdminProductsPage() {
   }
 
   return (
+    <AdminLayout>
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Quản lý sản phẩm</h1>
-          <p className="text-gray-500 text-sm mt-0.5">{products.length} sản phẩm</p>
+          <h1 className="text-2xl font-bold text-ink">Quản lý sản phẩm</h1>
+          <p className="text-ink-muted text-sm mt-0.5">{products.length} sản phẩm</p>
         </div>
         <button onClick={openAdd} className="btn-primary text-sm px-5">+ Thêm sản phẩm</button>
       </div>
@@ -181,11 +183,11 @@ export default function AdminProductsPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-16 text-gray-400">Đang tải...</div>
+        <div className="text-center py-16 text-ink-muted">Đang tải...</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-sm border border-border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+            <thead className="bg-surface-alt text-ink-muted text-xs uppercase">
               <tr>
                 <th className="text-left px-4 py-3">Sản phẩm</th>
                 <th className="text-left px-4 py-3">Giá lẻ</th>
@@ -195,21 +197,21 @@ export default function AdminProductsPage() {
                 <th className="text-left px-4 py-3">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-border">
               {displayed.map(p => (
-                <tr key={p.slug} className={`hover:bg-gray-50 ${p.is_active === false ? "opacity-50" : ""}`}>
+                <tr key={p.slug} className={`hover:bg-surface-alt ${p.is_active === false ? "opacity-50" : ""}`}>
                   <td className="px-4 py-3">
                     <div>
-                      <p className="font-medium text-gray-900">{p.name}</p>
-                      <p className="text-xs text-gray-400 font-mono mt-0.5">{p.slug}</p>
+                      <p className="font-medium text-ink">{p.name}</p>
+                      <p className="text-xs text-ink-muted font-mono mt-0.5">{p.slug}</p>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-semibold text-gray-900">{formatPrice(p.retail_price)}</td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-4 py-3 font-semibold text-ink">{formatPrice(p.retail_price)}</td>
+                  <td className="px-4 py-3 text-ink-muted">
                     {p.b2b_min_price ? formatPrice(p.b2b_min_price) : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STOCK_COLORS[p.stock_status] ?? "bg-gray-100"}`}>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STOCK_COLORS[p.stock_status] ?? "bg-surface-alt"}`}>
                       {STOCK_LABELS[p.stock_status] ?? p.stock_status}
                     </span>
                   </td>
@@ -227,11 +229,11 @@ export default function AdminProductsPage() {
                       <a href={`/san-pham/${p.slug}`} target="_blank"
                         className="text-xs text-blue-600 hover:underline">Xem</a>
                       <button onClick={() => openEdit(p)}
-                        className="text-xs text-gray-500 hover:text-gray-700 font-medium">Sửa</button>
+                        className="text-xs text-ink-muted hover:text-ink font-medium">Sửa</button>
                       <button
                         onClick={() => handleDelete(p.id, p.name)}
                         disabled={deleteId === p.id}
-                        className="text-xs text-red-500 hover:text-red-700 font-medium disabled:opacity-40">
+                        className="text-xs text-brand hover:text-red-700 font-medium disabled:opacity-40">
                         {deleteId === p.id ? "..." : "Xóa"}
                       </button>
                     </div>
@@ -241,7 +243,7 @@ export default function AdminProductsPage() {
             </tbody>
           </table>
           {displayed.length === 0 && (
-            <div className="text-center py-12 text-gray-400">Không tìm thấy sản phẩm.</div>
+            <div className="text-center py-12 text-ink-muted">Không tìm thấy sản phẩm.</div>
           )}
         </div>
       )}
@@ -250,24 +252,24 @@ export default function AdminProductsPage() {
       {modal && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
           onClick={() => setModal(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto"
+          <div className="bg-white rounded-sm shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-              <h2 className="font-bold text-gray-900">
+            <div className="sticky top-0 bg-white border-b border-border px-6 py-4 flex items-center justify-between">
+              <h2 className="font-bold text-ink">
                 {modal.mode === "add" ? "Thêm sản phẩm mới" : "Chỉnh sửa sản phẩm"}
               </h2>
-              <button onClick={() => setModal(null)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+              <button onClick={() => setModal(null)} className="text-ink-muted hover:text-ink-muted text-2xl leading-none">×</button>
             </div>
 
             <div className="p-6 space-y-4">
               {saveError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                <div className="bg-brand-light border border-red-200 text-red-700 text-sm rounded-sm px-4 py-3">
                   {saveError}
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Tên sản phẩm *</label>
+                <label className="block text-sm font-medium text-ink mb-1.5">Tên sản phẩm *</label>
                 <input className="input-field" value={form.name}
                   onChange={e => {
                     const name = e.target.value;
@@ -276,25 +278,25 @@ export default function AdminProductsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Slug</label>
+                <label className="block text-sm font-medium text-ink mb-1.5">Slug</label>
                 <input className="input-field font-mono text-sm" value={form.slug}
                   onChange={e => set({ slug: e.target.value })} />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Mô tả ngắn</label>
+                <label className="block text-sm font-medium text-ink mb-1.5">Mô tả ngắn</label>
                 <input className="input-field" value={form.short_description}
                   onChange={e => set({ short_description: e.target.value })} />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Giá lẻ (VNĐ) *</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Giá lẻ (VNĐ) *</label>
                   <input type="number" className="input-field" placeholder="350000" value={form.retail_price}
                     onChange={e => set({ retail_price: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Cân nặng (gram)</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Cân nặng (gram)</label>
                   <input type="number" className="input-field" placeholder="500" value={form.weight_grams}
                     onChange={e => set({ weight_grams: e.target.value })} />
                 </div>
@@ -302,7 +304,7 @@ export default function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Trạng thái kho</label>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Trạng thái kho</label>
                   <select className="input-field" value={form.stock_status}
                     onChange={e => set({ stock_status: e.target.value as ProductForm["stock_status"] })}>
                     <option value="in_stock">Còn hàng</option>
@@ -311,12 +313,12 @@ export default function AdminProductsPage() {
                   </select>
                 </div>
                 <div className="flex flex-col justify-end gap-2 pb-1">
-                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-ink">
                     <input type="checkbox" checked={form.is_active}
                       onChange={e => set({ is_active: e.target.checked })} className="rounded" />
                     Hiển thị trên shop
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-ink">
                     <input type="checkbox" checked={form.is_customizable}
                       onChange={e => set({ is_customizable: e.target.checked })} className="rounded" />
                     Cho phép tuỳ chỉnh
@@ -325,19 +327,19 @@ export default function AdminProductsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">URL ảnh chính</label>
+                <label className="block text-sm font-medium text-ink mb-1.5">URL ảnh chính</label>
                 <input className="input-field" placeholder="https://..."
                   value={form.cover_image} onChange={e => set({ cover_image: e.target.value })} />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Ảnh gallery (mỗi URL 1 dòng)</label>
+                <label className="block text-sm font-medium text-ink mb-1.5">Ảnh gallery (mỗi URL 1 dòng)</label>
                 <textarea className="input-field h-20 resize-none font-mono text-xs"
                   placeholder={"https://...\nhttps://..."} value={form.images}
                   onChange={e => set({ images: e.target.value })} />
               </div>
 
-              <div className="flex gap-3 pt-2 border-t border-gray-100">
+              <div className="flex gap-3 pt-2 border-t border-border">
                 <button onClick={handleSave}
                   disabled={saving || !form.name || !form.retail_price}
                   className="btn-primary flex-1 disabled:opacity-40">
@@ -350,5 +352,6 @@ export default function AdminProductsPage() {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }

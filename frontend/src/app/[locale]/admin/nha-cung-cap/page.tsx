@@ -1,5 +1,6 @@
 "use client";
 
+import AdminLayout from "@/components/layout/AdminLayout";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
@@ -10,9 +11,9 @@ type FilterStatus = "new" | "reviewing" | "approved" | "rejected" | "all";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   new:       { label: "Mới",          color: "bg-blue-100 text-blue-700" },
-  reviewing: { label: "Đang xem xét", color: "bg-amber-100 text-amber-700" },
+  reviewing: { label: "Đang xem xét", color: "bg-brand-light text-amber-700" },
   approved:  { label: "Đã duyệt",     color: "bg-green-100 text-green-700" },
-  rejected:  { label: "Từ chối",      color: "bg-red-100 text-red-600" },
+  rejected:  { label: "Từ chối",      color: "bg-red-100 text-brand" },
 };
 
 export default function AdminSupplierPage() {
@@ -49,18 +50,19 @@ export default function AdminSupplierPage() {
     setSelected(null);
   }
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center text-gray-400">Đang tải...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center text-ink-muted">Đang tải...</div>;
 
   return (
+    <AdminLayout>
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Đăng ký nhà cung cấp</h1>
+      <h1 className="text-2xl font-bold text-ink mb-6">Đăng ký nhà cung cấp</h1>
 
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit mb-6">
+      <div className="flex gap-1 bg-surface-alt rounded-sm p-1 w-fit mb-6">
         {(["new", "reviewing", "approved", "rejected", "all"] as FilterStatus[]).map(s => (
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`text-sm px-4 py-1.5 rounded-lg transition-colors ${filter === s ? "bg-white text-gray-900 shadow-sm font-medium" : "text-gray-500 hover:text-gray-700"}`}
+            className={`text-sm px-4 py-1.5 rounded-sm transition-colors ${filter === s ? "bg-white text-ink shadow-sm font-medium" : "text-ink-muted hover:text-ink"}`}
           >
             {s === "new" ? "Mới" : s === "reviewing" ? "Xem xét" : s === "approved" ? "Đã duyệt" : s === "rejected" ? "Từ chối" : "Tất cả"}
           </button>
@@ -68,13 +70,13 @@ export default function AdminSupplierPage() {
       </div>
 
       {items === null ? (
-        <div className="text-center py-16 text-gray-400">Đang tải...</div>
+        <div className="text-center py-16 text-ink-muted">Đang tải...</div>
       ) : items.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">Không có đơn đăng ký nào.</div>
+        <div className="text-center py-16 text-ink-muted">Không có đơn đăng ký nào.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-sm border border-border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+            <thead className="bg-surface-alt text-ink-muted text-xs uppercase tracking-wide">
               <tr>
                 <th className="text-left px-4 py-3">Công ty</th>
                 <th className="text-left px-4 py-3">Người liên hệ</th>
@@ -84,19 +86,19 @@ export default function AdminSupplierPage() {
                 <th className="px-4 py-3" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-border">
               {items.map(item => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setSelected(item)}>
+                <tr key={item.id} className="hover:bg-surface-alt transition-colors cursor-pointer" onClick={() => setSelected(item)}>
                   <td className="px-4 py-3 font-medium">{item.company_name}</td>
-                  <td className="px-4 py-3 text-gray-500">{item.contact_name}</td>
-                  <td className="px-4 py-3 text-gray-500">{item.email}</td>
-                  <td className="px-4 py-3 text-gray-500">{item.tax_code}</td>
+                  <td className="px-4 py-3 text-ink-muted">{item.contact_name}</td>
+                  <td className="px-4 py-3 text-ink-muted">{item.email}</td>
+                  <td className="px-4 py-3 text-ink-muted">{item.tax_code}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUS_LABELS[item.status]?.color}`}>
                       {STATUS_LABELS[item.status]?.label}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right text-xs text-gray-400">
+                  <td className="px-4 py-3 text-right text-xs text-ink-muted">
                     {new Date(item.created_at).toLocaleDateString("vi-VN")}
                   </td>
                 </tr>
@@ -111,37 +113,37 @@ export default function AdminSupplierPage() {
           <div className="bg-white w-full max-w-md h-full overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-bold text-gray-900">Chi tiết đơn đăng ký</h2>
-                <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+                <h2 className="font-bold text-ink">Chi tiết đơn đăng ký</h2>
+                <button onClick={() => setSelected(null)} className="text-ink-muted hover:text-ink-muted text-xl">✕</button>
               </div>
 
               <dl className="space-y-4 text-sm mb-6">
-                <div><dt className="text-gray-400">Công ty</dt><dd className="font-medium">{selected.company_name}</dd></div>
-                <div><dt className="text-gray-400">Mã số thuế</dt><dd className="font-medium">{selected.tax_code}</dd></div>
-                <div><dt className="text-gray-400">Người liên hệ</dt><dd className="font-medium">{selected.contact_name}</dd></div>
-                <div><dt className="text-gray-400">Email</dt><dd className="font-medium">{selected.email}</dd></div>
-                <div><dt className="text-gray-400">Điện thoại</dt><dd className="font-medium">{selected.phone}</dd></div>
-                <div><dt className="text-gray-400">Loại sản phẩm cung cấp</dt><dd className="text-gray-700 leading-relaxed">{selected.product_types}</dd></div>
+                <div><dt className="text-ink-muted">Công ty</dt><dd className="font-medium">{selected.company_name}</dd></div>
+                <div><dt className="text-ink-muted">Mã số thuế</dt><dd className="font-medium">{selected.tax_code}</dd></div>
+                <div><dt className="text-ink-muted">Người liên hệ</dt><dd className="font-medium">{selected.contact_name}</dd></div>
+                <div><dt className="text-ink-muted">Email</dt><dd className="font-medium">{selected.email}</dd></div>
+                <div><dt className="text-ink-muted">Điện thoại</dt><dd className="font-medium">{selected.phone}</dd></div>
+                <div><dt className="text-ink-muted">Loại sản phẩm cung cấp</dt><dd className="text-ink leading-relaxed">{selected.product_types}</dd></div>
                 <div>
-                  <dt className="text-gray-400">Hóa đơn VAT</dt>
-                  <dd className={`font-medium ${selected.has_vat_invoice ? "text-green-600" : "text-gray-400"}`}>
+                  <dt className="text-ink-muted">Hóa đơn VAT</dt>
+                  <dd className={`font-medium ${selected.has_vat_invoice ? "text-green-600" : "text-ink-muted"}`}>
                     {selected.has_vat_invoice ? "✓ Có" : "Không"}
                   </dd>
                 </div>
                 {selected.min_order_quantity && (
-                  <div><dt className="text-gray-400">Số lượng tối thiểu (MOQ)</dt><dd className="font-medium">{selected.min_order_quantity.toLocaleString("vi-VN")}</dd></div>
+                  <div><dt className="text-ink-muted">Số lượng tối thiểu (MOQ)</dt><dd className="font-medium">{selected.min_order_quantity.toLocaleString("vi-VN")}</dd></div>
                 )}
                 {selected.description && (
-                  <div><dt className="text-gray-400">Mô tả thêm</dt><dd className="text-gray-700 leading-relaxed">{selected.description}</dd></div>
+                  <div><dt className="text-ink-muted">Mô tả thêm</dt><dd className="text-ink leading-relaxed">{selected.description}</dd></div>
                 )}
-                <div><dt className="text-gray-400">Ngày gửi</dt><dd>{new Date(selected.created_at).toLocaleDateString("vi-VN")}</dd></div>
+                <div><dt className="text-ink-muted">Ngày gửi</dt><dd>{new Date(selected.created_at).toLocaleDateString("vi-VN")}</dd></div>
               </dl>
 
               <div className="space-y-2">
                 {selected.status !== "approved" && (
                   <button
                     onClick={() => updateStatus(selected.id, "approved")}
-                    className="w-full bg-green-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-green-500 transition-colors"
+                    className="w-full bg-green-600 text-white py-2.5 rounded-sm text-sm font-medium hover:bg-green-500 transition-colors"
                   >
                     Phê duyệt
                   </button>
@@ -149,7 +151,7 @@ export default function AdminSupplierPage() {
                 {selected.status === "new" && (
                   <button
                     onClick={() => updateStatus(selected.id, "reviewing")}
-                    className="w-full bg-amber-50 text-amber-700 py-2.5 rounded-xl text-sm font-medium hover:bg-amber-100 transition-colors"
+                    className="w-full bg-brand-light text-amber-700 py-2.5 rounded-sm text-sm font-medium hover:bg-brand-light transition-colors"
                   >
                     Chuyển sang Đang xem xét
                   </button>
@@ -157,7 +159,7 @@ export default function AdminSupplierPage() {
                 {selected.status !== "rejected" && (
                   <button
                     onClick={() => updateStatus(selected.id, "rejected")}
-                    className="w-full bg-red-50 text-red-600 py-2.5 rounded-xl text-sm font-medium hover:bg-red-100 transition-colors"
+                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors"
                   >
                     Từ chối
                   </button>
@@ -168,5 +170,6 @@ export default function AdminSupplierPage() {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }

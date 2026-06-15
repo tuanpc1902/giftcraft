@@ -57,22 +57,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <div className="bg-white min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back */}
-        <Link href="/blog" className="text-sm text-gray-400 hover:text-gray-700 transition-colors mb-8 inline-flex items-center gap-1">
+        <Link href="/blog" className="text-sm text-ink-muted hover:text-ink transition-colors mb-8 inline-flex items-center gap-1">
           ← Quay lại Blog
         </Link>
 
         {/* Category + meta */}
         <div className="mt-4 mb-3">
-          <span className="inline-block bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+          <span className="inline-block bg-brand-light text-brand text-xs font-semibold px-2.5 py-1 rounded-sm">
             {post.category}
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-4">
           {post.title}
         </h1>
 
-        <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
+        <div className="flex items-center gap-3 text-sm text-ink-muted mb-8">
           <span>{post.author}</span>
           <span>·</span>
           <span>{new Date(post.published_at).toLocaleDateString("vi-VN", { day: "2-digit", month: "long", year: "numeric" })}</span>
@@ -82,7 +82,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {/* Cover image */}
         {post.cover_image && (
-          <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mb-10 bg-gray-100">
+          <div className="relative aspect-[16/9] rounded-sm overflow-hidden mb-10 bg-surface-alt">
             <Image
               src={post.cover_image}
               alt={post.title}
@@ -96,16 +96,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {/* Content */}
         <div
-          className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+          className="prose prose-gray max-w-none text-ink leading-relaxed"
           dangerouslySetInnerHTML={{ __html: post.content ?? "" }}
         />
 
         {/* Footer CTA */}
-        <div className="mt-14 border-t border-gray-100 pt-10 text-center">
-          <p className="text-gray-500 text-sm mb-4">Bạn có dự án quà tặng cần tư vấn?</p>
+        <div className="mt-14 border-t border-border pt-10 text-center">
+          <p className="text-ink-muted text-sm mb-4">Bạn có dự án quà tặng cần tư vấn?</p>
           <Link
             href="/bat-dau-du-an-moi"
-            className="inline-block bg-gray-900 text-white font-semibold px-8 py-3 rounded-xl hover:bg-gray-700 transition-colors"
+            className="inline-block bg-ink text-white font-semibold px-8 py-3 rounded-sm hover:bg-ink transition-colors"
           >
             Bắt đầu dự án →
           </Link>
