@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Category, ProductListItem } from "@/types";
 import ProductCard from "@/components/shop/ProductCard";
-import { SkeletonCard } from "@/components/ui/Skeleton";
 
 const API = process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost/api";
 

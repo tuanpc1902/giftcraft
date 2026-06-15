@@ -151,7 +151,7 @@ export default function AdminBlogPage() {
                     {post.published_at ? new Date(post.published_at).toLocaleDateString("vi-VN") : "—"}
                   </td>
                   <td className="px-4 py-3 text-right flex items-center justify-end gap-2">
-                    <button onClick={() => openEdit(post)} className="text-xs text-brand hover:text-amber-700 font-medium">Sửa</button>
+                    <button onClick={() => openEdit(post)} className="text-xs text-brand hover:text-brand-dark font-medium">Sửa</button>
                     <button onClick={() => handleDelete(post.id)} className="text-xs text-brand hover:text-red-700 font-medium">Xóa</button>
                   </td>
                 </tr>
@@ -221,7 +221,7 @@ export default function AdminBlogPage() {
                 <button type="submit" disabled={saving} className="btn-primary text-sm px-6 disabled:opacity-40">
                   {saving ? "Đang lưu..." : selected ? "Lưu thay đổi" : "Tạo bài viết"}
                 </button>
-                <button type="button" onClick={() => setShowForm(false)} className="btn-outline text-sm px-6">Hủy</button>
+                <button type="button" onClick={() => setShowForm(false)} className="btn-secondary text-sm px-6">Hủy</button>
               </div>
             </form>
           </div>

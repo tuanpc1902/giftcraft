@@ -191,7 +191,7 @@ export default function TroThanhDoiTacPage() {
                 id="vat"
                 checked={form.has_vat_invoice}
                 onChange={e => set({ has_vat_invoice: e.target.checked })}
-                className="w-4 h-4 rounded border-border accent-gray-900"
+                className="w-4 h-4 rounded border-border accent-brand"
               />
               <label htmlFor="vat" className="text-sm font-medium text-ink">{t("vatInvoice")}</label>
             </div>

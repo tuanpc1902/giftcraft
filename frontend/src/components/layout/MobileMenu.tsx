@@ -18,6 +18,7 @@ interface MobileMenuProps {
 export default function MobileMenu({ open, onClose, links, isLoggedIn, isAdmin, onLogout }: MobileMenuProps) {
   const pathname = usePathname();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { onClose(); }, [pathname]);
 
   if (!open) return null;

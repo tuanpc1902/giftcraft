@@ -118,7 +118,7 @@ export default function SearchResults() {
               <button
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="btn-outline px-8 py-3 text-sm font-semibold disabled:opacity-50"
+                className="btn-secondary px-8 py-3 text-sm font-semibold disabled:opacity-50"
               >
                 {loadingMore ? t("loading") : t("loadMore")}
               </button>

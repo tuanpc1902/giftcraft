@@ -8,7 +8,7 @@ export default function ProductCard({ product }: { product: ProductListItem }) {
 
   return (
     <Link href={`/san-pham/${product.slug}`} className="group block">
-      <div className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden mb-3">
+      <div className="relative aspect-square bg-surface-alt rounded-sm overflow-hidden mb-3">
         {product.cover_image ? (
           <Image
             src={product.cover_image}
@@ -18,7 +18,7 @@ export default function ProductCard({ product }: { product: ProductListItem }) {
             sizes="(max-width: 768px) 50vw, 25vw"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-4xl">🎁</div>
+          <div className="absolute inset-0 flex items-center justify-center text-ink-muted text-4xl">🎁</div>
         )}
         {isOutOfStock && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -31,12 +31,12 @@ export default function ProductCard({ product }: { product: ProductListItem }) {
           </span>
         )}
       </div>
-      <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1 group-hover:text-red-700 transition-colors">
+      <h3 className="font-semibold text-ink text-sm leading-tight mb-1 group-hover:text-brand transition-colors">
         {product.name}
       </h3>
-      <p className="text-gray-700 font-bold">{formatPrice(product.retail_price)}</p>
+      <p className="text-ink font-bold">{formatPrice(product.retail_price)}</p>
       {product.b2b_min_price && (
-        <p className="text-xs text-gray-400 mt-0.5">
+        <p className="text-xs text-ink-muted mt-0.5">
           B2B từ {formatPrice(product.b2b_min_price)}
         </p>
       )}

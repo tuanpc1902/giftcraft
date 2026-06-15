@@ -112,6 +112,7 @@ export interface OrderItem {
     slug: string;
     image: string | null;
     sku: string | null;
+  };
 }
 
 export interface B2bQuote {

@@ -3,6 +3,7 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Order } from "@/types";
 import { formatPrice } from "@/lib/formatPrice";
@@ -12,7 +13,7 @@ const STATUS_LABELS: Record<string, string> = {
   shipped: "Đang giao", delivered: "Đã giao", cancelled: "Đã hủy",
 };
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-brand-light text-amber-700",
+  pending: "bg-brand-light text-brand",
   confirmed: "bg-blue-100 text-blue-700",
   processing: "bg-purple-100 text-purple-700",
   shipped: "bg-cyan-100 text-cyan-700",
@@ -47,8 +48,8 @@ function AdminOrdersInner() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-ink">Quản lý đơn hàng</h1>
         <div className="flex gap-2">
-          <a href="?delivery=express" className="text-xs border border-red-300 text-brand px-3 py-1.5 rounded-sm hover:bg-brand-light">🚀 Hỏa tốc</a>
-          <a href="/admin/don-hang" className="text-xs border border-border text-ink-muted px-3 py-1.5 rounded-sm hover:bg-surface-alt">Tất cả</a>
+          <Link href="?delivery=express" className="text-xs border border-red-300 text-brand px-3 py-1.5 rounded-sm hover:bg-brand-light">🚀 Hỏa tốc</Link>
+          <Link href="/admin/don-hang" className="text-xs border border-border text-ink-muted px-3 py-1.5 rounded-sm hover:bg-surface-alt">Tất cả</Link>
         </div>
       </div>
 

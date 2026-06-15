@@ -64,7 +64,7 @@ export default async function B2BLandingPage() {
         </div>
         <div className="grid grid-cols-5 gap-3 max-w-3xl mx-auto">
           {PRICE_TIERS.map((tier, i) => (
-            <div key={i} className={`text-center rounded-sm p-4 border-2 ${i === 4 ? "border-amber-400 bg-brand-light" : "border-border"}`}>
+            <div key={i} className={`text-center rounded-sm p-4 border-2 ${i === 4 ? "border-brand bg-brand-light" : "border-border"}`}>
               <p className="text-xs font-semibold text-ink-muted">{tier.from} {t("unit")}</p>
               <p className="text-2xl font-bold text-brand mt-1">{tier.pct}%</p>
               <p className="text-xs text-ink-muted mt-1">{t("discount")}</p>

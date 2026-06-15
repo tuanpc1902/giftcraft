@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import { Review, ReviewsSummary } from "@/types";
@@ -119,7 +120,7 @@ export default function ProductReviews({ slug, summary }: { slug: string; summar
         <h3 className="font-semibold text-ink mb-4">Viết đánh giá</h3>
         {!user ? (
           <p className="text-sm text-ink-muted">
-            <a href="/dang-nhap" className="text-brand hover:underline font-medium">Đăng nhập</a> để viết đánh giá.
+            <Link href="/dang-nhap" className="text-brand hover:underline font-medium">Đăng nhập</Link> để viết đánh giá.
           </p>
         ) : submitted ? (
           <div className="bg-green-50 border border-green-100 rounded-sm p-4 text-sm text-green-700">

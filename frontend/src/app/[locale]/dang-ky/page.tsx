@@ -28,7 +28,9 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await api.post("/auth/register", form);
-      await login(form.email, form.password);
+      const loginRes = await api.post("/auth/login", { email: form.email, password: form.password });
+      login(loginRes.data.data.token, loginRes.data.data.user);
+      router.push("/tai-khoan");
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Đăng ký thất bại.";
       addToast(msg, "error");

@@ -8,7 +8,7 @@ import { formatPrice } from "@/lib/formatPrice";
 
 const STATUS_MAP: Record<B2bQuote["status"], { label: string; color: string }> = {
   new:           { label: "Mới",            color: "bg-blue-100 text-blue-700" },
-  reviewing:     { label: "Đang xem xét",   color: "bg-brand-light text-amber-700" },
+  reviewing:     { label: "Đang xem xét",   color: "bg-brand-light text-brand" },
   quoted:        { label: "Đã báo giá",     color: "bg-purple-100 text-purple-700" },
   approved:      { label: "Đã duyệt",       color: "bg-teal-100 text-teal-700" },
   in_production: { label: "Đang sản xuất",  color: "bg-indigo-100 text-indigo-700" },
@@ -77,7 +77,7 @@ export default function AdminB2bPage() {
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setFilter("all")}
-          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === "all" ? "bg-gray-900 text-white border-gray-900" : "border-border text-ink-muted hover:bg-surface-alt"}`}
+          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === "all" ? "bg-ink text-white border-ink" : "border-border text-ink-muted hover:bg-surface-alt"}`}
         >
           Tất cả ({quotes.length})
         </button>
@@ -88,7 +88,7 @@ export default function AdminB2bPage() {
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === s ? "bg-gray-900 text-white border-gray-900" : "border-border text-ink-muted hover:bg-surface-alt"}`}
+              className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === s ? "bg-ink text-white border-ink" : "border-border text-ink-muted hover:bg-surface-alt"}`}
             >
               {label} ({count})
             </button>
@@ -223,7 +223,7 @@ export default function AdminB2bPage() {
                 <button
                   onClick={() => updateQuote(selected.id, { admin_note: editNote })}
                   disabled={saving}
-                  className="mt-2 text-xs btn-outline px-4 py-2 disabled:opacity-40"
+                  className="mt-2 text-xs btn-secondary px-4 py-2 disabled:opacity-40"
                 >
                   {saving ? "Đang lưu..." : "Lưu ghi chú"}
                 </button>
@@ -243,11 +243,11 @@ export default function AdminB2bPage() {
               {/* Project details */}
               <div className="space-y-2 text-sm">
                 <p className="text-xs font-semibold text-ink-muted uppercase tracking-wide">Chi tiết dự án</p>
-                {selected.occasion && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Dịp / Loại</span><span className="font-medium">{selected.occasion}</span></div>}
-                <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Số lượng</span><span className="font-medium">{selected.quantity_requested.toLocaleString()} sản phẩm</span></div>
-                {selected.budget_min != null && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Ngân sách</span><span className="font-medium">{selected.budget_min.toLocaleString()} – {selected.budget_max?.toLocaleString() ?? "?"}đ/bộ</span></div>}
-                {selected.deadline && <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Deadline</span><span className="font-medium">{new Date(selected.deadline).toLocaleDateString("vi-VN")}</span></div>}
-                <div className="flex justify-between border-b border-gray-50 pb-2"><span className="text-ink-muted">Ngày gửi</span><span className="font-medium">{new Date(selected.created_at).toLocaleDateString("vi-VN")}</span></div>
+                {selected.occasion && <div className="flex justify-between border-b border-border pb-2"><span className="text-ink-muted">Dịp / Loại</span><span className="font-medium">{selected.occasion}</span></div>}
+                <div className="flex justify-between border-b border-border pb-2"><span className="text-ink-muted">Số lượng</span><span className="font-medium">{selected.quantity_requested.toLocaleString()} sản phẩm</span></div>
+                {selected.budget_min != null && <div className="flex justify-between border-b border-border pb-2"><span className="text-ink-muted">Ngân sách</span><span className="font-medium">{selected.budget_min.toLocaleString()} – {selected.budget_max?.toLocaleString() ?? "?"}đ/bộ</span></div>}
+                {selected.deadline && <div className="flex justify-between border-b border-border pb-2"><span className="text-ink-muted">Deadline</span><span className="font-medium">{new Date(selected.deadline).toLocaleDateString("vi-VN")}</span></div>}
+                <div className="flex justify-between border-b border-border pb-2"><span className="text-ink-muted">Ngày gửi</span><span className="font-medium">{new Date(selected.created_at).toLocaleDateString("vi-VN")}</span></div>
               </div>
 
               {/* Requirements */}
@@ -262,7 +262,7 @@ export default function AdminB2bPage() {
               <div className="flex gap-2 pt-2">
                 <a
                   href={`mailto:${selected.email}?subject=Re: Báo giá B2B #${selected.id} – GiftCraft Studio`}
-                  className="flex-1 btn-outline text-sm text-center"
+                  className="flex-1 btn-secondary text-sm text-center"
                 >
                   ✉️ Email khách
                 </a>

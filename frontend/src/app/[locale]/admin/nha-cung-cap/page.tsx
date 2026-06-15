@@ -11,7 +11,7 @@ type FilterStatus = "new" | "reviewing" | "approved" | "rejected" | "all";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   new:       { label: "Mới",          color: "bg-blue-100 text-blue-700" },
-  reviewing: { label: "Đang xem xét", color: "bg-brand-light text-amber-700" },
+  reviewing: { label: "Đang xem xét", color: "bg-brand-light text-brand" },
   approved:  { label: "Đã duyệt",     color: "bg-green-100 text-green-700" },
   rejected:  { label: "Từ chối",      color: "bg-red-100 text-brand" },
 };
@@ -151,7 +151,7 @@ export default function AdminSupplierPage() {
                 {selected.status === "new" && (
                   <button
                     onClick={() => updateStatus(selected.id, "reviewing")}
-                    className="w-full bg-brand-light text-amber-700 py-2.5 rounded-sm text-sm font-medium hover:bg-brand-light transition-colors"
+                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors"
                   >
                     Chuyển sang Đang xem xét
                   </button>

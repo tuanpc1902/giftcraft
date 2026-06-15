@@ -112,7 +112,7 @@ function StartProjectInner() {
         {orderRef && <p className="text-xs text-ink-muted mb-8 font-mono">Mã yêu cầu: #{orderRef}</p>}
         <div className="flex gap-3 justify-center flex-wrap">
           <button onClick={() => router.push("/")} className="btn-primary px-6">Về trang chủ</button>
-          <button onClick={() => router.push("/forfolio")} className="btn-outline px-6">Xem Forfolio</button>
+          <button onClick={() => router.push("/forfolio")} className="btn-secondary px-6">Xem Forfolio</button>
         </div>
       </div>
     );
@@ -218,7 +218,7 @@ function StartProjectInner() {
             <h2 className="font-bold text-ink mb-5">Yêu cầu tùy chỉnh</h2>
             <div className="space-y-2 mb-5">
               {CUSTOMIZATIONS.map(c => (
-                <label key={c.key} className={`flex items-center gap-3 p-3 rounded-sm border-2 cursor-pointer transition-colors ${state.customizations.includes(c.key) ? "border-amber-400 bg-brand-light" : "border-border"}`}>
+                <label key={c.key} className={`flex items-center gap-3 p-3 rounded-sm border-2 cursor-pointer transition-colors ${state.customizations.includes(c.key) ? "border-brand bg-brand-light" : "border-border"}`}>
                   <input type="checkbox" checked={state.customizations.includes(c.key)}
                     onChange={e => set({
                       customizations: e.target.checked

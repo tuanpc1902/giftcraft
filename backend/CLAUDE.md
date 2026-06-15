@@ -239,7 +239,13 @@ Frontend reads `data.data.token` and `data.data.user`.
 
 ```powershell
 docker compose -f infra/docker-compose.yml -p giftcraft exec -T laravel php artisan test
-# 22/22 tests: Auth×5, Cart×5, Checkout×4, Product×6, Example×2
+# ~62 tests: Auth×5, Cart×5, Checkout×4, Product×6, Example×2, Review×13, Blog×11, Loyalty×6, SupplierJob×10
+
+# Run single suite
+docker compose -f infra/docker-compose.yml -p giftcraft exec -T laravel php artisan test --filter ReviewTest
+
+# Run in parallel (faster)
+docker compose -f infra/docker-compose.yml -p giftcraft exec -T laravel php artisan test --parallel
 ```
 
 ---

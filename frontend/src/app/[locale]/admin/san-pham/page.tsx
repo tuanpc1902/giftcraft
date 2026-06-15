@@ -67,7 +67,7 @@ const STOCK_LABELS: Record<string, string> = {
 };
 const STOCK_COLORS: Record<string, string> = {
   in_stock: "bg-green-100 text-green-700",
-  pre_order: "bg-brand-light text-amber-700",
+  pre_order: "bg-brand-light text-brand",
   out_of_stock: "bg-surface-alt text-ink-muted",
 };
 
@@ -345,7 +345,7 @@ export default function AdminProductsPage() {
                   className="btn-primary flex-1 disabled:opacity-40">
                   {saving ? "Đang lưu..." : modal.mode === "add" ? "Thêm sản phẩm" : "Lưu thay đổi"}
                 </button>
-                <button onClick={() => setModal(null)} className="btn-outline px-6">Hủy</button>
+                <button onClick={() => setModal(null)} className="btn-secondary px-6">Hủy</button>
               </div>
             </div>
           </div>

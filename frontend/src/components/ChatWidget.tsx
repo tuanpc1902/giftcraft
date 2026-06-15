@@ -134,7 +134,7 @@ export default function ChatWidget() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Chat với GiftCraft AI"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gray-900 text-white shadow-2xl flex items-center justify-center hover:bg-gray-700 transition-colors"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-ink text-white shadow-2xl flex items-center justify-center hover:opacity-80 transition-opacity"
       >
         {open ? (
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,19 +149,19 @@ export default function ChatWidget() {
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden max-h-[500px]">
+        <div className="fixed bottom-24 right-6 z-50 w-80 sm:w-96 bg-white rounded-sm shadow-2xl border border-border flex flex-col overflow-hidden max-h-[500px]">
           {/* Header */}
-          <div className="bg-gray-900 text-white px-4 py-3 flex items-center gap-3 flex-shrink-0">
-            <div className="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center text-gray-900 font-bold text-sm flex-shrink-0">
+          <div className="bg-ink text-white px-4 py-3 flex items-center gap-3 flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
               AI
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-sm">GiftCraft AI</div>
-              <div className="text-xs text-gray-400">Tư vấn quà tặng</div>
+              <div className="text-xs text-white/60">Tư vấn quà tặng</div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -177,25 +177,25 @@ export default function ChatWidget() {
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words ${
+                  className={`max-w-[85%] rounded-sm px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words ${
                     msg.role === "user"
-                      ? "bg-gray-900 text-white rounded-br-sm"
-                      : "bg-gray-100 text-gray-800 rounded-bl-sm"
+                      ? "bg-ink text-white"
+                      : "bg-surface-alt text-ink"
                   }`}
                 >
                   {msg.content ||
                     (streaming && i === messages.length - 1 ? (
                       <span className="inline-flex items-center gap-1 py-0.5">
                         <span
-                          className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+                          className="w-1.5 h-1.5 rounded-full bg-ink-muted animate-bounce"
                           style={{ animationDelay: "0ms" }}
                         />
                         <span
-                          className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+                          className="w-1.5 h-1.5 rounded-full bg-ink-muted animate-bounce"
                           style={{ animationDelay: "150ms" }}
                         />
                         <span
-                          className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+                          className="w-1.5 h-1.5 rounded-full bg-ink-muted animate-bounce"
                           style={{ animationDelay: "300ms" }}
                         />
                       </span>
@@ -207,7 +207,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-gray-100 p-3 flex gap-2 flex-shrink-0">
+          <div className="border-t border-border p-3 flex gap-2 flex-shrink-0">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -215,12 +215,12 @@ export default function ChatWidget() {
               placeholder="Nhắn tin tư vấn…"
               rows={1}
               disabled={streaming}
-              className="flex-1 resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50 max-h-24 overflow-y-auto"
+              className="flex-1 resize-none rounded-sm border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50 max-h-24 overflow-y-auto"
             />
             <button
               onClick={send}
               disabled={!input.trim() || streaming}
-              className="w-9 h-9 rounded-xl bg-gray-900 text-white flex items-center justify-center hover:bg-gray-700 disabled:opacity-40 transition-colors flex-shrink-0"
+              className="w-9 h-9 rounded-sm bg-brand text-white flex items-center justify-center hover:bg-brand-dark disabled:opacity-40 transition-colors flex-shrink-0"
               aria-label="Gửi"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

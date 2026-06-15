@@ -40,7 +40,7 @@ export default function Header() {
   }, [fetch, init]);
 
   useEffect(() => {
-    setUserMenuOpen(false);
+    setUserMenuOpen(false); // eslint-disable-line react-hooks/set-state-in-effect
     setSearchOpen(false);
   }, [pathname]);
 
