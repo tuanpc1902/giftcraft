@@ -55,7 +55,7 @@ class ReviewController extends Controller
             ->first();
 
         if ($existing) {
-            return $this->error('Bạn đã đánh giá sản phẩm này rồi.', 422);
+            return $this->error('Bạn đã đánh giá sản phẩm này rồi.', [], 422);
         }
 
         // Check for verified purchase

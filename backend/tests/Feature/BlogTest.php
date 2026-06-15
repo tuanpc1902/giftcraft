@@ -11,9 +11,17 @@ class BlogTest extends TestCase
 {
     use RefreshDatabase;
 
+    private ?User $author = null;
+
+    private function author(): User
+    {
+        return $this->author ??= User::factory()->create();
+    }
+
     private function makePublishedPost(array $attrs = []): BlogPost
     {
         return BlogPost::create(array_merge([
+            'author_id'    => $this->author()->id,
             'title'        => 'Xu hướng quà tặng 2026',
             'slug'         => 'xu-huong-qua-tang-' . uniqid(),
             'excerpt'      => 'Tóm tắt bài viết về xu hướng quà tặng.',
@@ -28,6 +36,7 @@ class BlogTest extends TestCase
     private function makeDraftPost(array $attrs = []): BlogPost
     {
         return BlogPost::create(array_merge([
+            'author_id'    => $this->author()->id,
             'title'        => 'Bài nháp chưa đăng',
             'slug'         => 'bai-nhap-' . uniqid(),
             'excerpt'      => 'Bài viết này chưa được đăng.',
@@ -183,6 +192,7 @@ class BlogTest extends TestCase
 
         $this->actingAs($admin)->putJson("/api/admin/blog/{$post->id}", [
             'title'        => $post->title,
+            'content'      => $post->content,
             'status'       => 'published',
             'category'     => $post->category,
             'read_minutes' => $post->read_minutes,
