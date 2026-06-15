@@ -221,7 +221,7 @@ export default function AdminBlogPage() {
                 <button type="submit" disabled={saving} className="btn-primary text-sm px-6 disabled:opacity-40">
                   {saving ? "Đang lưu..." : selected ? "Lưu thay đổi" : "Tạo bài viết"}
                 </button>
-                <button type="button" onClick={() => setShowForm(false)} className="btn-outline text-sm px-6">Hủy</button>
+                <button type="button" onClick={() => setShowForm(false)} className="btn-secondary text-sm px-6">Hủy</button>
               </div>
             </form>
           </div>

@@ -223,7 +223,7 @@ export default function AdminB2bPage() {
                 <button
                   onClick={() => updateQuote(selected.id, { admin_note: editNote })}
                   disabled={saving}
-                  className="mt-2 text-xs btn-outline px-4 py-2 disabled:opacity-40"
+                  className="mt-2 text-xs btn-secondary px-4 py-2 disabled:opacity-40"
                 >
                   {saving ? "Đang lưu..." : "Lưu ghi chú"}
                 </button>
@@ -262,7 +262,7 @@ export default function AdminB2bPage() {
               <div className="flex gap-2 pt-2">
                 <a
                   href={`mailto:${selected.email}?subject=Re: Báo giá B2B #${selected.id} – GiftCraft Studio`}
-                  className="flex-1 btn-outline text-sm text-center"
+                  className="flex-1 btn-secondary text-sm text-center"
                 >
                   ✉️ Email khách
                 </a>

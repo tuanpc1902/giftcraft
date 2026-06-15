@@ -345,7 +345,7 @@ export default function AdminProductsPage() {
                   className="btn-primary flex-1 disabled:opacity-40">
                   {saving ? "Đang lưu..." : modal.mode === "add" ? "Thêm sản phẩm" : "Lưu thay đổi"}
                 </button>
-                <button onClick={() => setModal(null)} className="btn-outline px-6">Hủy</button>
+                <button onClick={() => setModal(null)} className="btn-secondary px-6">Hủy</button>
               </div>
             </div>
           </div>

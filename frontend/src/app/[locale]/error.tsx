@@ -25,7 +25,7 @@ export default function Error({
         <button onClick={reset} className="btn-primary px-6 py-2.5 text-sm">
           Thử lại
         </button>
-        <Link href="/" className="btn-outline px-6 py-2.5 text-sm">
+        <Link href="/" className="btn-secondary px-6 py-2.5 text-sm">
           Về trang chủ
         </Link>
       </div>

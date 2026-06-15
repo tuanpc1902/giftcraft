@@ -12,7 +12,7 @@ export default function NotFound() {
         <Link href="/" className="btn-primary px-6 py-2.5 text-sm">
           Về trang chủ
         </Link>
-        <Link href="/san-pham" className="btn-outline px-6 py-2.5 text-sm">
+        <Link href="/san-pham" className="btn-secondary px-6 py-2.5 text-sm">
           Xem sản phẩm
         </Link>
       </div>

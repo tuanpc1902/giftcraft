@@ -219,7 +219,7 @@ export default function B2bPortalPage() {
               </div>
 
               <div className="pt-2">
-                <Link href="/bat-dau-du-an-moi" className="btn-outline w-full text-sm text-center">
+                <Link href="/bat-dau-du-an-moi" className="btn-secondary w-full text-sm text-center">
                   Gửi yêu cầu mới →
                 </Link>
               </div>

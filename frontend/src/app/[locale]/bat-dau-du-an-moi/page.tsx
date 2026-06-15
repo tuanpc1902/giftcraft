@@ -112,7 +112,7 @@ function StartProjectInner() {
         {orderRef && <p className="text-xs text-ink-muted mb-8 font-mono">Mã yêu cầu: #{orderRef}</p>}
         <div className="flex gap-3 justify-center flex-wrap">
           <button onClick={() => router.push("/")} className="btn-primary px-6">Về trang chủ</button>
-          <button onClick={() => router.push("/forfolio")} className="btn-outline px-6">Xem Forfolio</button>
+          <button onClick={() => router.push("/forfolio")} className="btn-secondary px-6">Xem Forfolio</button>
         </div>
       </div>
     );
