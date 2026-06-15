@@ -151,7 +151,7 @@ export default function AccountPage() {
             <div className="bg-brand-light rounded-sm border border-border p-6">
               <h3 className="font-bold text-ink mb-3">📋 {t("projects")}</h3>
               <p className="text-sm text-ink-muted mb-4">{t("projectsDesc")}</p>
-              <Link href="/tai-khoan/du-an" className="inline-flex items-center gap-2 bg-amber-400 text-ink font-semibold text-sm py-2.5 px-5 rounded-sm hover:bg-amber-300 transition-colors">
+              <Link href="/tai-khoan/du-an" className="btn-primary text-sm py-2.5 px-5">
                 {t("viewProjects")} →
               </Link>
             </div>
@@ -238,7 +238,7 @@ export default function AccountPage() {
                       <span>{loyalty.next_tier.remaining.toLocaleString("vi-VN")} {t("pointsLeft")}</span>
                     </div>
                     <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-amber-400 rounded-full transition-all" style={{ width: `${loyalty.next_tier.progress}%` }} />
+                      <div className="h-full bg-brand rounded-full transition-all" style={{ width: `${loyalty.next_tier.progress}%` }} />
                     </div>
                   </div>
                 )}
@@ -255,7 +255,7 @@ export default function AccountPage() {
                     <ul className="space-y-1">
                       {tier.benefits.map(b => (
                         <li key={b} className="text-xs text-ink-muted flex items-center gap-1.5">
-                          <span className="text-amber-400">✓</span> {b}
+                          <span className="text-brand">✓</span> {b}
                         </li>
                       ))}
                     </ul>

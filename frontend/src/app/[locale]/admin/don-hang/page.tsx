@@ -13,7 +13,7 @@ const STATUS_LABELS: Record<string, string> = {
   shipped: "Đang giao", delivered: "Đã giao", cancelled: "Đã hủy",
 };
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-brand-light text-amber-700",
+  pending: "bg-brand-light text-brand",
   confirmed: "bg-blue-100 text-blue-700",
   processing: "bg-purple-100 text-purple-700",
   shipped: "bg-cyan-100 text-cyan-700",

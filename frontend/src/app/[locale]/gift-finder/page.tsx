@@ -136,7 +136,7 @@ export default function GiftFinderPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {currentStep.options.map(opt => (
               <button key={opt.value} onClick={() => handleSelect(opt.value)}
-                className={`flex flex-col items-center gap-2 p-4 rounded-sm border-2 transition-all hover:border-amber-400 hover:bg-brand-light ${answers[stepKey] === opt.value ? "border-amber-400 bg-brand-light" : "border-border"}`}>
+                className={`flex flex-col items-center gap-2 p-4 rounded-sm border-2 transition-all hover:border-brand hover:bg-brand-light ${answers[stepKey] === opt.value ? "border-brand bg-brand-light" : "border-border"}`}>
                 <span className="text-3xl">{opt.icon}</span>
                 <span className="text-sm font-medium text-ink text-center">{opt.label}</span>
               </button>

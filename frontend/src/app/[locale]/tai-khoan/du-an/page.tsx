@@ -34,7 +34,7 @@ function QuoteTimeline({ status }: { status: B2bQuote["status"] }) {
               <div className="flex flex-col items-center gap-1">
                 <div className={`w-7 h-7 rounded-sm flex items-center justify-center text-xs transition-colors ${
                   done ? "bg-ink text-white" : "bg-surface-alt text-ink-muted"
-                } ${active ? "ring-2 ring-offset-2 ring-gray-900" : ""}`}>
+                } ${active ? "ring-2 ring-offset-2 ring-ink" : ""}`}>
                   {done ? (active ? info.icon : "✓") : i + 1}
                 </div>
                 <span className={`text-[10px] text-center max-w-[48px] leading-tight ${done ? "text-ink" : "text-ink-muted"}`}>

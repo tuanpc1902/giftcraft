@@ -10,7 +10,7 @@ import { Review } from "@/types";
 type FilterStatus = "pending" | "approved" | "rejected" | "all";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  pending:  { label: "Chờ duyệt", color: "bg-brand-light text-amber-700" },
+  pending:  { label: "Chờ duyệt", color: "bg-brand-light text-brand" },
   approved: { label: "Đã duyệt",  color: "bg-green-100 text-green-700" },
   rejected: { label: "Từ chối",   color: "bg-red-100 text-brand" },
 };

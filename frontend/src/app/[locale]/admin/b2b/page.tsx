@@ -8,7 +8,7 @@ import { formatPrice } from "@/lib/formatPrice";
 
 const STATUS_MAP: Record<B2bQuote["status"], { label: string; color: string }> = {
   new:           { label: "Mới",            color: "bg-blue-100 text-blue-700" },
-  reviewing:     { label: "Đang xem xét",   color: "bg-brand-light text-amber-700" },
+  reviewing:     { label: "Đang xem xét",   color: "bg-brand-light text-brand" },
   quoted:        { label: "Đã báo giá",     color: "bg-purple-100 text-purple-700" },
   approved:      { label: "Đã duyệt",       color: "bg-teal-100 text-teal-700" },
   in_production: { label: "Đang sản xuất",  color: "bg-indigo-100 text-indigo-700" },

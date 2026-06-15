@@ -67,7 +67,7 @@ const STOCK_LABELS: Record<string, string> = {
 };
 const STOCK_COLORS: Record<string, string> = {
   in_stock: "bg-green-100 text-green-700",
-  pre_order: "bg-brand-light text-amber-700",
+  pre_order: "bg-brand-light text-brand",
   out_of_stock: "bg-surface-alt text-ink-muted",
 };
 

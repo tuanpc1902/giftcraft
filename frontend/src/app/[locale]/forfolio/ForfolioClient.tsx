@@ -86,13 +86,13 @@ export default function ForfolioClient({ projects }: { projects: Project[] }) {
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
           {filtered.map(p => (
             <div key={p.id} onClick={() => openLightbox(p)}
-              className={`break-inside-avoid group cursor-pointer rounded-sm overflow-hidden relative ${p.is_featured ? "ring-2 ring-amber-400" : ""}`}>
+              className={`break-inside-avoid group cursor-pointer rounded-sm overflow-hidden relative ${p.is_featured ? "ring-2 ring-brand" : ""}`}>
               <div className="relative aspect-[4/3] bg-surface-alt">
                 <Image src={p.cover_image} alt={p.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                 {p.is_featured && (
                   <span className="absolute top-3 left-3 bg-brand-light text-brand text-xs font-bold px-2.5 py-1 rounded-sm">⭐ Nổi bật</span>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
                   <p className="text-white font-bold text-sm">{p.title}</p>
                   <p className="text-white/80 text-xs">{p.occasion} · {p.quantity ? `${p.quantity.toLocaleString()} bộ` : ""}</p>
                   <span className="mt-2 inline-block text-xs text-brand font-semibold">Xem chi tiết →</span>
@@ -133,7 +133,7 @@ export default function ForfolioClient({ projects }: { projects: Project[] }) {
                 <div className="flex gap-2 p-3 overflow-x-auto">
                   {lightbox.gallery_images.map((img, i) => (
                     <button key={i} onClick={() => setImgIndex(i)}
-                      className={`relative flex-shrink-0 w-14 h-14 rounded-sm overflow-hidden border-2 transition-colors ${imgIndex === i ? "border-amber-400" : "border-transparent"}`}>
+                      className={`relative flex-shrink-0 w-14 h-14 rounded-sm overflow-hidden border-2 transition-colors ${imgIndex === i ? "border-brand" : "border-transparent"}`}>
                       <Image src={img} alt="" fill className="object-cover" sizes="56px" />
                     </button>
                   ))}

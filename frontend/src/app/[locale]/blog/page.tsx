@@ -158,7 +158,7 @@ export default function BlogPage() {
           {visiblePosts.map(post => (
             <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
               <article className="bg-white border border-border rounded-sm overflow-hidden hover:border-border hover:shadow-md transition-all h-full flex flex-col">
-                <div className="aspect-video bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <div className="aspect-video bg-linear-to-br from-surface-alt to-border flex items-center justify-center">
                   <span className="text-4xl opacity-50">
                     {CATEGORY_ICONS[post.category] ?? "📖"}
                   </span>
@@ -198,7 +198,7 @@ export default function BlogPage() {
                 required
                 value={newsletterEmail}
                 onChange={e => setNewsletterEmail(e.target.value)}
-                className="flex-1 bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-sm px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="flex-1 bg-white/10 border border-white/20 text-white placeholder:text-white/50 rounded-sm px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
                 placeholder={t("newsletterPlaceholder")}
               />
               <button type="submit" className="bg-brand text-white font-bold py-3 px-6 rounded-sm hover:bg-brand-light transition-colors text-sm whitespace-nowrap">
