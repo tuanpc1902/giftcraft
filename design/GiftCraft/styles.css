@@ -1,0 +1,224 @@
+/* ============================================================
+   GiftCraft Studio — Design tokens & base
+   Editorial-minimal, single vermilion accent (Tết)
+   ============================================================ */
+
+:root {
+  /* Color */
+  --bg: #ffffff;
+  --ink: #111111;
+  --accent: #b91c1c;        /* đỏ son — vermilion */
+  --accent-ink: #8f1414;    /* pressed */
+  --accent-light: #fee2e2;
+  --secondary: #6b7280;
+  --line: #f0f0f0;
+  --line-strong: #e7e7e7;
+  --dark: #141414;
+  --dark-soft: #1c1c1c;
+  --paper: #faf9f7;         /* warm off-white panel */
+  --paper-2: #f5f3f0;
+
+  /* Type */
+  --serif: "Spectral", "Be Vietnam Pro", "Times New Roman", serif;
+  --sans: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --heading-font: var(--serif);
+
+  /* Spacing scale (8px base) */
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+  --s9: 96px; --s10: 128px;
+
+  --maxw: 1280px;
+  --gutter: 40px;
+
+  --radius: 2px;
+  --radius-lg: 4px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body { overflow-x: hidden; }
+
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--accent); color: #fff; }
+
+/* ---- Type primitives ---- */
+.display {
+  font-family: var(--heading-font);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: normal; /* negative tracking detaches VN stacked diacritics in Blink */
+}
+.serif { font-family: var(--heading-font); }
+.kicker {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.kicker-muted { color: var(--secondary); }
+.eyebrow-line {
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.eyebrow-line::before {
+  content: ""; width: 28px; height: 1px; background: currentColor; opacity: 0.5;
+}
+
+/* ---- Layout ---- */
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+.section { padding: var(--s10) 0; }
+.section-sm { padding: var(--s9) 0; }
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 13.5px; font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 15px 28px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  transition: all 0.25s var(--ease);
+  white-space: nowrap;
+  line-height: 1;
+}
+.btn .ar { transition: transform 0.3s var(--ease); }
+.btn:hover .ar { transform: translateX(4px); }
+
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-ink); }
+
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn-secondary:hover { background: var(--ink); color: #fff; }
+
+.btn-ghost { background: transparent; color: var(--ink); padding: 12px 4px; }
+.btn-ghost:hover { color: var(--accent); }
+
+.btn-light { background: #fff; color: var(--ink); }
+.btn-light:hover { background: var(--accent); color: #fff; }
+
+.btn-dark-outline { background: transparent; color: #fff; border-color: rgba(255,255,255,0.4); }
+.btn-dark-outline:hover { background: #fff; color: var(--ink); border-color: #fff; }
+
+.btn-block { width: 100%; }
+.btn-lg { padding: 18px 34px; font-size: 14px; }
+
+/* underline link */
+.ulink {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--ink);
+  transition: gap 0.25s var(--ease), color 0.2s, border-color 0.2s;
+}
+.ulink:hover { gap: 14px; color: var(--accent); border-color: var(--accent); }
+
+/* ---- Badges ---- */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 9px; border-radius: var(--radius);
+  line-height: 1;
+}
+.badge-accent { background: var(--accent); color: #fff; }
+.badge-soft { background: var(--accent-light); color: var(--accent); }
+.badge-ink { background: var(--ink); color: #fff; }
+.badge-outline { border: 1px solid var(--line-strong); color: var(--secondary); }
+.badge-stock { background: #ecfdf5; color: #047857; }
+.badge-oos { background: #f3f4f6; color: #9ca3af; }
+.badge-dot::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---- Image placeholder ---- */
+.ph {
+  position: relative; overflow: hidden;
+  background:
+    repeating-linear-gradient(135deg, #f4f2ef 0 14px, #efece8 14px 28px);
+  color: #b9b2a8;
+}
+.ph::after {
+  content: attr(data-label);
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Be Vietnam Pro", monospace;
+  font-size: 10.5px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #a9a299;
+  padding: 12px; text-align: center;
+}
+.ph-dark {
+  background:
+    repeating-linear-gradient(135deg, #222 0 14px, #1d1d1d 14px 28px);
+}
+.ph-dark::after { color: #555; }
+.ph-warm {
+  background:
+    repeating-linear-gradient(135deg, #f3e7e7 0 14px, #efe0e0 14px 28px);
+}
+.ph-warm::after { color: #cda3a3; }
+
+/* zoom on hover container */
+.zoom { overflow: hidden; }
+.zoom > .ph, .zoom > img { transition: transform 0.9s var(--ease); }
+.zoom:hover > .ph, .zoom:hover > img { transform: scale(1.05); }
+
+/* ---- Inputs ---- */
+.field {
+  width: 100%;
+  font-family: var(--sans); font-size: 14px;
+  padding: 13px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: #fff; color: var(--ink);
+  transition: border-color 0.2s;
+}
+.field:focus { outline: none; border-color: var(--ink); }
+.field::placeholder { color: #b6b6b6; }
+.label {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--secondary); margin-bottom: 8px;
+}
+
+/* ---- Utility ---- */
+.muted { color: var(--secondary); }
+.hr { height: 1px; background: var(--line); border: 0; }
+.price { font-weight: 600; letter-spacing: -0.01em; }
+.price-old { color: var(--secondary); text-decoration: line-through; font-weight: 400; }
+
+/* scrollbars for drawers */
+.scroll-y { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ddd transparent; }
+.scroll-y::-webkit-scrollbar { width: 6px; }
+.scroll-y::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+
+/* reveal-on-load */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(18px); }
+  .reveal.in { opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+}
+
+/* no-scroll when drawer open */
+body.locked { overflow: hidden; }
+
+/* focus ring */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

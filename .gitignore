@@ -59,3 +59,13 @@ backend/Homestead.yaml
 infra/nginx/ssl/
 infra/certbot/
 *.log
+
+# ============================================================
+# Superpowers / brainstorm artifacts
+# ============================================================
+.superpowers/
+
+# ============================================================
+# Windows Zone.Identifier files
+# ============================================================
+*:Zone.Identifier

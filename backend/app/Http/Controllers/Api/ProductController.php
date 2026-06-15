@@ -41,6 +41,10 @@ class ProductController extends Controller
                 $query->where('retail_price', '<=', (int) $request->query('max_price'));
             }
 
+            if ($request->filled('customizable')) {
+                $query->where('is_customizable', true);
+            }
+
             match ($request->query('sort')) {
                 'price_asc' => $query->orderBy('retail_price'),
                 'price_desc' => $query->orderByDesc('retail_price'),
