@@ -34,33 +34,51 @@ aspect-[16/9]      →  aspect-video  (or keep custom ratio with aspect-[16/9])
 ```
 src/
 ├── app/
-│   ├── layout.tsx              Root layout — Providers, Header, font setup
-│   ├── globals.css             Tailwind import + @theme + .btn-primary/.input-field
-│   ├── (shop)/                 Layout group: san-pham/, gio-hang/, checkout/, don-hang/
-│   ├── _home/HomePage.tsx      Homepage (underscore = private folder, not a route)
-│   ├── admin/                  All /admin/* pages
-│   ├── dang-nhap/page.tsx      Login
-│   ├── dang-ky/page.tsx        Register
-│   ├── tai-khoan/page.tsx      Account hub (protected)
-│   ├── tai-khoan/du-an/        B2B project tracking (protected)
-│   ├── qua-tang-doanh-nghiep/  B2B landing
-│   ├── bat-dau-du-an-moi/      B2B 5-step quote form
-│   ├── forfolio/               Portfolio + lightbox
-│   ├── gift-finder/            4-question quiz
-│   └── blog/page.tsx           Blog listing (client component)
+│   ├── globals.css             Tailwind @import + @theme design tokens + .btn-primary/.input-field
+│   └── [locale]/               i18n root (locales: vi [default], en)
+│       ├── layout.tsx          Locale layout — fonts, NextIntlClientProvider, Header, Footer
+│       ├── page.tsx            Homepage (server component, ISR)
+│       ├── not-found.tsx       404 page
+│       ├── error.tsx           Error boundary (client)
+│       ├── loading.tsx         Route loading spinner
+│       ├── (shop)/             Layout group: san-pham/, gio-hang/, checkout/, don-hang/
+│       ├── admin/              All /admin/* pages (client, uses AdminLayout)
+│       ├── dang-nhap/          Login
+│       ├── dang-ky/            Register
+│       ├── tai-khoan/          Account hub + /du-an (protected)
+│       ├── qua-tang-doanh-nghiep/  B2B landing
+│       ├── bat-dau-du-an-moi/  B2B 5-step quote form
+│       ├── forfolio/           Portfolio + lightbox
+│       ├── gift-finder/        4-question quiz → product recommendations
+│       ├── blog/               Blog listing + [slug]/ detail
+│       ├── tim-kiem/           Search results (Meilisearch)
+│       ├── tro-thanh-doi-tac/  Supplier application form
+│       └── tuyen-dung/         Careers + job application form
 ├── components/
-│   ├── Header.tsx              Sticky nav — mobile menu, cart badge, auth dropdown
-│   ├── ProductCard.tsx         Server component — product grid card
-│   ├── B2bQuoteModal.tsx       B2B quote modal on product page
+│   ├── layout/
+│   │   ├── Header.tsx          Sticky nav — search, cart badge, auth dropdown, mobile menu
+│   │   ├── Footer.tsx          Footer links
+│   │   ├── AdminLayout.tsx     Dark sidebar admin shell (client, auth-guarded)
+│   │   └── MobileMenu.tsx      Mobile slide-in menu
+│   ├── ui/                     Design system: Button, Badge, SkeletonCard, Toast, etc.
+│   ├── ProductCard.tsx         Product grid card
+│   ├── ProductReviews.tsx      Reviews list + submit form
+│   ├── ChatWidget.tsx          AI chat bubble (Claude streaming)
 │   └── Providers.tsx           TanStack Query provider
 ├── lib/
 │   ├── api.ts                  Axios instance (Bearer + X-Session-ID interceptors)
 │   ├── formatPrice.ts          formatPrice(n) → vi-VN VNĐ string
 │   └── session.ts              getOrCreateSessionId() → guest UUID
 ├── store/
-│   ├── cart.ts                 useCartStore (Zustand) — fetch/add/update/remove/voucher
+│   ├── cart.ts                 useCartStore (Zustand)
 │   └── auth.ts                 useAuthStore (Zustand) — login/logout/init
-└── types/index.ts              All TypeScript interfaces
+├── types/index.ts              All TypeScript interfaces
+└── i18n/
+    ├── routing.ts              defineRouting({ locales: ['vi','en'], defaultLocale: 'vi' })
+    └── request.ts              getRequestConfig for next-intl
+messages/
+├── vi.json                     Vietnamese strings (default)
+└── en.json                     English strings
 ```
 
 ---
@@ -102,12 +120,25 @@ const { data } = await api.get("/products");
 
 ---
 
+## Design tokens (globals.css @theme)
+
+```css
+--color-brand:       #B91C1C   /* red-700 — primary CTA, brand elements */
+--color-brand-light: #FEE2E2   /* red-100 — light tint, badges */
+--color-ink:         #111111   /* near-black text, admin sidebar bg */
+--color-ink-muted:   #6B7280   /* secondary text */
+--color-border:      #F3F4F6   /* subtle borders */
+--color-surface-alt: #F9FAFB   /* page background tint */
+```
+
+Tailwind utility classes: `text-brand`, `bg-brand`, `bg-brand-light`, `text-ink`, `text-ink-muted`, `border-border`, `bg-surface-alt`, `bg-ink`.
+
 ## Shared utility classes (globals.css)
 
 ```css
-.input-field    /* w-full, border, rounded-xl, focus ring */
-.btn-primary    /* bg-gray-900 text-white, rounded-xl, hover:bg-gray-700 */
-.btn-outline    /* border-2 border-gray-900, rounded-xl, hover:bg-gray-50 */
+.input-field    /* w-full, border-border, rounded-sm, focus ring brand */
+.btn-primary    /* bg-brand text-white, rounded-sm, hover opacity */
+.btn-outline    /* border border-ink, rounded-sm, hover bg-surface-alt */
 ```
 
 ---
@@ -126,7 +157,7 @@ const { data } = await api.get("/products");
 { user, token, login, logout, init }
 ```
 - `user` is `null` until `init()` is called
-- `user.role` is `"user" | "admin"` — check for admin routes
+- `user.role` is `"customer" | "b2b" | "admin"` — check `=== "admin"` for admin routes
 
 ---
 
