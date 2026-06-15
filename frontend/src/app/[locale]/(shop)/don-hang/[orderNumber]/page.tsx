@@ -1,190 +1,135 @@
 "use client";
-
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { useParams } from "next/navigation";
 import api from "@/lib/api";
 import { Order } from "@/types";
 import { formatPrice } from "@/lib/formatPrice";
+import Badge from "@/components/ui/Badge";
+import { SkeletonText } from "@/components/ui/Skeleton";
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Chờ xử lý",
+const STATUS_LABEL: Record<string, string> = {
+  pending: "Chờ xác nhận",
   confirmed: "Đã xác nhận",
-  processing: "Đang xử lý",
+  processing: "Đang chuẩn bị",
   shipped: "Đang giao",
   delivered: "Đã giao",
   cancelled: "Đã hủy",
 };
 
-const PAYMENT_LABELS: Record<string, { label: string; color: string }> = {
-  pending: { label: "Chờ thanh toán", color: "text-amber-600" },
-  paid: { label: "Đã thanh toán", color: "text-green-600" },
-  failed: { label: "Thanh toán thất bại", color: "text-red-500" },
-  refunded: { label: "Đã hoàn tiền", color: "text-blue-500" },
+const PAYMENT_STATUS: Record<string, { label: string; variant: "brand" | "success" | "muted" }> = {
+  pending: { label: "Chờ thanh toán", variant: "muted" },
+  paid: { label: "Đã thanh toán", variant: "success" },
+  failed: { label: "Thanh toán thất bại", variant: "brand" },
 };
 
-function OrderContent() {
+export default function OrderDetailPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
-  const searchParams = useSearchParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
-  const [pollCount, setPollCount] = useState(0);
+
+  async function fetchOrder() {
+    try {
+      const { data } = await api.get(`/orders/${orderNumber}`);
+      setOrder(data.data);
+    } catch { /* ignore */ }
+    finally { setLoading(false); }
+  }
 
   useEffect(() => {
-    async function load() {
-      try {
-        const { data } = await api.get(`/orders/${orderNumber}`);
-        setOrder(data.data);
-      } catch {
-        setOrder(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, [orderNumber]);
-
-  // Poll for payment status (max 10 times, every 3s) when payment=success but status still pending
-  useEffect(() => {
-    const paymentResult = searchParams.get("payment");
-    if (paymentResult !== "success" || !order || order.payment_status === "paid") return;
-    if (pollCount >= 10) return;
-
-    const timer = setTimeout(async () => {
-      try {
-        const { data } = await api.get(`/orders/${orderNumber}`);
-        setOrder(data.data);
-        setPollCount(c => c + 1);
-      } catch {
-        /* ignore */
-      }
+    fetchOrder();
+    const interval = setInterval(() => {
+      if (order?.payment_status === "pending") fetchOrder();
     }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [order, orderNumber, searchParams, pollCount]);
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderNumber, order?.payment_status]);
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-24 text-center">
-        <div className="animate-spin text-4xl">⏳</div>
+      <div className="max-w-2xl mx-auto px-4 py-16">
+        <SkeletonText lines={6} />
       </div>
     );
   }
 
   if (!order) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-24 text-center">
-        <p className="text-gray-400">Không tìm thấy đơn hàng.</p>
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <p className="text-ink-muted mb-4">Không tìm thấy đơn hàng.</p>
+        <Link href="/tai-khoan" className="btn-primary">Xem đơn hàng của tôi</Link>
       </div>
     );
   }
 
-  const payment = PAYMENT_LABELS[order.payment_status] ?? { label: order.payment_status, color: "text-gray-500" };
+  const ps = PAYMENT_STATUS[order.payment_status] ?? PAYMENT_STATUS.pending;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
-      {/* Header */}
-      <div className="text-center mb-10">
-        <div className="text-5xl mb-4">
-          {order.payment_status === "paid" || order.payment_method === "cod" ? "🎉" : "⏳"}
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <p className="text-xs text-ink-muted uppercase tracking-widest mb-1">Đơn hàng</p>
+          <h1 className="font-display text-2xl font-bold text-ink">{order.order_number}</h1>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
-          {order.payment_method === "cod" ? "Đặt hàng thành công!" : "Cảm ơn bạn!"}
-        </h1>
-        <p className="text-gray-500 text-sm">Mã đơn hàng: <span className="font-mono font-semibold text-gray-800">{order.order_number}</span></p>
+        <Badge variant={ps.variant}>{ps.label}</Badge>
       </div>
 
-      {/* Status timeline */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
-        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-          <div>
-            <p className="text-xs text-gray-400 uppercase tracking-wide">Trạng thái đơn hàng</p>
-            <p className="font-bold text-gray-900 text-lg">{STATUS_LABELS[order.status] ?? order.status}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400 uppercase tracking-wide">Thanh toán</p>
-            <p className={`font-semibold ${payment.color}`}>{payment.label}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {["confirmed", "processing", "shipped", "delivered"].map((s, i) => {
-            const done = ["confirmed", "processing", "shipped", "delivered"].indexOf(order.status) >= i;
-            return (
-              <div key={s} className="flex items-center gap-2 flex-shrink-0">
-                <div className={`w-2.5 h-2.5 rounded-full ${done ? "bg-green-500" : "bg-gray-200"}`} />
-                <span className={`text-xs ${done ? "text-green-700 font-medium" : "text-gray-400"}`}>
-                  {STATUS_LABELS[s]}
-                </span>
-                {i < 3 && <div className="w-8 h-px bg-gray-200" />}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Shipping info */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
-        <h2 className="font-bold text-gray-800 mb-3">Thông tin giao hàng</h2>
-        <div className="text-sm text-gray-600 space-y-1">
-          <p>{order.shipping_address.name} — {order.shipping_address.phone}</p>
-          <p>{order.shipping_address.address}, {order.shipping_address.ward}, {order.shipping_address.district}, {order.shipping_address.city}</p>
-          <p className="font-medium text-gray-700">
-            {order.delivery_type === "express" ? "🚀 Giao hỏa tốc" : "📦 Giao tiêu chuẩn"}
-            {order.requested_delivery_date && ` — Ngày nhận: ${order.requested_delivery_date}`}
+      {/* Status */}
+      <div className="border border-border rounded-sm p-5 mb-6">
+        <p className="text-xs font-semibold text-ink uppercase tracking-widest mb-4">Trạng thái</p>
+        <p className="text-sm font-semibold text-ink">{STATUS_LABEL[order.status] ?? order.status}</p>
+        {order.payment_status === "pending" && (
+          <p className="text-xs text-ink-muted mt-2">
+            Đang chờ xác nhận thanh toán... Trang sẽ tự cập nhật.
           </p>
-          {order.gift_message && (
-            <p className="italic text-gray-500">🎁 &ldquo;{order.gift_message}&rdquo;</p>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Items */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
-        <h2 className="font-bold text-gray-800 mb-4">Sản phẩm</h2>
-        <div className="space-y-3">
-          {order.items.map((item, i) => (
-            <div key={i} className="flex justify-between text-sm">
-              <div>
-                <p className="font-medium text-gray-800">{item.product_snapshot.name}</p>
-                <p className="text-gray-400">x{item.quantity}</p>
-              </div>
-              <p className="font-semibold text-gray-900">{formatPrice(item.total_price)}</p>
+      <div className="border border-border rounded-sm divide-y divide-border mb-6">
+        {order.items.map((item, i) => (
+          <div key={i} className="flex gap-3 p-4">
+            <div className="relative w-16 h-16 bg-surface-alt flex-shrink-0">
+              {item.product_snapshot.image && (
+                <Image src={item.product_snapshot.image} alt={item.product_snapshot.name} fill sizes="64px" className="object-cover" />
+              )}
             </div>
-          ))}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-ink">{item.product_snapshot.name}</p>
+              <p className="text-xs text-ink-muted mt-1">x{item.quantity}</p>
+            </div>
+            <p className="text-sm font-semibold text-ink">{formatPrice(item.total_price)}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Summary */}
+      <div className="border border-border rounded-sm p-5 space-y-2 mb-6">
+        <div className="flex justify-between text-sm">
+          <span className="text-ink-muted">Tạm tính</span>
+          <span>{formatPrice(order.subtotal)}</span>
         </div>
-        <div className="border-t border-gray-100 mt-4 pt-3 space-y-1 text-sm">
-          <div className="flex justify-between text-gray-500">
-            <span>Tạm tính</span><span>{formatPrice(order.subtotal)}</span>
+        {order.discount_amount > 0 && (
+          <div className="flex justify-between text-sm text-brand">
+            <span>Giảm giá</span>
+            <span>−{formatPrice(order.discount_amount)}</span>
           </div>
-          {order.discount_amount > 0 && (
-            <div className="flex justify-between text-green-600">
-              <span>Giảm giá</span><span>−{formatPrice(order.discount_amount)}</span>
-            </div>
-          )}
-          <div className="flex justify-between text-gray-500">
-            <span>Phí vận chuyển</span><span>{formatPrice(order.shipping_fee)}</span>
-          </div>
-          <div className="flex justify-between font-bold text-gray-900 text-base border-t border-gray-100 pt-2">
-            <span>Tổng cộng</span><span>{formatPrice(order.total)}</span>
-          </div>
+        )}
+        <div className="flex justify-between text-sm">
+          <span className="text-ink-muted">Phí vận chuyển</span>
+          <span>{formatPrice(order.shipping_fee)}</span>
+        </div>
+        <div className="flex justify-between font-bold border-t border-border pt-2 mt-2">
+          <span className="text-ink">Tổng cộng</span>
+          <span className="text-brand">{formatPrice(order.total)}</span>
         </div>
       </div>
 
-      <div className="flex gap-3 flex-col sm:flex-row">
-        <Link href="/san-pham" className="flex-1 text-center border border-gray-300 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-          Tiếp tục mua sắm
-        </Link>
+      <div className="flex gap-3">
+        <Link href="/tai-khoan" className="btn-secondary flex-1 text-center">Xem đơn hàng</Link>
+        <Link href="/san-pham" className="btn-primary flex-1 text-center">Tiếp tục mua sắm</Link>
       </div>
     </div>
-  );
-}
-
-export default function OrderPage() {
-  return (
-    <Suspense fallback={<div className="py-24 text-center text-gray-400 text-sm">Đang tải đơn hàng...</div>}>
-      <OrderContent />
-    </Suspense>
   );
 }

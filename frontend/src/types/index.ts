@@ -4,6 +4,12 @@ export interface B2bTier {
   savings_percent: number;
 }
 
+export interface ReviewsSummary {
+  average_rating: number;
+  total_count: number;
+  distribution: Record<string, number>;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -21,11 +27,7 @@ export interface Product {
   category: { id: number; name: string; slug: string } | null;
   meta_title: string | null;
   meta_description: string | null;
-  reviews_summary?: {
-    average_rating: number;
-    total_count: number;
-    distribution: Record<string, number>;
-  };
+  reviews_summary?: ReviewsSummary;
   related_products?: ProductListItem[];
 }
 
@@ -110,7 +112,6 @@ export interface OrderItem {
     slug: string;
     image: string | null;
     sku: string | null;
-  };
 }
 
 export interface B2bQuote {

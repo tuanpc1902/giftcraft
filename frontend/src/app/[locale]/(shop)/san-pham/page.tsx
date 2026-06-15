@@ -1,9 +1,7 @@
-import { Suspense } from "react";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
-import ProductCard from "@/components/ProductCard";
-import MobileFilterToggle from "./MobileFilterToggle";
 import { Category, ProductListItem } from "@/types";
+import ProductCard from "@/components/shop/ProductCard";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 
 const API = process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost/api";
 
@@ -26,161 +24,192 @@ async function getCategories(): Promise<Category[]> {
   } catch { return []; }
 }
 
+const OCCASIONS = [
+  { label: "Tất cả", slug: "" },
+  { label: "Quà Tết", slug: "tet" },
+  { label: "Trung Thu", slug: "trung-thu" },
+  { label: "Sinh nhật", slug: "sinh-nhat" },
+  { label: "Khai trương", slug: "khai-truong" },
+  { label: "Tri ân", slug: "tri-an" },
+  { label: "Cưới hỏi", slug: "cuoi-hoi" },
+];
+
+const PRICE_RANGES = [
+  { label: "Dưới 300k", max: "300000" },
+  { label: "300k – 600k", min: "300000", max: "600000" },
+  { label: "600k – 1 triệu", min: "600000", max: "1000000" },
+  { label: "Trên 1 triệu", min: "1000000" },
+];
+
 export default async function ProductListPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string>>;
 }) {
-  const [params, t] = await Promise.all([
-    searchParams,
-    getTranslations("products"),
-  ]);
+  const params = await searchParams;
   const [{ items, meta }, categories] = await Promise.all([
     getProducts(params),
     getCategories(),
   ]);
 
   const activeCategory = params.category ?? "";
+  const activeOccasion = params.occasion ?? "";
   const activeSort = params.sort ?? "";
 
-  const SORT_OPTIONS = [
-    { value: "", label: t("sortDefault") },
-    { value: "price_asc", label: t("sortPriceAsc") },
-    { value: "price_desc", label: t("sortPriceDesc") },
-  ];
-
-  const PRICE_RANGES = [
-    { label: t("priceUnder300"), min: "", max: "300000" },
-    { label: t("price300to600"), min: "300000", max: "600000" },
-    { label: t("price600to1m"), min: "600000", max: "1000000" },
-    { label: t("priceOver1m"), min: "1000000", max: "" },
-  ];
-
-  function buildUrl(updates: Record<string, string>) {
-    const p = new URLSearchParams({ ...params, ...updates });
-    if (!updates.category && activeCategory) p.set("category", activeCategory);
-    if (!updates.sort && activeSort) p.set("sort", activeSort);
+  function buildUrl(updates: Record<string, string | undefined>) {
+    const p = new URLSearchParams(params);
+    Object.entries(updates).forEach(([k, v]) => {
+      if (v === undefined || v === "") p.delete(k);
+      else p.set(k, v);
+    });
     p.delete("page");
     return `/san-pham?${p.toString()}`;
   }
 
-  const filterContent = (
-    <>
-      <nav className="space-y-1">
-        <Link href="/san-pham"
-          className={`block px-3 py-2 rounded-xl text-sm transition-colors ${!activeCategory ? "text-white font-medium" : "text-gray-600 hover:bg-red-50"}`}
-          style={!activeCategory ? { backgroundColor: "var(--color-brand)" } : undefined}>
-          {t("allCategories")}
-        </Link>
-        {categories.map(cat => (
-          <div key={cat.slug}>
-            <Link href={buildUrl({ category: cat.slug })}
-              className={`block px-3 py-2 rounded-xl text-sm font-medium transition-colors ${activeCategory === cat.slug ? "bg-red-50 font-semibold" : "text-gray-700 hover:bg-amber-50"}`}
-              style={activeCategory === cat.slug ? { color: "var(--color-brand)" } : undefined}>
+  const FilterSidebar = (
+    <aside className="space-y-8">
+      {/* Categories */}
+      <div>
+        <p className="text-xs font-semibold text-ink uppercase tracking-widest mb-3">Danh mục</p>
+        <nav className="space-y-1">
+          <Link
+            href="/san-pham"
+            className={`block px-3 py-2 text-sm rounded-sm transition-colors ${
+              !activeCategory ? "bg-brand text-white font-semibold" : "text-ink-muted hover:text-brand"
+            }`}
+          >
+            Tất cả
+          </Link>
+          {categories.map((cat) => (
+            <Link
+              key={cat.slug}
+              href={buildUrl({ category: cat.slug })}
+              className={`block px-3 py-2 text-sm rounded-sm transition-colors ${
+                activeCategory === cat.slug
+                  ? "text-brand font-semibold bg-brand-light"
+                  : "text-ink-muted hover:text-brand"
+              }`}
+            >
               {cat.name}
             </Link>
-            {cat.children?.map(child => (
-              <Link key={child.slug} href={buildUrl({ category: child.slug })}
-                className={`block pl-6 pr-3 py-1.5 rounded-xl text-sm transition-colors ${activeCategory === child.slug ? "bg-red-50 font-medium" : "text-gray-500 hover:text-gray-700"}`}
-                style={activeCategory === child.slug ? { color: "var(--color-brand)" } : undefined}>
-                {child.name}
-              </Link>
-            ))}
-          </div>
-        ))}
-      </nav>
+          ))}
+        </nav>
+      </div>
 
-      <div className="mt-6">
-        <h2 className="font-bold text-gray-900 text-sm uppercase tracking-wide mb-3">{t("priceRange")}</h2>
-        <div className="space-y-1.5">
-          {PRICE_RANGES.map(r => {
-            const isActive = params.min_price === r.min && params.max_price === r.max;
+      {/* Occasions */}
+      <div>
+        <p className="text-xs font-semibold text-ink uppercase tracking-widest mb-3">Dịp tặng</p>
+        <div className="space-y-1">
+          {OCCASIONS.map((o) => (
+            <Link
+              key={o.slug}
+              href={buildUrl({ occasion: o.slug })}
+              className={`block px-3 py-2 text-sm rounded-sm transition-colors ${
+                activeOccasion === o.slug
+                  ? "text-brand font-semibold bg-brand-light"
+                  : "text-ink-muted hover:text-brand"
+              }`}
+            >
+              {o.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Price */}
+      <div>
+        <p className="text-xs font-semibold text-ink uppercase tracking-widest mb-3">Khoảng giá</p>
+        <div className="space-y-1">
+          {PRICE_RANGES.map((r) => {
+            const isActive = params.min_price === (r.min ?? "") && params.max_price === (r.max ?? "");
             return (
-              <Link key={r.label}
+              <Link
+                key={r.label}
                 href={buildUrl({ min_price: r.min, max_price: r.max })}
-                className={`block px-3 py-2 rounded-xl text-sm transition-colors ${isActive ? "bg-red-50 font-medium" : "text-gray-600 hover:bg-amber-50"}`}
-                style={isActive ? { color: "var(--color-brand)" } : undefined}>
+                className={`block px-3 py-2 text-sm rounded-sm transition-colors ${
+                  isActive ? "text-brand font-semibold bg-brand-light" : "text-ink-muted hover:text-brand"
+                }`}
+              >
                 {r.label}
               </Link>
             );
           })}
         </div>
       </div>
-    </>
+
+      {/* Customizable */}
+      <div>
+        <Link
+          href={buildUrl({ customizable: params.customizable ? "" : "1" })}
+          className={`flex items-center gap-2 text-sm transition-colors ${
+            params.customizable ? "text-brand font-semibold" : "text-ink-muted hover:text-brand"
+          }`}
+        >
+          <span className={`w-4 h-4 border rounded-sm flex items-center justify-center ${
+            params.customizable ? "bg-brand border-brand" : "border-border"
+          }`}>
+            {params.customizable && <span className="text-white text-xs">✓</span>}
+          </span>
+          Chỉ hàng tùy chỉnh
+        </Link>
+      </div>
+    </aside>
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-gray-600">{t("breadcrumbHome")}</Link>
-        <span>/</span>
-        <span className="text-gray-700">{t("title")}</span>
-      </div>
-
-      <div className="flex items-center gap-2 mb-4 lg:hidden">
-        <MobileFilterToggle filterContent={filterContent} />
-        <div className="flex items-center gap-1 ml-auto">
-          {SORT_OPTIONS.map(opt => (
-            <Link key={opt.value} href={buildUrl({ sort: opt.value })}
-              className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${activeSort === opt.value ? "text-white" : "border border-gray-200 text-gray-600"}`}
-              style={activeSort === opt.value ? { backgroundColor: "var(--color-brand)" } : undefined}>
-              {opt.label}
-            </Link>
-          ))}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="section-title">Sản phẩm</h1>
+          <p className="text-sm text-ink-muted mt-1">{meta.total} sản phẩm</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <select
+            className="input-field w-auto text-sm"
+            value={activeSort}
+          >
+            <option value="">Mặc định</option>
+            <option value="price_asc">Giá tăng dần</option>
+            <option value="price_desc">Giá giảm dần</option>
+          </select>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        <aside className="hidden lg:block lg:w-56 flex-shrink-0">
-          <div className="sticky top-24">
-            <h2 className="font-bold text-gray-900 text-sm uppercase tracking-wide mb-4">{t("category")}</h2>
-            {filterContent}
-          </div>
-        </aside>
+      <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
+        {/* Sidebar desktop */}
+        <div className="hidden lg:block">{FilterSidebar}</div>
 
-        <div className="flex-1 min-w-0">
-          <div className="hidden lg:flex items-center justify-between mb-6 gap-4">
-            <p className="text-sm text-gray-500">
-              {t("productCount", { count: meta.total })}
-            </p>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">{t("sort")}:</span>
-              <div className="flex gap-1">
-                {SORT_OPTIONS.map(opt => (
-                  <Link key={opt.value} href={buildUrl({ sort: opt.value })}
-                    className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${activeSort === opt.value ? "text-white" : "border border-gray-200 text-gray-600 hover:bg-amber-50"}`}
-                    style={activeSort === opt.value ? { backgroundColor: "var(--color-brand)" } : undefined}>
-                    {opt.label}
-                  </Link>
-                ))}
-              </div>
+        {/* Product grid */}
+        <div>
+          {items.length === 0 ? (
+            <div className="text-center py-20 text-ink-muted">
+              <p className="text-lg font-medium mb-2">Không tìm thấy sản phẩm</p>
+              <Link href="/san-pham" className="text-sm text-brand hover:underline">
+                Xem tất cả sản phẩm
+              </Link>
             </div>
-          </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {items.map((p) => (
+                <ProductCard key={p.slug} product={p} />
+              ))}
+            </div>
+          )}
 
-          <p className="text-sm text-gray-500 mb-4 lg:hidden">
-            {t("productCount", { count: meta.total })}
-          </p>
-
-          <Suspense fallback={<div className="text-center py-12 text-gray-400">{t("loading")}</div>}>
-            {items.length === 0 ? (
-              <div className="text-center py-24">
-                <p className="text-gray-400 text-lg mb-4">{t("noProducts")}</p>
-                <Link href="/san-pham" className="hover:underline text-sm" style={{ color: "var(--color-brand)" }}>{t("viewAll")}</Link>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
-                {items.map(p => <ProductCard key={p.slug} product={p} />)}
-              </div>
-            )}
-          </Suspense>
-
+          {/* Pagination */}
           {meta.last_page > 1 && (
-            <div className="flex justify-center flex-wrap gap-2 mt-10">
-              {Array.from({ length: meta.last_page }, (_, i) => i + 1).map(page => (
-                <Link key={page}
-                  href={buildUrl({ page: page.toString() })}
-                  className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm font-medium transition-colors ${meta.current_page === page ? "text-white" : "border border-gray-200 text-gray-600 hover:bg-amber-50"}`}
-                  style={meta.current_page === page ? { backgroundColor: "var(--color-brand)" } : undefined}>
+            <div className="flex items-center justify-center gap-2 mt-12">
+              {Array.from({ length: meta.last_page }, (_, i) => i + 1).map((page) => (
+                <Link
+                  key={page}
+                  href={buildUrl({ page: String(page) })}
+                  className={`w-9 h-9 flex items-center justify-center text-sm rounded-sm border transition-colors ${
+                    meta.current_page === page
+                      ? "bg-brand text-white border-brand"
+                      : "border-border text-ink-muted hover:border-brand hover:text-brand"
+                  }`}
+                >
                   {page}
                 </Link>
               ))}

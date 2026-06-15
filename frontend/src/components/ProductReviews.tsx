@@ -1,9 +1,10 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
-import { Review } from "@/types";
+import { Review, ReviewsSummary } from "@/types";
+import Button from "@/components/ui/Button";
+import { Input, Textarea } from "@/components/ui/Input";
 
 function StarRating({ value, onChange }: { value: number; onChange?: (v: number) => void }) {
   const [hovered, setHovered] = useState(0);
@@ -17,7 +18,7 @@ function StarRating({ value, onChange }: { value: number; onChange?: (v: number)
           onMouseEnter={() => onChange && setHovered(star)}
           onMouseLeave={() => onChange && setHovered(0)}
           className={`text-2xl transition-colors ${
-            star <= (hovered || value) ? "text-amber-400" : "text-gray-200"
+            star <= (hovered || value) ? "text-amber-400" : "text-border"
           } ${onChange ? "cursor-pointer hover:scale-110" : "cursor-default"}`}
         >
           ★
@@ -27,14 +28,13 @@ function StarRating({ value, onChange }: { value: number; onChange?: (v: number)
   );
 }
 
-export default function ProductReviews({ slug }: { slug: string }) {
+export default function ProductReviews({ slug, summary }: { slug: string; summary?: ReviewsSummary | null }) {
   const { user, init } = useAuthStore();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
-
   const [rating, setRating] = useState(5);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -65,18 +65,29 @@ export default function ProductReviews({ slug }: { slug: string }) {
 
   return (
     <div className="space-y-8">
+      {/* Summary bar */}
+      {summary && summary.total_count > 0 && (
+        <div className="flex items-center gap-6 pb-6 border-b border-border">
+          <div className="text-center">
+            <p className="text-4xl font-bold text-ink">{summary.average_rating.toFixed(1)}</p>
+            <StarRating value={Math.round(summary.average_rating)} />
+            <p className="text-xs text-ink-muted mt-1">{summary.total_count} đánh giá</p>
+          </div>
+        </div>
+      )}
+
       {/* Review list */}
       {loading ? (
-        <div className="py-8 text-center text-gray-400 text-sm">Đang tải đánh giá...</div>
+        <div className="py-8 text-center text-ink-muted text-sm">Đang tải đánh giá...</div>
       ) : reviews.length === 0 ? (
-        <div className="py-8 text-center text-gray-400 text-sm">Chưa có đánh giá nào. Hãy là người đầu tiên!</div>
+        <div className="py-8 text-center text-ink-muted text-sm">Chưa có đánh giá nào. Hãy là người đầu tiên!</div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-border">
           {reviews.map(review => (
             <div key={review.id} className="py-5">
               <div className="flex items-start justify-between gap-4 mb-2">
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">{review.user.name}</p>
+                  <p className="font-semibold text-ink text-sm">{review.user.name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <StarRating value={review.rating} />
                     {review.is_verified_purchase && (
@@ -84,19 +95,17 @@ export default function ProductReviews({ slug }: { slug: string }) {
                     )}
                   </div>
                 </div>
-                <span className="text-xs text-gray-400 shrink-0">
+                <span className="text-xs text-ink-muted shrink-0">
                   {new Date(review.created_at).toLocaleDateString("vi-VN")}
                 </span>
               </div>
               {review.title && (
-                <p className="font-semibold text-gray-800 text-sm mb-1">{review.title}</p>
+                <p className="font-semibold text-ink text-sm mb-1">{review.title}</p>
               )}
-              <p className="text-sm text-gray-600 leading-relaxed">{review.body}</p>
+              <p className="text-sm text-ink-muted leading-relaxed">{review.body}</p>
               <button
-                className="text-xs text-gray-400 hover:text-gray-600 mt-2 transition-colors"
-                onClick={async () => {
-                  await api.post(`/reviews/${review.id}/helpful`);
-                }}
+                className="text-xs text-ink-muted hover:text-ink mt-2 transition-colors"
+                onClick={() => api.post(`/reviews/${review.id}/helpful`)}
               >
                 Hữu ích ({review.helpful_count})
               </button>
@@ -106,36 +115,29 @@ export default function ProductReviews({ slug }: { slug: string }) {
       )}
 
       {/* Write review */}
-      <div className="border-t border-gray-100 pt-6">
-        <h3 className="font-bold text-gray-900 mb-4">Viết đánh giá</h3>
+      <div className="border-t border-border pt-6">
+        <h3 className="font-semibold text-ink mb-4">Viết đánh giá</h3>
         {!user ? (
-          <p className="text-sm text-gray-500">
-            <a href="/dang-nhap" className="text-amber-600 hover:underline font-medium">Đăng nhập</a> để viết đánh giá.
+          <p className="text-sm text-ink-muted">
+            <a href="/dang-nhap" className="text-brand hover:underline font-medium">Đăng nhập</a> để viết đánh giá.
           </p>
         ) : submitted ? (
-          <div className="bg-green-50 border border-green-100 rounded-2xl p-4 text-sm text-green-700">
+          <div className="bg-green-50 border border-green-100 rounded-sm p-4 text-sm text-green-700">
             Cảm ơn bạn đã đánh giá! Đánh giá đang chờ được duyệt.
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Xếp hạng</label>
+              <label className="block text-sm font-medium text-ink mb-1.5">Xếp hạng</label>
               <StarRating value={rating} onChange={setRating} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tiêu đề (tuỳ chọn)</label>
-              <input
-                className="input-field"
-                placeholder="Tóm tắt nhận xét của bạn"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                maxLength={120}
-              />
+              <label className="block text-sm font-medium text-ink mb-1.5">Tiêu đề (tuỳ chọn)</label>
+              <Input placeholder="Tóm tắt nhận xét của bạn" value={title} onChange={e => setTitle(e.target.value)} maxLength={120} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nhận xét</label>
-              <textarea
-                className="input-field resize-none"
+              <label className="block text-sm font-medium text-ink mb-1.5">Nhận xét</label>
+              <Textarea
                 rows={4}
                 placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
                 value={body}
@@ -145,14 +147,8 @@ export default function ProductReviews({ slug }: { slug: string }) {
                 maxLength={2000}
               />
             </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <button
-              type="submit"
-              disabled={submitting}
-              className="btn-primary text-sm px-6 disabled:opacity-40"
-            >
-              {submitting ? "Đang gửi..." : "Gửi đánh giá"}
-            </button>
+            {error && <p className="text-sm text-brand">{error}</p>}
+            <Button type="submit" loading={submitting}>Gửi đánh giá</Button>
           </form>
         )}
       </div>
