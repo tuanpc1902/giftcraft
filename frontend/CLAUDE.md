@@ -136,9 +136,10 @@ Tailwind utility classes: `text-brand`, `bg-brand`, `bg-brand-light`, `text-ink`
 ## Shared utility classes (globals.css)
 
 ```css
-.input-field    /* w-full, border-border, rounded-sm, focus ring brand */
-.btn-primary    /* bg-brand text-white, rounded-sm, hover opacity */
-.btn-outline    /* border border-ink, rounded-sm, hover bg-surface-alt */
+.input-field      /* w-full, border-border, rounded-sm, focus ring brand */
+.btn-primary      /* bg-brand text-white, rounded-sm, hover:bg-brand-dark */
+.btn-secondary    /* border border-ink text-ink, rounded-sm, hover:bg-surface-alt */
+.btn-ghost        /* text-ink, hover:text-brand — no background or border */
 ```
 
 ---
