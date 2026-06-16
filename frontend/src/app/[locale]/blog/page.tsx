@@ -32,13 +32,13 @@ function formatDate(dateStr: string) {
 
 function PostSkeleton() {
   return (
-    <div className="border border-border rounded-sm overflow-hidden animate-pulse">
-      <div className="aspect-video bg-surface-alt" />
+    <div className="border border-border rounded-sm overflow-hidden">
+      <div className="aspect-video skeleton" />
       <div className="p-5 space-y-3">
-        <div className="h-3 w-20 bg-surface-alt rounded-sm" />
-        <div className="h-4 w-full bg-surface-alt rounded-sm" />
-        <div className="h-4 w-3/4 bg-surface-alt rounded-sm" />
-        <div className="h-3 w-1/2 bg-surface-alt rounded-sm mt-4" />
+        <div className="h-3 w-20 skeleton rounded-sm" />
+        <div className="h-4 w-full skeleton rounded-sm" />
+        <div className="h-4 w-3/4 skeleton rounded-sm" />
+        <div className="h-3 w-1/2 skeleton rounded-sm mt-4" />
       </div>
     </div>
   );
@@ -163,7 +163,7 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {visiblePosts.map(post => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
-                <article className="bg-white border border-border rounded-sm overflow-hidden hover:shadow-md transition-all h-full flex flex-col">
+                <article className="bg-white border border-border rounded-sm overflow-hidden card-hover h-full flex flex-col">
                   <div className="relative aspect-video bg-surface-alt overflow-hidden">
                     {post.cover_image ? (
                       <Image
@@ -178,12 +178,12 @@ export default function BlogPage() {
                     )}
                   </div>
                   <div className="p-5 flex flex-col flex-1">
-                    <span className="inline-block text-xs font-semibold text-brand mb-2">{post.category}</span>
+                    <span className="inline-block text-xs font-semibold text-brand bg-brand-light px-2.5 py-1 rounded-full mb-3 w-fit">{post.category}</span>
                     <h3 className="font-bold text-ink mb-2 group-hover:text-brand transition-colors leading-snug">
                       {post.title}
                     </h3>
                     <p className="text-sm text-ink-muted leading-relaxed flex-1 mb-4">{post.excerpt}</p>
-                    <div className="flex items-center gap-2 text-xs text-ink-muted mt-auto">
+                    <div className="flex items-center gap-2 text-xs text-ink-muted mt-auto pt-3 border-t border-border">
                       <span>{post.author}</span>
                       <span>·</span>
                       <span>{formatDate(post.published_at)}</span>

@@ -4,7 +4,7 @@ interface SkeletonProps {
 
 function Skeleton({ className = "" }: SkeletonProps) {
   return (
-    <div className={`animate-pulse bg-surface-alt rounded-sm ${className}`} />
+    <div className={`skeleton rounded-sm ${className}`} />
   );
 }
 
