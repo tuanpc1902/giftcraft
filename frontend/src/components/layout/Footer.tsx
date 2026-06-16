@@ -41,36 +41,85 @@ const COLS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {COLS.map((col) => (
-            <div key={col.title}>
-              <p className="text-xs font-semibold text-ink uppercase tracking-widest mb-4">
-                {col.title}
+    <footer className="border-t border-border mt-24 bg-white">
+      {/* Brand bar */}
+      <div className="border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+            <div className="max-w-xs">
+              <Link href="/" className="font-display font-bold text-2xl text-ink hover:text-brand transition-colors block mb-3">
+                GiftCraft Studio
+              </Link>
+              <p className="text-sm text-ink-muted leading-relaxed">
+                Quà tặng cao cấp, thiết kế riêng cho từng dịp — từ cá nhân đến doanh nghiệp.
               </p>
-              <ul className="space-y-2">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <Link
-                      href={l.href}
-                      className="text-sm text-ink-muted hover:text-brand transition-colors"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex items-center gap-3 mt-5">
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 bg-surface-alt rounded-full flex items-center justify-center text-ink-muted hover:bg-brand hover:text-white transition-all duration-200 text-xs font-bold"
+                  aria-label="Facebook"
+                >
+                  f
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 bg-surface-alt rounded-full flex items-center justify-center text-ink-muted hover:bg-brand hover:text-white transition-all duration-200 text-xs font-bold"
+                  aria-label="Instagram"
+                >
+                  in
+                </a>
+                <a
+                  href="https://tiktok.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 bg-surface-alt rounded-full flex items-center justify-center text-ink-muted hover:bg-brand hover:text-white transition-all duration-200 text-xs font-bold"
+                  aria-label="TikTok"
+                >
+                  tt
+                </a>
+              </div>
             </div>
-          ))}
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 flex-1 md:max-w-2xl">
+              {COLS.map((col) => (
+                <div key={col.title}>
+                  <p className="text-xs font-semibold text-ink uppercase tracking-widest mb-4">
+                    {col.title}
+                  </p>
+                  <ul className="space-y-2.5">
+                    {col.links.map((l) => (
+                      <li key={l.label}>
+                        <Link
+                          href={l.href}
+                          className="text-sm text-ink-muted hover:text-brand transition-colors"
+                        >
+                          {l.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-ink-muted">
+      </div>
+
+      {/* Bottom bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
+          <p className="text-xs text-ink-muted">
             © {new Date().getFullYear()} GiftCraft Studio. Tất cả quyền được bảo lưu.
           </p>
-          <p className="text-sm text-ink-muted">
-            Làm với tình yêu tại Việt Nam
-          </p>
+          <div className="flex items-center gap-5 text-xs text-ink-muted">
+            <Link href="/chinh-sach-bao-mat" className="hover:text-brand transition-colors">Bảo mật</Link>
+            <Link href="/dieu-khoan" className="hover:text-brand transition-colors">Điều khoản</Link>
+            <span>🇻🇳 Việt Nam</span>
+          </div>
         </div>
       </div>
     </footer>
