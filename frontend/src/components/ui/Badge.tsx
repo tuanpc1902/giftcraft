@@ -11,7 +11,7 @@ interface BadgeProps {
 const VARIANT_CLASS: Record<BadgeVariant, string> = {
   default: "bg-surface-alt text-ink",
   brand:   "bg-brand-light text-brand",
-  success: "bg-green-100 text-green-700",
+  success: "bg-success-light text-success",
   muted:   "bg-border text-ink-muted",
 };
 

@@ -10,11 +10,11 @@ import { JobApplication } from "@/types";
 type FilterStatus = "new" | "reviewing" | "interviewed" | "hired" | "rejected" | "all";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  new:        { label: "Mới",           color: "bg-blue-100 text-blue-700" },
+  new:        { label: "Mới",           color: "bg-info-light text-info" },
   reviewing:  { label: "Đang xem xét",  color: "bg-brand-light text-brand" },
   interviewed:{ label: "Đã phỏng vấn",  color: "bg-purple-100 text-purple-700" },
-  hired:      { label: "Đã tuyển",       color: "bg-green-100 text-green-700" },
-  rejected:   { label: "Từ chối",        color: "bg-red-100 text-brand" },
+  hired:      { label: "Đã tuyển",       color: "bg-success-light text-success" },
+  rejected:   { label: "Từ chối",        color: "bg-brand-light text-brand" },
 };
 
 export default function AdminJobsPage() {
@@ -127,7 +127,7 @@ export default function AdminJobsPage() {
                   <dt className="text-ink-muted">CV / Portfolio</dt>
                   <dd>
                     <a href={selected.cv_url} target="_blank" rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline break-all text-xs">
+                      className="text-info hover:underline break-all text-xs">
                       {selected.cv_url}
                     </a>
                   </dd>
@@ -141,7 +141,7 @@ export default function AdminJobsPage() {
               <div className="space-y-2">
                 {selected.status === "new" && (
                   <button onClick={() => updateStatus(selected.id, "reviewing")}
-                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors">
+                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-brand-dark hover:text-white transition-colors">
                     Chuyển sang Đang xem xét
                   </button>
                 )}
@@ -153,13 +153,13 @@ export default function AdminJobsPage() {
                 )}
                 {selected.status === "interviewed" && (
                   <button onClick={() => updateStatus(selected.id, "hired")}
-                    className="w-full bg-green-600 text-white py-2.5 rounded-sm text-sm font-medium hover:bg-green-500 transition-colors">
+                    className="w-full bg-success text-white py-2.5 rounded-sm text-sm font-medium hover:bg-success/90 transition-colors">
                     Tuyển dụng
                   </button>
                 )}
                 {selected.status !== "rejected" && selected.status !== "hired" && (
                   <button onClick={() => updateStatus(selected.id, "rejected")}
-                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors">
+                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-brand-dark hover:text-white transition-colors">
                     Từ chối
                   </button>
                 )}

@@ -11,8 +11,8 @@ type FilterStatus = "pending" | "approved" | "rejected" | "all";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   pending:  { label: "Chờ duyệt", color: "bg-brand-light text-brand" },
-  approved: { label: "Đã duyệt",  color: "bg-green-100 text-green-700" },
-  rejected: { label: "Từ chối",   color: "bg-red-100 text-brand" },
+  approved: { label: "Đã duyệt",  color: "bg-success-light text-success" },
+  rejected: { label: "Từ chối",   color: "bg-brand-light text-brand" },
 };
 
 export default function AdminReviewsPage() {
@@ -93,7 +93,7 @@ export default function AdminReviewsPage() {
                 <tr key={review.id} className="hover:bg-surface-alt transition-colors cursor-pointer" onClick={() => setSelected(review)}>
                   <td className="px-4 py-3 font-medium">{review.user?.name ?? "—"}</td>
                   <td className="px-4 py-3 text-ink-muted">{review.product?.name ?? "—"}</td>
-                  <td className="px-4 py-3 text-amber-400">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</td>
+                  <td className="px-4 py-3 text-star">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</td>
                   <td className="px-4 py-3 max-w-xs truncate text-ink-muted">{review.body}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUS_LABELS[review.status]?.color}`}>
@@ -123,12 +123,12 @@ export default function AdminReviewsPage() {
               <dl className="space-y-4 text-sm mb-6">
                 <div><dt className="text-ink-muted">Khách hàng</dt><dd className="font-medium">{selected.user?.name}</dd></div>
                 <div><dt className="text-ink-muted">Sản phẩm</dt><dd className="font-medium">{selected.product?.name ?? "—"}</dd></div>
-                <div><dt className="text-ink-muted">Xếp hạng</dt><dd className="text-amber-400 text-lg">{"★".repeat(selected.rating)}{"☆".repeat(5 - selected.rating)}</dd></div>
+                <div><dt className="text-ink-muted">Xếp hạng</dt><dd className="text-star text-lg">{"★".repeat(selected.rating)}{"☆".repeat(5 - selected.rating)}</dd></div>
                 {selected.title && <div><dt className="text-ink-muted">Tiêu đề</dt><dd className="font-medium">{selected.title}</dd></div>}
                 <div><dt className="text-ink-muted">Nội dung</dt><dd className="text-ink leading-relaxed">{selected.body}</dd></div>
                 <div>
                   <dt className="text-ink-muted">Mua hàng xác thực</dt>
-                  <dd className={`font-medium ${selected.is_verified_purchase ? "text-green-600" : "text-ink-muted"}`}>
+                  <dd className={`font-medium ${selected.is_verified_purchase ? "text-success" : "text-ink-muted"}`}>
                     {selected.is_verified_purchase ? "✓ Có" : "Không"}
                   </dd>
                 </div>
@@ -139,13 +139,13 @@ export default function AdminReviewsPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => updateStatus(selected.id, "approved")}
-                    className="flex-1 bg-green-600 text-white py-2.5 rounded-sm text-sm font-medium hover:bg-green-500 transition-colors"
+                    className="flex-1 bg-success text-white py-2.5 rounded-sm text-sm font-medium hover:bg-success/90 transition-colors"
                   >
                     Duyệt
                   </button>
                   <button
                     onClick={() => updateStatus(selected.id, "rejected")}
-                    className="flex-1 bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors"
+                    className="flex-1 bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-brand-dark hover:text-white transition-colors"
                   >
                     Từ chối
                   </button>
@@ -154,7 +154,7 @@ export default function AdminReviewsPage() {
               {selected.status === "approved" && (
                 <button
                   onClick={() => updateStatus(selected.id, "rejected")}
-                  className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors"
+                  className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-brand-dark hover:text-white transition-colors"
                 >
                   Thu hồi phê duyệt
                 </button>
@@ -162,7 +162,7 @@ export default function AdminReviewsPage() {
               {selected.status === "rejected" && (
                 <button
                   onClick={() => updateStatus(selected.id, "approved")}
-                  className="w-full bg-green-600 text-white py-2.5 rounded-sm text-sm font-medium hover:bg-green-500 transition-colors"
+                  className="w-full bg-success text-white py-2.5 rounded-sm text-sm font-medium hover:bg-success/90 transition-colors"
                 >
                   Duyệt lại
                 </button>

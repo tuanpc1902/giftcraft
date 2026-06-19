@@ -3,7 +3,7 @@ import { useToastStore } from "@/store/toast";
 import { CheckCircleIcon, XCircleIcon, InformationCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const ICONS = {
-  success: <CheckCircleIcon className="w-5 h-5 text-green-600" />,
+  success: <CheckCircleIcon className="w-5 h-5 text-success" />,
   error:   <XCircleIcon className="w-5 h-5 text-brand" />,
   info:    <InformationCircleIcon className="w-5 h-5 text-ink-muted" />,
 };

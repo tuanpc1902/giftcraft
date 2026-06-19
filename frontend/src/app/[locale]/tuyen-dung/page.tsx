@@ -143,7 +143,7 @@ export default function TuyenDungPage() {
                 <p className="text-sm text-ink-muted mb-3 leading-relaxed">{pos.desc}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {pos.tags.map(tag => (
-                    <span key={tag} className="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full">{tag}</span>
+                    <span key={tag} className="text-xs bg-info-light text-info px-2.5 py-0.5 rounded-full">{tag}</span>
                   ))}
                 </div>
               </div>

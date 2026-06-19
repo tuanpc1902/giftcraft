@@ -66,7 +66,7 @@ const STOCK_LABELS: Record<string, string> = {
   out_of_stock: "Hết hàng",
 };
 const STOCK_COLORS: Record<string, string> = {
-  in_stock: "bg-green-100 text-green-700",
+  in_stock: "bg-success-light text-success",
   pre_order: "bg-brand-light text-brand",
   out_of_stock: "bg-surface-alt text-ink-muted",
 };
@@ -227,13 +227,13 @@ export default function AdminProductsPage() {
                   <td className="px-4 py-3">
                     <div className="flex gap-3">
                       <a href={`/san-pham/${p.slug}`} target="_blank"
-                        className="text-xs text-blue-600 hover:underline">Xem</a>
+                        className="text-xs text-info hover:underline">Xem</a>
                       <button onClick={() => openEdit(p)}
                         className="text-xs text-ink-muted hover:text-ink font-medium">Sửa</button>
                       <button
                         onClick={() => handleDelete(p.id, p.name)}
                         disabled={deleteId === p.id}
-                        className="text-xs text-brand hover:text-red-700 font-medium disabled:opacity-40">
+                        className="text-xs text-brand hover:text-brand-dark font-medium disabled:opacity-40">
                         {deleteId === p.id ? "..." : "Xóa"}
                       </button>
                     </div>
@@ -263,7 +263,7 @@ export default function AdminProductsPage() {
 
             <div className="p-6 space-y-4">
               {saveError && (
-                <div className="bg-brand-light border border-red-200 text-red-700 text-sm rounded-sm px-4 py-3">
+                <div className="bg-brand-light border border-brand/20 text-brand text-sm rounded-sm px-4 py-3">
                   {saveError}
                 </div>
               )}

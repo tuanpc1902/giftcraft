@@ -130,7 +130,7 @@ function StartProjectInner() {
         {steps.map((label, i) => (
           <div key={i} className="flex items-center gap-1 flex-shrink-0">
             <div className={`w-7 h-7 rounded-sm flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-              state.step > i + 1 ? "bg-green-500 text-white" :
+              state.step > i + 1 ? "bg-success text-white" :
               state.step === i + 1 ? "bg-ink text-white" : "bg-surface-alt text-ink-muted"
             }`}>{state.step > i + 1 ? "✓" : i + 1}</div>
             <span className={`hidden sm:block text-xs whitespace-nowrap ${state.step === i + 1 ? "text-ink font-medium" : "text-ink-muted"}`}>{label}</span>

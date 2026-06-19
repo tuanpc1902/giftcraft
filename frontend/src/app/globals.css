@@ -18,6 +18,13 @@
   --color-gold:         #B45309;
   --color-gold-light:   #FEF3C7;
 
+  /* Semantic status */
+  --color-success:       #15803D;  /* green-700 — success states */
+  --color-success-light: #DCFCE7;  /* green-100 — success badge background */
+  --color-info:          #1D4ED8;  /* blue-700 — informational text, links */
+  --color-info-light:    #DBEAFE;  /* blue-100 — info badge / callout background */
+  --color-star:          #F59E0B;  /* amber-500 — rating stars */
+
   /* Typography */
   --font-display: var(--font-display), Georgia, serif;
   --font-body:    var(--font-body), system-ui, sans-serif;

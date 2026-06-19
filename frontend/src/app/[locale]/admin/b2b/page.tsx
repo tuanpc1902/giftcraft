@@ -7,12 +7,12 @@ import { B2bQuote } from "@/types";
 import { formatPrice } from "@/lib/formatPrice";
 
 const STATUS_MAP: Record<B2bQuote["status"], { label: string; color: string }> = {
-  new:           { label: "Mới",            color: "bg-blue-100 text-blue-700" },
+  new:           { label: "Mới",            color: "bg-info-light text-info" },
   reviewing:     { label: "Đang xem xét",   color: "bg-brand-light text-brand" },
   quoted:        { label: "Đã báo giá",     color: "bg-purple-100 text-purple-700" },
   approved:      { label: "Đã duyệt",       color: "bg-teal-100 text-teal-700" },
   in_production: { label: "Đang sản xuất",  color: "bg-indigo-100 text-indigo-700" },
-  delivered:     { label: "Đã giao",        color: "bg-green-100 text-green-700" },
+  delivered:     { label: "Đã giao",        color: "bg-success-light text-success" },
   cancelled:     { label: "Đã hủy",         color: "bg-surface-alt text-ink-muted" },
 };
 
@@ -66,7 +66,7 @@ export default function AdminB2bPage() {
         </div>
         <div className="flex gap-2 items-center">
           {countByStatus("new") > 0 && (
-            <span className="bg-blue-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+            <span className="bg-info-light0 text-white text-xs font-bold px-2.5 py-1 rounded-full">
               {countByStatus("new")} mới
             </span>
           )}

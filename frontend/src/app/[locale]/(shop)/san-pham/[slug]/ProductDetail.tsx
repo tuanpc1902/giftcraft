@@ -29,7 +29,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
       <div className="flex items-center gap-0.5">
         {[1, 2, 3, 4, 5].map((n) => (
           n <= Math.round(rating)
-            ? <StarSolid key={n} className="w-4 h-4 text-amber-400" />
+            ? <StarSolid key={n} className="w-4 h-4 text-star" />
             : <StarIcon key={n} className="w-4 h-4 text-border" />
         ))}
       </div>

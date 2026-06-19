@@ -19,7 +19,7 @@ function StarRating({ value, onChange }: { value: number; onChange?: (v: number)
           onMouseEnter={() => onChange && setHovered(star)}
           onMouseLeave={() => onChange && setHovered(0)}
           className={`text-2xl transition-colors ${
-            star <= (hovered || value) ? "text-amber-400" : "text-border"
+            star <= (hovered || value) ? "text-star" : "text-border"
           } ${onChange ? "cursor-pointer hover:scale-110" : "cursor-default"}`}
         >
           ★
@@ -92,7 +92,7 @@ export default function ProductReviews({ slug, summary }: { slug: string; summar
                   <div className="flex items-center gap-2 mt-0.5">
                     <StarRating value={review.rating} />
                     {review.is_verified_purchase && (
-                      <span className="text-xs text-green-600 font-medium">✓ Đã mua hàng</span>
+                      <span className="text-xs text-success font-medium">✓ Đã mua hàng</span>
                     )}
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export default function ProductReviews({ slug, summary }: { slug: string; summar
             <Link href="/dang-nhap" className="text-brand hover:underline font-medium">Đăng nhập</Link> để viết đánh giá.
           </p>
         ) : submitted ? (
-          <div className="bg-green-50 border border-green-100 rounded-sm p-4 text-sm text-green-700">
+          <div className="bg-success-light border border-success-light rounded-sm p-4 text-sm text-success">
             Cảm ơn bạn đã đánh giá! Đánh giá đang chờ được duyệt.
           </div>
         ) : (

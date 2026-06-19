@@ -8,12 +8,12 @@ import { useAuthStore } from "@/store/auth";
 import { B2bQuote } from "@/types";
 
 const STATUS_MAP: Record<B2bQuote["status"], { label: string; color: string; icon: string; desc: string }> = {
-  new:           { label: "Đã nhận",        color: "bg-blue-100 text-blue-700",    icon: "📥", desc: "Yêu cầu của bạn đã được nhận." },
+  new:           { label: "Đã nhận",        color: "bg-info-light text-info",    icon: "📥", desc: "Yêu cầu của bạn đã được nhận." },
   reviewing:     { label: "Đang xem xét",   color: "bg-brand-light text-brand",  icon: "👀", desc: "Đội ngũ đang xem xét yêu cầu." },
   quoted:        { label: "Đã báo giá",     color: "bg-purple-100 text-purple-700", icon: "💬", desc: "Báo giá đã được gửi. Vui lòng kiểm tra email." },
   approved:      { label: "Đã duyệt",       color: "bg-teal-100 text-teal-700",    icon: "✅", desc: "Báo giá đã được duyệt. Chuẩn bị sản xuất." },
   in_production: { label: "Đang sản xuất",  color: "bg-indigo-100 text-indigo-700", icon: "🏭", desc: "Sản phẩm đang được sản xuất." },
-  delivered:     { label: "Đã giao",        color: "bg-green-100 text-green-700",  icon: "🎉", desc: "Dự án hoàn tất. Cảm ơn bạn!" },
+  delivered:     { label: "Đã giao",        color: "bg-success-light text-success",  icon: "🎉", desc: "Dự án hoàn tất. Cảm ơn bạn!" },
   cancelled:     { label: "Đã hủy",         color: "bg-surface-alt text-ink-muted",    icon: "✕",  desc: "Yêu cầu đã bị hủy." },
 };
 
@@ -204,9 +204,9 @@ export default function B2bPortalPage() {
 
               {/* Admin note (visible to user) */}
               {selected.admin_note && (
-                <div className="bg-blue-50 rounded-sm p-4">
-                  <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">Ghi chú từ GiftCraft</p>
-                  <p className="text-sm text-blue-800">{selected.admin_note}</p>
+                <div className="bg-info-light rounded-sm p-4">
+                  <p className="text-xs font-semibold text-info uppercase tracking-wide mb-1">Ghi chú từ GiftCraft</p>
+                  <p className="text-sm text-info">{selected.admin_note}</p>
                 </div>
               )}
 

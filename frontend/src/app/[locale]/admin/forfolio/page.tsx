@@ -184,7 +184,7 @@ export default function AdminForfolioPage() {
                       <button
                         onClick={() => handleDelete(p.id)}
                         disabled={deleting === p.id}
-                        className="text-xs text-brand hover:text-red-700 font-medium disabled:opacity-40"
+                        className="text-xs text-brand hover:text-brand-dark font-medium disabled:opacity-40"
                       >
                         {deleting === p.id ? "..." : "Xóa"}
                       </button>

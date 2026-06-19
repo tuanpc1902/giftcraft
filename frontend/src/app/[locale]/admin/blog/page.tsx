@@ -142,7 +142,7 @@ export default function AdminBlogPage() {
                   <td className="px-4 py-3 text-ink-muted text-xs">{post.category}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      post.status === "published" ? "bg-green-100 text-green-700" : "bg-surface-alt text-ink-muted"
+                      post.status === "published" ? "bg-success-light text-success" : "bg-surface-alt text-ink-muted"
                     }`}>
                       {post.status === "published" ? "Đã đăng" : "Nháp"}
                     </span>
@@ -152,7 +152,7 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="px-4 py-3 text-right flex items-center justify-end gap-2">
                     <button onClick={() => openEdit(post)} className="text-xs text-brand hover:text-brand-dark font-medium">Sửa</button>
-                    <button onClick={() => handleDelete(post.id)} className="text-xs text-brand hover:text-red-700 font-medium">Xóa</button>
+                    <button onClick={() => handleDelete(post.id)} className="text-xs text-brand hover:text-brand-dark font-medium">Xóa</button>
                   </td>
                 </tr>
               ))}

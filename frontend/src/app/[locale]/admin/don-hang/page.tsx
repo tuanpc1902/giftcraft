@@ -14,10 +14,10 @@ const STATUS_LABELS: Record<string, string> = {
 };
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-brand-light text-brand",
-  confirmed: "bg-blue-100 text-blue-700",
+  confirmed: "bg-info-light text-info",
   processing: "bg-purple-100 text-purple-700",
   shipped: "bg-cyan-100 text-cyan-700",
-  delivered: "bg-green-100 text-green-700",
+  delivered: "bg-success-light text-success",
   cancelled: "bg-surface-alt text-ink-muted",
 };
 
@@ -48,7 +48,7 @@ function AdminOrdersInner() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-ink">Quản lý đơn hàng</h1>
         <div className="flex gap-2">
-          <Link href="?delivery=express" className="text-xs border border-red-300 text-brand px-3 py-1.5 rounded-sm hover:bg-brand-light">🚀 Hỏa tốc</Link>
+          <Link href="?delivery=express" className="text-xs border border-brand/30 text-brand px-3 py-1.5 rounded-sm hover:bg-brand-light">🚀 Hỏa tốc</Link>
           <Link href="/admin/don-hang" className="text-xs border border-border text-ink-muted px-3 py-1.5 rounded-sm hover:bg-surface-alt">Tất cả</Link>
         </div>
       </div>
@@ -79,7 +79,7 @@ function AdminOrdersInner() {
                   <td className="px-4 py-3 font-semibold text-ink">{formatPrice(order.total)}</td>
                   <td className="px-4 py-3">
                     {order.delivery_type === "express" ? (
-                      <span className="bg-red-100 text-brand text-xs font-bold px-2 py-1 rounded-full">🚀 HỎA TỐC</span>
+                      <span className="bg-brand-light text-brand text-xs font-bold px-2 py-1 rounded-full">🚀 HỎA TỐC</span>
                     ) : (
                       <span className="text-ink-muted text-xs">Tiêu chuẩn</span>
                     )}

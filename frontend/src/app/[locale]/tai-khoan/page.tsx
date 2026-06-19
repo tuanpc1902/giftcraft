@@ -14,7 +14,7 @@ type Tab = "profile" | "orders" | "loyalty" | "projects";
 const TIER_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   silver:  { label: "Silver",  color: "text-ink-muted",  bg: "bg-surface-alt" },
   gold:    { label: "Gold",    color: "text-ink-muted", bg: "bg-brand-light" },
-  diamond: { label: "Diamond", color: "text-blue-700",  bg: "bg-blue-100" },
+  diamond: { label: "Diamond", color: "text-info",  bg: "bg-info-light" },
 };
 
 export default function AccountPage() {
@@ -275,7 +275,7 @@ export default function AccountPage() {
                           <p className="text-sm font-medium text-ink">{tx.description}</p>
                           <p className="text-xs text-ink-muted">{new Date(tx.created_at).toLocaleDateString("vi-VN")}</p>
                         </div>
-                        <span className={`text-sm font-bold ${tx.points > 0 ? "text-green-600" : "text-brand"}`}>
+                        <span className={`text-sm font-bold ${tx.points > 0 ? "text-success" : "text-brand"}`}>
                           {tx.points > 0 ? "+" : ""}{tx.points}
                         </span>
                       </div>

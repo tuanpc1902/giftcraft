@@ -20,10 +20,10 @@ export default function AdminDashboard() {
   }, []);
 
   const cards = [
-    { label: "Doanh thu hôm nay", value: formatPrice(stats.today_revenue), color: "bg-green-50 text-green-700" },
+    { label: "Doanh thu hôm nay", value: formatPrice(stats.today_revenue), color: "bg-success-light text-success" },
     { label: "Đơn chờ xử lý", value: String(stats.pending_orders), color: "bg-brand-light text-brand" },
     { label: "Đơn hỏa tốc", value: String(stats.express_orders), color: "bg-brand-light text-brand" },
-    { label: "Quote B2B mới", value: String(stats.new_b2b_quotes), color: "bg-blue-50 text-blue-700" },
+    { label: "Quote B2B mới", value: String(stats.new_b2b_quotes), color: "bg-info-light text-info" },
   ];
 
   return (

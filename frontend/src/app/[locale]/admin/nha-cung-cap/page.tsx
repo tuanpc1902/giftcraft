@@ -10,10 +10,10 @@ import { SupplierApplication } from "@/types";
 type FilterStatus = "new" | "reviewing" | "approved" | "rejected" | "all";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  new:       { label: "Mới",          color: "bg-blue-100 text-blue-700" },
+  new:       { label: "Mới",          color: "bg-info-light text-info" },
   reviewing: { label: "Đang xem xét", color: "bg-brand-light text-brand" },
-  approved:  { label: "Đã duyệt",     color: "bg-green-100 text-green-700" },
-  rejected:  { label: "Từ chối",      color: "bg-red-100 text-brand" },
+  approved:  { label: "Đã duyệt",     color: "bg-success-light text-success" },
+  rejected:  { label: "Từ chối",      color: "bg-brand-light text-brand" },
 };
 
 export default function AdminSupplierPage() {
@@ -126,7 +126,7 @@ export default function AdminSupplierPage() {
                 <div><dt className="text-ink-muted">Loại sản phẩm cung cấp</dt><dd className="text-ink leading-relaxed">{selected.product_types}</dd></div>
                 <div>
                   <dt className="text-ink-muted">Hóa đơn VAT</dt>
-                  <dd className={`font-medium ${selected.has_vat_invoice ? "text-green-600" : "text-ink-muted"}`}>
+                  <dd className={`font-medium ${selected.has_vat_invoice ? "text-success" : "text-ink-muted"}`}>
                     {selected.has_vat_invoice ? "✓ Có" : "Không"}
                   </dd>
                 </div>
@@ -143,7 +143,7 @@ export default function AdminSupplierPage() {
                 {selected.status !== "approved" && (
                   <button
                     onClick={() => updateStatus(selected.id, "approved")}
-                    className="w-full bg-green-600 text-white py-2.5 rounded-sm text-sm font-medium hover:bg-green-500 transition-colors"
+                    className="w-full bg-success text-white py-2.5 rounded-sm text-sm font-medium hover:bg-success/90 transition-colors"
                   >
                     Phê duyệt
                   </button>
@@ -151,7 +151,7 @@ export default function AdminSupplierPage() {
                 {selected.status === "new" && (
                   <button
                     onClick={() => updateStatus(selected.id, "reviewing")}
-                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors"
+                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-brand-dark hover:text-white transition-colors"
                   >
                     Chuyển sang Đang xem xét
                   </button>
@@ -159,7 +159,7 @@ export default function AdminSupplierPage() {
                 {selected.status !== "rejected" && (
                   <button
                     onClick={() => updateStatus(selected.id, "rejected")}
-                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-red-100 transition-colors"
+                    className="w-full bg-brand-light text-brand py-2.5 rounded-sm text-sm font-medium hover:bg-brand-dark hover:text-white transition-colors"
                   >
                     Từ chối
                   </button>
